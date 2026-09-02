@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" class="demo-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% if demoTitle %}{{ demoTitle }} — {{ demo.brand.name }}{% else %}{{ demo.brand.name }}{% endif %}</title>
+  <meta name="description" content="{{ demoDescription or demo.brand.description }}">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#12302a">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ demo.fonts }}">
+
+  {#
+    Only this demo's stylesheet is loaded. The portfolio's main.css is never
+    included here, and every rule in theme.css is scoped under .demo-clinic,
+    so nothing can travel in either direction.
+  #}
+  <link rel="stylesheet" href="{{ demo.cssPath }}">
+
+  <link rel="icon" href="/assets/demos/{{ demoMeta.slug }}/favicon.svg" type="image/svg+xml">
+</head>
+
+<body class="{{ demo.themeClass }}{% if portal %} is-portal{% endif %}">
+
+  {# Hands the whole demo dataset to app.js without a network request. #}
+  <script type="application/json" id="demo-data">{{ demo | json | safe }}</script>
+
+  {{ content | safe }}
+
+  {% if demo.demoMode %}
+    <aside class="demo-badge" aria-label="Demonstration notice">
+      <span class="demo-badge__dot" aria-hidden="true"></span>
+      <span class="demo-badge__text">
+        Demo — sample data.
+        <a href="/demos/">More templates</a>
+      </span>
+    </aside>
+  {% endif %}
+
+  {# Motion libraries load only inside demos, never on portfolio pages. #}
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
+  <script src="{{ demo.jsPath }}" type="module"></script>
+
+  <script>
+    /* Prospect personalisation: /demos/clinic/?prospect=Ridgeway%20Family%20Care
+       swaps the displayed brand name at runtime so a demo link can be sent to a
+       named business without rebuilding the site. */
+    (function () {
+      try {
+        var name = new URLSearchParams(location.search).get('prospect');
+        if (!name) return;
+        name = name.slice(0, 60).trim();
+        if (!name) return;
+
+        document.querySelectorAll('[data-brand-name]').forEach(function (el) {
+          el.textContent = name;
+        });
+        document.querySelectorAll('[data-brand-short]').forEach(function (el) {
+          el.textContent = name.split(/\s+/).slice(0, 2).join(' ');
+        });
+        document.querySelectorAll('[data-brand-mark]').forEach(function (el) {
+          el.textContent = name
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(function (w) { return w.charAt(0); })
+            .join('')
+            .toUpperCase();
+        });
+
+        document.title = document.title.replace(/[^—]+$/, name);
+
+        /* Keep the parameter attached while browsing the demo. */
+        document.querySelectorAll('a[href^="/demos/"]').forEach(function (a) {
+          var u = new URL(a.getAttribute('href'), location.origin);
+          u.searchParams.set('prospect', name);
+          a.setAttribute('href', u.pathname + u.search);
+        });
+      } catch (e) {
+        /* Personalisation is cosmetic — never let it break the page. */
+      }
+    })();
+  </script>
+</body>
+</html>

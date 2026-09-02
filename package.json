@@ -1,0 +1,20 @@
+{
+  "name": "lracdimension",
+  "version": "1.0.0",
+  "description": "LRACDIMENSION \u2014 systems portfolio of John Carl Dimatulac. Built with Eleventy.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "eleventy --serve --quiet",
+    "build": "eleventy",
+    "clean": "rimraf _site",
+    "worker:deploy": "cd workers/scan && npx wrangler deploy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "rimraf": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

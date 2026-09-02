@@ -1,0 +1,66 @@
+---
+demoTitle: Care we provide
+demoDescription: Family medicine, pediatrics and women's health — what each visit covers and what it costs.
+---
+{% set base = '/demos/' + demoMeta.slug + '/' %}
+{% include "demos/clinic/top.njk" %}
+
+<main>
+  <section class="band--md">
+    <div class="wrap">
+      <div class="two" style="margin-bottom:clamp(2rem,4vw,3.5rem)">
+        <div>
+          <h1 class="h1">Care we provide</h1>
+        </div>
+        <div>
+          <p class="lede" style="max-width:52ch">
+            If you are reading this trying to work out whether your thing is
+            worth an appointment, it probably is. Call and describe it. The
+            front desk can usually tell you in a minute.
+          </p>
+          <p class="prose" style="margin-top:1.25rem">
+            Prices below are what a visit costs without insurance. With
+            insurance, most of these are a copay. Either way you will be told
+            the number before anything is booked.
+          </p>
+        </div>
+      </div>
+
+      {% for g in demo.careGroups %}
+        <section class="caregroup" id="{{ g.id }}">
+          <div class="head">
+            <h2 class="h2">{{ g.title }}</h2>
+            <span class="label">{{ g.services.length }} kinds of visit</span>
+          </div>
+
+          <p class="prose" style="margin-bottom:1.5rem">{{ g.lede }}</p>
+
+          {% for s in g.services %}
+            <article class="svc">
+              <div>
+                <h3 class="svc__name">{{ s.name }}</h3>
+                <p class="svc__meta">
+                  {{ s.duration }} minutes<br>
+                  {% if s.price == 0 %}No charge on most plans{% else %}${{ s.price }} without insurance{% endif %}
+                </p>
+              </div>
+              <div>
+                <p class="svc__blurb">{{ s.blurb }}</p>
+                <p class="svc__visit">{{ s.visit }}</p>
+              </div>
+            </article>
+          {% endfor %}
+        </section>
+      {% endfor %}
+
+      <div class="callout" style="margin-top:2.5rem">{{ demo.selfPay }}</div>
+
+      <div style="margin-top:2rem;display:flex;flex-wrap:wrap;gap:.75rem">
+        <a class="btn" href="{{ base }}book/">Book a visit</a>
+        <a class="btn btn--quiet" href="{{ base }}visit/">Insurance we take</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% include "demos/clinic/foot.njk" %}

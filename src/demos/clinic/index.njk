@@ -1,0 +1,216 @@
+---
+demoTitle: false
+---
+{% set base = '/demos/' + demoMeta.slug + '/' %}
+{% include "demos/clinic/top.njk" %}
+
+<main>
+
+  {# ============================================================ HERO ==== #}
+  {# Spacing: large — this and the closing block carry the most air. #}
+  <section class="hero" data-hero>
+    <div class="wrap hero__grid">
+
+      <div class="hero__say">
+        <h1 class="display">
+          <span style="display:block;overflow:hidden"><span data-anim="line" style="display:block">See the same</span></span>
+          <span style="display:block;overflow:hidden"><span data-anim="line" style="display:block">doctor. Usually</span></span>
+          <span style="display:block;overflow:hidden"><span data-anim="line" style="display:block">this week.</span></span>
+        </h1>
+
+        <p class="lede" data-anim="fade">
+          A family practice on the north side of {{ demo.contact.city }}. Four
+          providers, one building, and the open times printed here rather than
+          hidden behind a phone call.
+        </p>
+
+        <div class="hero__actions" data-anim="fade">
+          <a class="btn" href="{{ base }}book/">Book a visit</a>
+          <a class="btn btn--quiet" href="tel:{{ demo.contact.phoneHref }}">Call {{ demo.contact.phone }}</a>
+        </div>
+      </div>
+
+      <div class="avail" data-anim="fade">
+        <div class="avail__head">
+          <span class="avail__title">Open appointments</span>
+          <span class="note" data-avail-count>Loading the book&hellip;</span>
+        </div>
+
+        <div class="avail__table" data-availability></div>
+
+        <div class="avail__foot">
+          <span class="note">Pick a time and the booking form opens with it held.</span>
+          <a class="textlink" href="{{ base }}book/">Book without choosing a time</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {# ==================================================== ACCESS FACTS ==== #}
+  {# Spacing: small — a tight strip between two larger sections. #}
+  <section class="band--sm band--surface">
+    <div class="wrap">
+      <div class="facts">
+        {% for f in demo.accessFacts %}
+          <div class="fact">
+            <div class="fact__figure">{{ f.figure }}</div>
+            <p class="fact__label">{{ f.label }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ======================================================== WHAT WE DO == #}
+  {# Spacing: medium. Left column carries a sticky running index of the
+     three groups so it stays occupied for the full scroll of the list. #}
+  <section class="band--md">
+    <div class="wrap two">
+
+      <div class="railcol">
+       <div class="rail">
+        <div class="head">
+          <h2 class="h2">What we treat</h2>
+        </div>
+
+        <p class="prose">
+          Three services under one roof, which mostly means you are not sent
+          across town for something that could be handled here. Blood work is
+          drawn in the building. Minor procedures are done in the building.
+        </p>
+
+        <ul class="idx">
+          {% for g in demo.careGroups %}
+            <li>
+              <a href="{{ base }}care/#{{ g.id }}">
+                <span class="idx__name">{{ g.title }}</span>
+                <span class="idx__n">{{ g.services.length }} visits</span>
+              </a>
+            </li>
+          {% endfor %}
+          <li>
+            <a href="{{ base }}care/">
+              <span class="idx__name">Everything in detail</span>
+              <span class="idx__n">with prices</span>
+            </a>
+          </li>
+        </ul>
+       </div>
+      </div>
+
+      <div>
+        {% for g in demo.careGroups %}
+          <div class="svc">
+            <div>
+              <h3 class="svc__name">{{ g.title }}</h3>
+              <p class="svc__meta">{{ g.services.length }} kinds of visit</p>
+            </div>
+            <div>
+              <p class="svc__blurb">{{ g.lede }}</p>
+
+              {# A real list, with its own structure and spacing. #}
+              <ul class="visitlist">
+                {% for s in g.services %}
+                  <li><span>{{ s.name }}</span></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  {# ======================================================= PROVIDERS ==== #}
+  {# Spacing: small. Collapsed to a single wide column — the rows fill the
+     full container width, so there is no empty half. #}
+  <section class="band--sm band--surface">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">The people you would actually see</h2>
+        <a class="textlink" href="{{ base }}providers/">Read how each of them works</a>
+      </div>
+
+      <div class="roster">
+        {% for p in demo.providers %}
+          <article class="prov" data-next-block>
+            <div class="prov__plate"
+                 style="--p-angle:{{ p.pattern.angle }}deg;--p-gap:{{ p.pattern.gap }}px"
+                 aria-hidden="true">{{ p.initials }}</div>
+
+            <div>
+              <h3 class="prov__name">
+                {% if p.credential == 'FNP-C' %}{{ p.name }}, {{ p.credential }}{% else %}Dr. {{ p.name }}, {{ p.credential }}{% endif %}
+              </h3>
+              <p class="prov__role">{{ p.role }} &nbsp;|&nbsp; here since {{ p.joined }}</p>
+              <p class="prov__approach prose">{{ p.approach }}</p>
+              <div class="prov__focus">
+                {% for f in p.focus %}<span class="chip">{{ f }}</span>{% endfor %}
+              </div>
+            </div>
+
+            <div class="prov__next">
+              <div class="prov__nextlabel">Next opening</div>
+              <div class="prov__nexttime" data-next-for="{{ p.id }}">&mdash;</div>
+              <a class="btn btn--sm btn--quiet" style="margin-top:.65rem" data-next-link
+                 href="{{ base }}book/?provider={{ p.id }}">Book with {{ p.name.split(' ') | last }}</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ====================================================== HOW WE OPEN === #}
+  {# Spacing: large — the closing block. Left column carries the hours
+     table, which is tall enough to hold the column on its own. #}
+  <section class="band--lg band--ink">
+    <div class="wrap two two--even">
+
+      <div>
+        <div class="head">
+          <h2 class="h2">Getting seen is the whole point</h2>
+        </div>
+
+        <ul>
+          {% for h in demo.hours %}
+            <li class="hourrow">
+              <span>{{ h.days }}</span>
+              <span class="hourrow__time">
+                {% if h.close %}{{ h.open }} &ndash; {{ h.close }}{% else %}{{ h.open }}{% endif %}
+              </span>
+              {% if h.note %}<span class="hourrow__note">{{ h.note }}</span>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div>
+        <p class="lede">
+          A practice can be excellent and still useless to you if the first
+          opening is in March.
+        </p>
+
+        <p class="prose" style="margin-top:1rem">
+          We hold same-day slots every morning, open on Saturday mornings for
+          illness and injury, and answer the phone ourselves. If your provider
+          is out on the day you need to be seen, you get someone in this
+          building who has read your chart before walking in.
+        </p>
+
+        <div class="callout" style="margin-top:1.25rem">{{ demo.contact.afterHours }}</div>
+
+        <div style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.7rem">
+          <a class="btn" href="{{ base }}book/">Book a visit</a>
+          <a class="btn btn--quiet" href="{{ base }}visit/">What a first visit involves</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+{% include "demos/clinic/foot.njk" %}

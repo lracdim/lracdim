@@ -1,0 +1,152 @@
+---
+demoTitle: Your visit
+demoDescription: Hours, where to park, what to bring, insurance we take, and what a first appointment involves.
+---
+{% set base = '/demos/' + demoMeta.slug + '/' %}
+{% include "demos/clinic/top.njk" %}
+
+<main>
+  <section class="band--md">
+    <div class="wrap">
+      <div class="two" style="margin-bottom:clamp(2rem,4vw,3.5rem)">
+        <div><h1 class="h1">Your visit</h1></div>
+        <div>
+          <p class="lede" style="max-width:52ch">
+            Everything practical in one place, so the first appointment is not
+            also a scavenger hunt.
+          </p>
+        </div>
+      </div>
+
+      <div class="two">
+        {# ---------------------------------------------- where we are --- #}
+        <div>
+          <div class="head"><h2 class="h3">Where we are</h2></div>
+
+          <p class="prose">
+            {{ demo.contact.street }}, {{ demo.contact.suite }}<br>
+            {{ demo.contact.city }}, {{ demo.contact.state }} {{ demo.contact.zip }}
+          </p>
+
+          <p class="note" style="margin-top:.85rem">{{ demo.contact.parking }}</p>
+          <p class="note">{{ demo.contact.transit }}</p>
+
+          {# Block plan rather than a map screenshot: shows the corner, the lot,
+             and which door to use — the three things people actually need. #}
+          <div class="plan" style="margin-top:1.25rem">
+            <svg viewBox="0 0 320 200" role="img" aria-label="Block plan showing the building on {{ demo.contact.streetLabel }}, the parking lot, and the {{ demo.contact.crossStreet }} entrance">
+              <rect x="0" y="0" width="320" height="200" fill="none"/>
+              <!-- streets -->
+              <rect x="0" y="150" width="320" height="16" fill="#12302a" opacity="0.08"/>
+              <rect x="52" y="0" width="16" height="200" fill="#12302a" opacity="0.08"/>
+              <text x="238" y="162" font-family="IBM Plex Sans" font-size="9" fill="#48695f">{{ demo.contact.crossStreet }}</text>
+              <text x="58" y="20" font-family="IBM Plex Sans" font-size="9" fill="#48695f" transform="rotate(90 58 20)">{{ demo.contact.streetLabel }}</text>
+              <!-- lot -->
+              <rect x="80" y="96" width="96" height="44" fill="#12302a" opacity="0.05" stroke="#12302a" stroke-opacity="0.2" stroke-dasharray="3 3"/>
+              <text x="92" y="122" font-family="IBM Plex Sans" font-size="9" fill="#48695f">Free parking</text>
+              <!-- building -->
+              <rect x="80" y="34" width="96" height="54" fill="#12302a"/>
+              <text x="92" y="58" font-family="Newsreader" font-size="13" fill="#eaefec">{{ demo.contact.buildingLabel }}</text>
+              <text x="92" y="74" font-family="IBM Plex Sans" font-size="9" fill="#eaefec" opacity="0.7">{{ demo.contact.suite }}</text>
+              <!-- entrance -->
+              <circle cx="176" cy="88" r="5" fill="#4338a8"/>
+              <text x="188" y="92" font-family="IBM Plex Sans" font-size="9" fill="#12302a">Entrance</text>
+              <!-- neighbours -->
+              <rect x="196" y="34" width="60" height="54" fill="#12302a" opacity="0.12"/>
+              <rect x="196" y="96" width="60" height="44" fill="#12302a" opacity="0.12"/>
+            </svg>
+          </div>
+        </div>
+
+        {# ---------------------------------------------------- hours ---- #}
+        <div>
+          <div class="head"><h2 class="h3">Hours</h2></div>
+
+          <ul style="border-top:1px solid var(--line-strong)">
+            {% for h in demo.hours %}
+              <li class="hourrow">
+                <span>{{ h.days }}</span>
+                <span class="hourrow__time">
+                  {% if h.close %}{{ h.open }} – {{ h.close }}{% else %}{{ h.open }}{% endif %}
+                </span>
+                {% if h.note %}<span class="hourrow__note">{{ h.note }}</span>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+
+          <div class="callout" style="margin-top:1.5rem">{{ demo.contact.afterHours }}</div>
+
+          <div class="head" style="margin-top:2.5rem"><h2 class="h3">What to bring</h2></div>
+          <ul class="ruled">
+            {% for item in demo.bringList %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ---------------------------------------------- first appointment --- #}
+  <section class="band--sm band--surface">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">A first appointment, start to finish</h2>
+      </div>
+
+      <div class="two">
+        <div>
+          <p class="prose">
+            New patient visits are forty minutes and are usually the longest
+            appointment you will have here. That is deliberate — it is the one
+            where we build the record everything else runs on.
+          </p>
+        </div>
+
+        <div>
+          <ol class="steps">
+            {% for step in demo.firstVisit %}
+              <li>
+                <div>
+                  <h3>{{ step.title }}</h3>
+                  <p>{{ step.detail }}</p>
+                </div>
+              </li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ------------------------------------------------------ insurance --- #}
+  <section class="band--lg">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2">Insurance we take</h2>
+        <span class="label">Checked while you are on the phone</span>
+      </div>
+
+      <div class="two">
+        <div>
+          <p class="prose">
+            If your plan is not on this list, call anyway. Some plans cover us
+            out of network at a rate worth knowing about, and the front desk
+            can check yours in a couple of minutes.
+          </p>
+          <div style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.75rem">
+            <a class="btn" href="{{ base }}book/">Book a visit</a>
+            <a class="btn btn--quiet" href="tel:{{ demo.contact.phoneHref }}">Call {{ demo.contact.phone }}</a>
+          </div>
+        </div>
+
+        <div>
+          <ul class="insurers">
+            {% for i in demo.insurers %}<li>{{ i }}</li>{% endfor %}
+          </ul>
+          <div class="callout" style="margin-top:1.5rem">{{ demo.selfPay }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% include "demos/clinic/foot.njk" %}

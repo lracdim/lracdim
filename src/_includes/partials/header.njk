@@ -1,0 +1,40 @@
+<header class="header" data-header>
+  <div class="shell header__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">//</span>
+      {{ site.shortName }}
+    </a>
+
+    <nav class="nav header__nav" aria-label="Primary">
+      {% for item in site.nav %}
+        <a class="nav__link" href="{{ item.href }}"
+           {% if page.url == item.href %}aria-current="page"{% endif %}>{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+
+    <button type="button" class="btn header__cta" data-open-diagnostic>
+      Analyze my website <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    </button>
+
+    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="drawer">
+      <span data-nav-toggle-label>Menu</span>
+      <span class="nav-toggle__bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" data-drawer>
+  <nav aria-label="Mobile">
+    {% for item in site.nav %}
+      <a class="drawer__link" href="{{ item.href }}">
+        <span class="drawer__index">{{ loop.index0 | pad }}</span>{{ item.label }}
+      </a>
+    {% endfor %}
+  </nav>
+  <div>
+    <button type="button" class="btn btn--block" data-open-diagnostic>
+      Analyze my website <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    </button>
+    <p class="label label--faint" style="margin-top:1.25rem">{{ site.location }}</p>
+  </div>
+</div>

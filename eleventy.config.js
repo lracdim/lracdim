@@ -1,0 +1,77 @@
+export default function (eleventyConfig) {
+  // Pass static assets straight through.
+  eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
+  eleventyConfig.addWatchTarget('src/assets');
+
+  // Demo template assets. Each demo owns assets/demos/<slug>/ and nothing
+  // outside it — theme CSS and app JS are loaded only by layouts/demo.njk.
+  eleventyConfig.addPassthroughCopy({ 'src/assets/demos': 'assets/demos' });
+
+  // Cloudflare Pages / Netlify platform files.
+  eleventyConfig.addPassthroughCopy({ 'src/_headers': '_headers' });
+  eleventyConfig.addPassthroughCopy({ 'src/_redirects': '_redirects' });
+  eleventyConfig.addWatchTarget('src/assets/demos');
+
+  // Zero-pad an index into a section marker: 0 -> "01"
+  eleventyConfig.addFilter('pad', (n, width = 2) =>
+    String(Number(n) + 1).padStart(width, '0')
+  );
+
+  // Slugify for anchors/ids.
+  eleventyConfig.addFilter('slug', (str) =>
+    String(str)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+  );
+
+  eleventyConfig.addFilter('year', () => new Date().getFullYear());
+
+  // First N items of an array — used for card previews.
+  eleventyConfig.addFilter('slice_first', (arr, n) =>
+    Array.isArray(arr) ? arr.slice(0, n) : []
+  );
+
+  eleventyConfig.addFilter('urlencode', (str) => encodeURIComponent(String(str)));
+
+  // Serialize a data object into a <script type="application/json"> payload.
+  // Used to hand a demo's clinic.json to its client-side app without a fetch.
+  eleventyConfig.addFilter('json', (value) =>
+    JSON.stringify(value == null ? null : value).replace(/</g, '\\u003c')
+  );
+
+  /**
+   * collections.demoTemplates
+   *
+   * Every page inside src/demos/<slug>/ is tagged "demo" by its directory data
+   * file, so getFilteredByTag('demo') returns all of a demo's pages. The
+   * catalogue wants one entry per TEMPLATE, so this keeps only each demo's
+   * root page — the one whose URL is exactly /demos/<slug>/.
+   *
+   * Adding a new template therefore requires no catalogue edit: drop in a
+   * folder with a demoMeta block and it appears here.
+   */
+  eleventyConfig.addCollection('demoTemplates', (collectionApi) =>
+    collectionApi
+      .getFilteredByTag('demo')
+      .filter((item) => {
+        const meta = item.data.demoMeta;
+        return meta && meta.slug && item.url === `/demos/${meta.slug}/`;
+      })
+      .sort((a, b) =>
+        String(a.data.demoMeta.name).localeCompare(String(b.data.demoMeta.name))
+      )
+  );
+
+  return {
+    dir: {
+      input: 'src',
+      output: '_site',
+      includes: '_includes',
+      data: '_data'
+    },
+    markdownTemplateEngine: 'njk',
+    htmlTemplateEngine: 'njk',
+    templateFormats: ['njk', 'md', 'html']
+  };
+}

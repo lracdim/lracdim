@@ -1,0 +1,33 @@
+---
+layout: layouts/demo.njk
+portal: true
+---
+{% set base = '/demos/' + demoMeta.slug + '/portal/' %}
+<div class="shell">
+  <aside class="side">
+    <a class="side__brand" href="{{ base }}schedule/">
+      <span class="brand__mark" data-brand-mark>{{ demo.brand.mark }}</span>
+      <span>
+        <span class="side__name" data-brand-short>{{ demo.brand.shortName }}</span>
+        <span class="side__sub">{{ demo.portal.name }}</span>
+      </span>
+    </a>
+
+    <nav class="side__nav" aria-label="Portal">
+      {% for item in demo.portal.nav %}
+        <a href="{{ base }}{{ item.href }}/"
+           {% if page.url == base + item.href + '/' %}aria-current="page"{% endif %}>{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="side__user">
+      <b data-staff-name>{{ demo.portal.staffName }}</b>
+      <span>{{ demo.portal.staffRole }}</span>
+      <button type="button" class="side__out" data-signout>Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    {{ content | safe }}
+  </main>
+</div>

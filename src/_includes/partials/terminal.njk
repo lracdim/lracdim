@@ -1,0 +1,17 @@
+<div class="terminal" data-terminal>
+  <div class="terminal__bar">
+    <span class="terminal__dot" aria-hidden="true"></span>
+    <span class="terminal__dot" aria-hidden="true"></span>
+    <span class="terminal__dot terminal__dot--live" aria-hidden="true"></span>
+    <span class="terminal__path">lracdim@systems:~</span>
+  </div>
+
+  <div class="terminal__screen" data-terminal-screen role="log" aria-live="polite"></div>
+
+  <form class="terminal__form" data-terminal-form autocomplete="off">
+    <span class="terminal__prompt" aria-hidden="true">&gt;</span>
+    <label class="visually-hidden" for="terminal-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Terminal command</label>
+    <input class="terminal__input" id="terminal-input" data-terminal-input
+           type="text" placeholder="Enter command..." spellcheck="false">
+  </form>
+</div>

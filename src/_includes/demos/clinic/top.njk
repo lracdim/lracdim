@@ -1,0 +1,25 @@
+<header class="top">
+  <div class="wrap top__bar">
+    <a class="brand" href="{{ '/demos/' + demoMeta.slug + '/' }}">
+      <span class="brand__mark" data-brand-mark>{{ demo.brand.mark }}</span>
+      <span>
+        <span class="brand__name" data-brand-name>{{ demo.brand.name }}</span>
+        <span class="brand__where">{{ demo.contact.city }}, {{ demo.contact.state }}</span>
+      </span>
+    </a>
+
+    <nav class="topnav" aria-label="Main">
+      {% set base = '/demos/' + demoMeta.slug + '/' %}
+      <a href="{{ base }}care/" {% if page.url == base + 'care/' %}aria-current="page"{% endif %}>Care</a>
+      <a href="{{ base }}providers/" {% if page.url == base + 'providers/' %}aria-current="page"{% endif %}>Providers</a>
+      <a href="{{ base }}visit/" {% if page.url == base + 'visit/' %}aria-current="page"{% endif %}>Your visit</a>
+      <a href="{{ base }}portal/">Staff portal</a>
+    </nav>
+
+    <div class="top__call">
+      <a class="top__phone" href="tel:{{ demo.contact.phoneHref }}">{{ demo.contact.phone }}</a>
+      <a class="btn btn--sm" href="{{ '/demos/' + demoMeta.slug + '/book/' }}">Book a visit</a>
+      <button type="button" class="top__toggle" data-nav-toggle aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,90 @@
+---
+layout: layouts/demo-portal.njk
+demoTitle: Settings
+---
+<div class="pagehead">
+  <div>
+    <h1>Settings</h1>
+    <p>Practice details as they appear on the public site.</p>
+  </div>
+</div>
+
+<div class="grid2" data-settings>
+
+  <section class="panel">
+    <div class="panel__head"><div class="panel__title">Practice</div></div>
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr>
+            <td class="t-name">Name</td>
+            <td data-brand-name>{{ demo.brand.name }}</td>
+          </tr>
+          <tr>
+            <td class="t-name">Address</td>
+            <td>
+              {{ demo.contact.street }}, {{ demo.contact.suite }}<br>
+              {{ demo.contact.city }}, {{ demo.contact.state }} {{ demo.contact.zip }}
+            </td>
+          </tr>
+          <tr><td class="t-name">Phone</td><td>{{ demo.contact.phone }}</td></tr>
+          <tr><td class="t-name">Fax</td><td>{{ demo.contact.fax }}</td></tr>
+          <tr><td class="t-name">Email</td><td>{{ demo.contact.email }}</td></tr>
+          <tr><td class="t-name">Established</td><td>{{ demo.brand.established }}</td></tr>
+          <tr>
+            <td class="t-name">Hours</td>
+            <td>
+              {% for h in demo.hours %}
+                {{ h.days }} — {% if h.close %}{{ h.open }} to {{ h.close }}{% else %}{{ h.open }}{% endif %}<br>
+              {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td class="t-name">Insurance accepted</td>
+            <td>{{ demo.insurers | length }} plans on file</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div>
+    <section class="panel">
+      <div class="panel__head"><div class="panel__title">Demo data</div></div>
+      <div class="panel__body">
+        <p class="prose" style="font-size:.9375rem">
+          Everything in this portal lives in this browser only. Bookings you
+          make on the public site, check-ins, completed visits and the invoices
+          they raise are all stored locally and never leave this device.
+        </p>
+
+        <p class="prose" style="font-size:.9375rem;margin-top:.9rem">
+          Reseeding restores the original patients, appointments and invoices,
+          and clears anything added during this session.
+        </p>
+
+        <div class="callout" data-reset-confirm hidden style="margin-top:1rem">
+          This wipes the bookings and invoices you created while trying the
+          demo. Press the button once more to go ahead.
+        </div>
+
+        <button type="button" class="btn btn--quiet" style="margin-top:1.25rem" data-reset>
+          Reset demo data
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><div class="panel__title">This template</div></div>
+      <div class="panel__body">
+        <p class="prose" style="font-size:.9375rem">
+          Every name, address, provider, price and seed record on this site is
+          read from one JSON file. Rebranding a sold copy means editing that
+          file — no template changes.
+        </p>
+        <a class="btn btn--sm btn--quiet" style="margin-top:1rem" href="/demos/">See other templates</a>
+      </div>
+    </section>
+  </div>
+
+</div>

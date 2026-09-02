@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #060e20;
+  --surface: #091328;
+  --surface-container: #0f1a2e;
+  --surface-container-low: #0a1426;
+  --surface-container-high: #142040;
+  --surface-container-highest: #1a2850;
+  --primary: #00e5ff;
+  --primary-dim: #00b8cc;
+  --secondary: #b388ff;
+  --secondary-dim: #8c6bff;
+  --tertiary: #64ffda;
+  --tertiary-dim: #4cd9b8;
+  --error: #ff5252;
+  --on-background: #dee5ff;
+  --on-surface: #c9d1e8;
+  --on-surface-variant: #9aa3be;
+  --outline-variant: #40485d;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--on-background);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.glass-panel {
+  background: rgba(9, 19, 40, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+  color: var(--background);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.font-headline {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-label {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.glass-panel {
+  background: rgba(15, 26, 46, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-panel:hover {
+  background: rgba(15, 26, 46, 0.9);
+}
+
+.terminal-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal-scroll::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 3px;
+}
+
+.terminal-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.4);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .font-headline {
+    letter-spacing: -0.02em;
+  }
+}

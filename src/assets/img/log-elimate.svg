@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="SITE TO SYSTEM">
+  <defs>
+    <pattern id="h" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(112)">
+      <rect width="16" height="1" fill="#eff0f1" fill-opacity="0.09"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="750" fill="#18191b"/>
+  <rect width="1200" height="750" fill="url(#h)"/>
+  <rect x="0" y="0" width="1200" height="64" fill="#202124"/>
+  <text x="48" y="41" font-family="JetBrains Mono, Consolas, monospace" font-size="18" fill="#e2d8a3">//</text>
+  <text x="80" y="41" font-family="JetBrains Mono, Consolas, monospace" font-size="18" fill="#eff0f1" fill-opacity="0.6">LOG 03</text>
+  <text x="48" y="420" font-family="Archivo, Helvetica, Arial, sans-serif" font-size="88" font-weight="400" letter-spacing="-3" fill="#eff0f1">SITE TO SYSTEM</text>
+  <rect x="48" y="450" width="220" height="4" fill="#e2d8a3"/>
+  <text x="48" y="700" font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#eff0f1" fill-opacity="0.38">SCREENSHOT PENDING — PLATE IS A PLACEHOLDER</text>
+</svg>

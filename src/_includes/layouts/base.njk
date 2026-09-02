@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% if title %}{{ title }} — {{ site.name }}{% else %}{{ site.name }} — {{ site.role }}{% endif %}</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{% if title %}{{ title }} — {{ site.name }}{% else %}{{ site.name }}{% endif %}">
+  <meta property="og:description" content="{{ description or site.description }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.url }}/assets/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ site.url }}/assets/img/og.png">
+  <meta name="theme-color" content="#18191b">
+
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ site.owner }}",
+    "jobTitle": "{{ site.role }}",
+    "url": "{{ site.url }}",
+    "email": "mailto:{{ site.email }}",
+    "address": { "@type": "PostalAddress", "addressLocality": "{{ site.location }}" },
+    "description": "{{ site.description }}"
+  }
+  </script>
+</head>
+
+<body data-contact-email="{{ site.email }}">
+  <script>
+    /* Runtime integrations, from _data/site.js. Empty strings degrade honestly. */
+    window.LRACDIM = {
+      scanEndpoint: {{ site.scanEndpoint | json | safe }},
+      leadWebhook: {{ site.leadWebhook | json | safe }},
+      email: {{ site.email | json | safe }}
+    };
+  </script>
+
+  {% include "partials/preloader.njk" %}
+  {% include "partials/header.njk" %}
+
+  <main id="main">
+    {{ content | safe }}
+  </main>
+
+  {% include "partials/footer.njk" %}
+  {% include "partials/diagnostic.njk" %}
+
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>

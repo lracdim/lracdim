@@ -1,0 +1,8 @@
+name = "lracdim-scan"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# Comma-separated origins allowed to call this worker. Empty = allow all
+# (fine while testing; lock it down before you share the site).
+[vars]
+ALLOWED_ORIGINS = "https://lracdimension.com,https://www.lracdimension.com,http://localhost:8099"

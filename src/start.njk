@@ -1,0 +1,137 @@
+---
+layout: layouts/base.njk
+title: Start a project
+permalink: /start/
+description: Describe the operation and what is leaking. You get a written reply within one business day, with a straight answer on whether it is a fit.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Intake</span>
+    <h1 class="h1" style="margin-top:1rem">Start a project</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Describe the operation and where it leaks. You get a written reply within
+      one business day with a straight answer on whether it is a fit, and what
+      the first build would be.
+    </p>
+    <div class="pagehead__meta">
+      <span class="label label--faint">No sales call required</span>
+      <span class="label label--faint">Reply within one business day</span>
+      <span class="label label--faint">{{ site.location }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <div class="split">
+
+      <div class="split__lead">
+        <div class="eyebrow">
+          <span class="label">What happens next</span>
+          <span class="eyebrow__rule"></span>
+        </div>
+        <ol class="intake-steps">
+          <li>
+            <strong>You send this.</strong>
+            <span>It lands in my own automation, not an inbox. If the webhook is not wired yet, the page tells you.</span>
+          </li>
+          <li>
+            <strong>I read the site and the description.</strong>
+            <span>If you ran the diagnostic first, that report is attached to your name.</span>
+          </li>
+          <li>
+            <strong>You get a written reply.</strong>
+            <span>Fit or not, and if yes, the first build with a number on it.</span>
+          </li>
+        </ol>
+
+        <p class="body body--sm" style="margin-top:2rem">
+          Prefer email? <a class="link" href="mailto:{{ site.email }}">{{ site.email }}</a>
+        </p>
+      </div>
+
+      <div class="split__body">
+        <form class="intake" data-start-form novalidate>
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="st-name">Your name</label>
+              <input id="st-name" name="name" type="text" autocomplete="name" required>
+              <span class="intake__error" data-error></span>
+            </div>
+            <div class="intake__field">
+              <label for="st-company">Company</label>
+              <input id="st-company" name="company" type="text" autocomplete="organization">
+            </div>
+          </div>
+
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="st-email">Email</label>
+              <input id="st-email" name="email" type="email" autocomplete="email" required>
+              <span class="intake__error" data-error></span>
+            </div>
+            <div class="intake__field">
+              <label for="st-site">Current website</label>
+              <input id="st-site" name="website" type="text" inputmode="url" placeholder="company.com">
+            </div>
+          </div>
+
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="st-need">What you need</label>
+              <select id="st-need" name="need" required>
+                <option value="">Choose one</option>
+                <option>A website that runs an operation, not just a brochure</option>
+                <option>Automation between tools I already use</option>
+                <option>An internal system (HRMS, LMS, portal, dashboard)</option>
+                <option>One of the templates, rebranded to my business</option>
+                <option>A diagnosis first — I am not sure yet</option>
+              </select>
+              <span class="intake__error" data-error></span>
+            </div>
+            <div class="intake__field">
+              <label for="st-budget">Budget range</label>
+              <select id="st-budget" name="budget">
+                <option value="">Not decided yet</option>
+                <option>Under $2,000</option>
+                <option>$2,000 – $5,000</option>
+                <option>$5,000 – $15,000</option>
+                <option>$15,000+</option>
+                <option>Ongoing retainer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="intake__field">
+            <label for="st-msg">Where does the work leak today?</label>
+            <span class="intake__hint">Who has to remember what, where things wait, what breaks when volume doubles.</span>
+            <textarea id="st-msg" name="message" required></textarea>
+            <span class="intake__error" data-error></span>
+          </div>
+
+          <button type="submit" class="btn btn--block">
+            Send it <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+
+          <p class="body body--sm" data-start-status></p>
+        </form>
+
+        <div class="intake__done" data-start-done hidden>
+          <h2 class="h2">Received.</h2>
+          <p class="body" style="margin-top:1rem" data-start-done-copy></p>
+          <div style="margin-top:2rem;display:flex;flex-wrap:wrap;gap:1rem">
+            <button type="button" class="btn btn--ghost" data-open-diagnostic>
+              Run the diagnostic while you wait <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+            </button>
+            <a class="btn btn--ghost" href="/industries/">
+              Read the industry blueprints <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

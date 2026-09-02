@@ -1,0 +1,88 @@
+---
+layout: layouts/base.njk
+title: Industries
+permalink: /industries/
+description: Reference system blueprints by sector — logistics, clinics, law, security, construction, real estate, education, accounting, automotive, and recruitment.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Blueprint layer</span>
+    <h1 class="h1" style="margin-top:1rem">Industries</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Every sector leaks work in its own places. These are the systems I build
+      for each one &mdash; what goes on the public site, what runs behind it,
+      and what stops being anyone&rsquo;s job to remember.
+    </p>
+
+    <div class="pagehead__meta">
+      <span class="label label--faint">{{ industries.length }} sectors</span>
+      <span class="label label--faint">Reference architectures</span>
+      <span class="label label--faint">Built to order</span>
+    </div>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Sector index</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">Select a blueprint</span>
+    </div>
+
+    <div class="cards">
+      {% for industry in industries %}
+        <a class="card industry-card" href="/industries/{{ industry.slug }}/"
+           data-reveal data-reveal-delay="{{ loop.index0 * 55 }}">
+          <div class="card__body">
+            <span class="label label--signal">{{ industry.sector }}</span>
+            <h2 class="h3" style="margin-top:1rem">{{ industry.name }}</h2>
+            <p class="industry-card__tagline">{{ industry.tagline }}</p>
+            <p class="body body--sm" style="margin-top:.9rem">{{ industry.summary }}</p>
+
+            <ul class="industry-card__leaks">
+              {% for leak in industry.leaks | slice_first(3) %}
+                <li>{{ leak.title }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="card__foot">
+            <span class="label label--faint">{{ loop.index0 | pad }}</span>
+            <span class="label label--plain label--faint">
+              {{ industry.build.public.length + industry.build.portal.length }} modules
+              <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+            </span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">Your sector is not on the list?</h2>
+      </div>
+      <div class="split__body">
+        <p class="lede" style="margin-bottom:2rem">
+          The pattern holds regardless of trade: find where work waits on a
+          person to remember it, then build the thing that remembers instead.
+          Run the diagnostic on your current site, or describe the operation.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:1rem">
+          <button type="button" class="btn" data-open-diagnostic>
+            Run diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+          <a class="btn btn--ghost" href="/start/">
+            Describe the operation <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

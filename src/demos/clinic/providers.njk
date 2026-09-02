@@ -1,0 +1,67 @@
+---
+demoTitle: Our providers
+demoDescription: Four providers, their specialties, how each of them works, and their next open appointment.
+---
+{% set base = '/demos/' + demoMeta.slug + '/' %}
+{% include "demos/clinic/top.njk" %}
+
+<main>
+  <section class="band--md">
+    <div class="wrap">
+      <div class="two" style="margin-bottom:clamp(2rem,4vw,3.5rem)">
+        <div><h1 class="h1">Our providers</h1></div>
+        <div>
+          <p class="lede" style="max-width:52ch">
+            You pick one and you keep them. If yours is out on the day you need
+            to be seen, you get someone in this building who has read your
+            chart before walking in.
+          </p>
+        </div>
+      </div>
+
+      <div class="roster">
+        {% for p in demo.providers %}
+          <article class="prov" data-next-block>
+            <div class="prov__plate" style="--p-angle:{{ p.pattern.angle }}deg;--p-gap:{{ p.pattern.gap }}px" aria-hidden="true">
+              {{ p.initials }}
+            </div>
+
+            <div>
+              <h2 class="prov__name">
+                {% if p.credential == 'FNP-C' %}{{ p.name }}, {{ p.credential }}{% else %}Dr. {{ p.name }}, {{ p.credential }}{% endif %}
+              </h2>
+              <p class="prov__role">{{ p.role }} &nbsp;|&nbsp; here since {{ p.joined }} &nbsp;|&nbsp; {{ p.seeing }}</p>
+              <p class="prov__approach prose">{{ p.approach }}</p>
+
+              <div class="prov__focus">
+                {% for f in p.focus %}<span class="chip">{{ f }}</span>{% endfor %}
+              </div>
+
+              <p class="note" style="margin-top:.85rem">
+                Speaks {% for l in p.languages %}{{ l }}{% if not loop.last %} and {% endif %}{% endfor %}.
+              </p>
+            </div>
+
+            <div class="prov__next">
+              <div class="prov__nextlabel">Next opening</div>
+              <div class="prov__nexttime" data-next-for="{{ p.id }}">&mdash;</div>
+              <a class="btn btn--sm" style="margin-top:.75rem" data-next-link
+                 href="{{ base }}book/?provider={{ p.id }}">Book this time</a>
+              <p class="note" style="margin-top:.75rem">
+                Currently caring for {{ p.panel }} patients.
+              </p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <p class="prose" style="margin-top:2rem">
+        Taking new patients across all four. If you are moving your care from
+        another practice, ask us to request your records and we will chase them
+        so you do not have to.
+      </p>
+    </div>
+  </section>
+</main>
+
+{% include "demos/clinic/foot.njk" %}

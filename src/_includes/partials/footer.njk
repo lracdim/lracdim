@@ -1,0 +1,40 @@
+<footer class="footer">
+  <div class="shell">
+    <div class="footer__mark"><em>//</em>LRACDIM</div>
+
+    <div class="footer__grid">
+      <div>
+        <p class="label label--faint">Index</p>
+        {% for item in site.nav %}
+          <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
+        {% endfor %}
+      </div>
+
+      <div>
+        <p class="label label--faint">Elsewhere</p>
+        {% for item in site.social %}{% if item.href %}
+          <a class="footer__link" href="{{ item.href }}" rel="noopener">{{ item.label }}</a>
+        {% endif %}{% endfor %}
+      </div>
+
+      <div>
+        <p class="label label--faint">Operator</p>
+        <p class="footer__link" style="color:var(--paper)">{{ site.owner }}</p>
+        <p class="footer__link">{{ site.role }}</p>
+        <p class="footer__link">{{ site.location }}</p>
+      </div>
+
+      <div>
+        <p class="label label--faint">Start here</p>
+        <button type="button" class="btn" data-open-diagnostic style="margin-top:1rem">
+          Run diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <span class="label label--faint">&copy; {{ "" | year }} {{ site.owner }}</span>
+      <span class="label label--faint">Built with Eleventy</span>
+    </div>
+  </div>
+</footer>

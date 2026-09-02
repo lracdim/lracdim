@@ -1,0 +1,858 @@
+{
+  "layout": "layouts/demo.njk",
+  "tags": "demo",
+  "demoMeta": {
+    "slug": "clinic",
+    "name": "Alder Street Family Health",
+    "industry": "Private medical clinic",
+    "blurb": "Multi-provider family practice with live availability on the front page and a working front-desk portal. Booking on the public site lands on the staff schedule, checks in, and bills.",
+    "thumbnail": "/assets/demos/clinic/thumb.svg",
+    "status": "demo",
+    "pages": 11,
+    "accent": "#4338a8"
+  },
+  "demo": {
+    "demoMode": true,
+    "themeClass": "demo-clinic",
+    "cssPath": "/assets/demos/clinic/theme.css",
+    "jsPath": "/assets/demos/clinic/app.js",
+    "storageKey": "asfh.v1",
+    "fonts": "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,400;0,500;0,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap",
+    "brand": {
+      "name": "Alder Street Family Health",
+      "shortName": "Alder Street",
+      "mark": "AS",
+      "tagline": "A family practice on the north side of Missoula.",
+      "established": 2009,
+      "description": "Independent family medicine, pediatrics, and women's health in Missoula. Same providers every visit, and appointments most weeks within a few days."
+    },
+    "contact": {
+      "phone": "(406) 549-0182",
+      "phoneHref": "+14065490182",
+      "fax": "(406) 549-0184",
+      "email": "frontdesk@alderstreethealth.com",
+      "street": "214 South Alder Street",
+      "suite": "Suite 2",
+      "city": "Missoula",
+      "state": "MT",
+      "zip": "59802",
+      "streetLabel": "S Alder Street",
+      "crossStreet": "Cedar Street",
+      "buildingLabel": "214 Alder",
+      "parking": "Free lot behind the building, entrance off Cedar Street.",
+      "transit": "Mountain Line routes 1 and 7 stop at Alder & Cedar, one block north.",
+      "afterHours": "For anything that cannot wait, call the main number and press 2. A provider on call returns messages within the hour."
+    },
+    "hours": [
+      {
+        "days": "Monday – Thursday",
+        "open": "7:30 am",
+        "close": "5:30 pm",
+        "note": "Labs drawn 7:30 – 10:30 am"
+      },
+      {
+        "days": "Friday",
+        "open": "7:30 am",
+        "close": "4:00 pm",
+        "note": ""
+      },
+      {
+        "days": "Saturday",
+        "open": "8:30 am",
+        "close": "12:00 pm",
+        "note": "Same-day illness and injury only"
+      },
+      {
+        "days": "Sunday",
+        "open": "Closed",
+        "close": "",
+        "note": "On-call provider by phone"
+      }
+    ],
+    "accessFacts": [
+      {
+        "figure": "Same week",
+        "label": "Most routine appointments are booked within five business days."
+      },
+      {
+        "figure": "Saturday mornings",
+        "label": "Open 8:30 to noon for illness and injury. No appointment needed."
+      },
+      {
+        "figure": "Four providers",
+        "label": "You see yours. If they are out, you see someone who knows your chart."
+      },
+      {
+        "figure": "Labs on site",
+        "label": "Blood drawn in the building. Most results are back inside two days."
+      }
+    ],
+    "providers": [
+      {
+        "id": "reyes",
+        "name": "Naomi Reyes",
+        "credential": "MD",
+        "role": "Family medicine",
+        "joined": 2011,
+        "panel": 1180,
+        "initials": "NR",
+        "focus": [
+          "Adult primary care",
+          "Diabetes",
+          "Blood pressure",
+          "Thyroid"
+        ],
+        "approach": "I would rather see you for fifteen minutes this week than for thirty next month. Most things get simpler when you catch them early, and most people know when something has changed. If you call and say it feels different, we find you a slot.",
+        "seeing": "Adults and teenagers, new patients welcome.",
+        "languages": [
+          "English",
+          "Spanish"
+        ],
+        "pattern": {
+          "angle": 20,
+          "gap": 9
+        }
+      },
+      {
+        "id": "lindqvist",
+        "name": "Theo Lindqvist",
+        "credential": "DO",
+        "role": "Pediatrics",
+        "joined": 2015,
+        "panel": 940,
+        "initials": "TL",
+        "focus": [
+          "Newborn care",
+          "Well-child visits",
+          "Asthma",
+          "Sports physicals"
+        ],
+        "approach": "Children do badly with strangers, and so do parents at two in the morning. I keep my own newborns and my own sick visits, which means by the time your child is four we already know each other. Call about the small things. They are usually small.",
+        "seeing": "Birth through eighteen, new patients welcome.",
+        "languages": [
+          "English"
+        ],
+        "pattern": {
+          "angle": 68,
+          "gap": 7
+        }
+      },
+      {
+        "id": "raghunathan",
+        "name": "Priya Raghunathan",
+        "credential": "MD",
+        "role": "Women's health",
+        "joined": 2018,
+        "panel": 860,
+        "initials": "PR",
+        "focus": [
+          "Well-woman exams",
+          "Contraception",
+          "Early pregnancy",
+          "Menopause"
+        ],
+        "approach": "A lot of what I see has been carried around for a year before anyone mentions it. Bleeding that changed, pain that is not normal for you, a decision about contraception you have been putting off. Bring it. There is nothing on my list I have not heard before.",
+        "seeing": "Adolescents and adults, new patients welcome.",
+        "languages": [
+          "English",
+          "Tamil"
+        ],
+        "pattern": {
+          "angle": 112,
+          "gap": 11
+        }
+      },
+      {
+        "id": "okafor",
+        "name": "Ellen Okafor",
+        "credential": "FNP-C",
+        "role": "Family medicine",
+        "joined": 2019,
+        "panel": 1020,
+        "initials": "EO",
+        "focus": [
+          "Same-day illness",
+          "Minor injuries",
+          "Physicals",
+          "Preventive care"
+        ],
+        "approach": "I hold the largest share of same-day slots, so I meet a lot of people on their worst afternoon. That is a good introduction. You find out quickly whether a practice picks up the phone and whether anyone follows up two days later. We do both.",
+        "seeing": "Five years and up, new patients welcome.",
+        "languages": [
+          "English"
+        ],
+        "pattern": {
+          "angle": 158,
+          "gap": 8
+        }
+      }
+    ],
+    "careGroups": [
+      {
+        "id": "family",
+        "title": "Family medicine",
+        "lede": "The everyday work of a practice: the annual visit, the thing that has been going on for three weeks, and the conditions that need someone watching them over years.",
+        "services": [
+          {
+            "name": "Annual physical",
+            "price": 210,
+            "duration": 40,
+            "blurb": "A full review once a year: blood work, blood pressure, medications, and whatever has changed since last time. Most people leave with one or two things to act on and a clear reason for each.",
+            "visit": "Forty minutes. Come fasting if you want labs drawn the same morning."
+          },
+          {
+            "name": "Same-week illness visit",
+            "price": 145,
+            "duration": 20,
+            "blurb": "Sore throat, cough that will not clear, a urinary infection, a rash that is spreading. If you are not sure it warrants a visit, call and describe it. The front desk can usually tell you within a minute.",
+            "visit": "Twenty minutes. Rapid strep and urine testing are done in the building."
+          },
+          {
+            "name": "Ongoing conditions",
+            "price": 165,
+            "duration": 30,
+            "blurb": "Diabetes, high blood pressure, thyroid, cholesterol, asthma. These do not need heroics. They need the same person looking at the same numbers a few times a year and adjusting before anything drifts.",
+            "visit": "Thirty minutes, usually every three to six months once things are steady."
+          },
+          {
+            "name": "Minor procedures",
+            "price": 240,
+            "duration": 30,
+            "blurb": "Skin lesion removal, joint injections, ingrown toenails, abscess drainage, sutures. Done here rather than sent on, which usually means this week instead of next month.",
+            "visit": "Thirty minutes. You will be told the cost before anything is scheduled."
+          },
+          {
+            "name": "Medicare annual wellness",
+            "price": 0,
+            "duration": 45,
+            "blurb": "The yearly visit Medicare covers in full. It is not a physical — it is a review of medications, memory, falls, and what preventive care you are due. Worth doing even when nothing is wrong.",
+            "visit": "Forty-five minutes. No copay on most Medicare plans."
+          }
+        ]
+      },
+      {
+        "id": "pediatrics",
+        "title": "Pediatrics",
+        "lede": "Newborn through eighteen, with Dr. Lindqvist keeping his own patients from the first week onward. The point is that by school age, your child is not meeting a stranger.",
+        "services": [
+          {
+            "name": "Newborn and first-year visits",
+            "price": 175,
+            "duration": 30,
+            "blurb": "The schedule of checks in the first year, starting within a few days of coming home. Weight, feeding, sleep, and the questions you did not want to ask the hospital.",
+            "visit": "Thirty minutes. First visit is booked before you leave the hospital if you call ahead."
+          },
+          {
+            "name": "Well-child check",
+            "price": 160,
+            "duration": 30,
+            "blurb": "Growth, development, hearing and vision, and vaccinations if you are due. A chance to raise anything you have been noticing — speech, eating, mood, school.",
+            "visit": "Thirty minutes, yearly after age three."
+          },
+          {
+            "name": "Sick visit",
+            "price": 140,
+            "duration": 20,
+            "blurb": "Fevers, ear pain, rashes, breathing that sounds wrong. Same-day slots are held every morning specifically for children, and Saturday mornings are open for this.",
+            "visit": "Twenty minutes. Call before eleven for a same-day slot."
+          },
+          {
+            "name": "School and sports physical",
+            "price": 95,
+            "duration": 20,
+            "blurb": "The form the school or league needs, done properly rather than in a queue at a pop-up clinic in August. Bring the form and it goes home signed.",
+            "visit": "Twenty minutes. Book from June onward to avoid the August rush."
+          }
+        ]
+      },
+      {
+        "id": "womens",
+        "title": "Women's health",
+        "lede": "Routine care, contraception, and the beginning of a pregnancy, handled here rather than referred out. Dr. Raghunathan holds the whole service.",
+        "services": [
+          {
+            "name": "Well-woman exam",
+            "price": 195,
+            "duration": 30,
+            "blurb": "The yearly visit including cervical screening when you are due. Also the visit where most people finally mention the thing they have been meaning to ask about.",
+            "visit": "Thirty minutes. Most insurance covers this in full as preventive care."
+          },
+          {
+            "name": "Contraception",
+            "price": 150,
+            "duration": 30,
+            "blurb": "A conversation about what fits your life, not a default prescription. Pills, implants, and IUDs are all discussed, and IUD placement and removal are done here.",
+            "visit": "Thirty minutes to discuss. IUD placement is booked separately, usually within two weeks."
+          },
+          {
+            "name": "Early pregnancy",
+            "price": 185,
+            "duration": 40,
+            "blurb": "Confirmation, dating, first blood work, and a plan for the months ahead including which delivering practice you want. Come in as soon as you have a positive test.",
+            "visit": "Forty minutes. We coordinate the handoff to your delivering provider."
+          },
+          {
+            "name": "Menopause and perimenopause",
+            "price": 175,
+            "duration": 40,
+            "blurb": "Sleep, temperature, mood, cycles that have gone strange. This is a long appointment on purpose, because it is rarely one question and it is rarely quick.",
+            "visit": "Forty minutes. Bring a rough record of the last few months if you have one."
+          }
+        ]
+      }
+    ],
+    "firstVisit": [
+      {
+        "title": "Before you come",
+        "detail": "Call or use the booking form. The front desk checks your insurance while you are on the phone and tells you what the visit will cost you."
+      },
+      {
+        "title": "Arriving",
+        "detail": "Come fifteen minutes early the first time. Paperwork is two pages. Park in the lot behind the building and use the Cedar Street door."
+      },
+      {
+        "title": "The appointment",
+        "detail": "A medical assistant takes vitals and your history, then your provider comes in. New patient visits are forty minutes, and they are usually the longest one you will have here."
+      },
+      {
+        "title": "Afterwards",
+        "detail": "Labs are drawn in the building before you leave. Results and any next step come back by phone or portal message, usually inside two days."
+      }
+    ],
+    "bringList": [
+      "Photo identification",
+      "Insurance card",
+      "A list of every medication and dose, including anything over the counter",
+      "Records from your last practice, if you have them",
+      "For children: the immunization record and any school forms",
+      "The name and address of your pharmacy"
+    ],
+    "insurers": [
+      "Blue Cross Blue Shield of Montana",
+      "PacificSource",
+      "Allegiance Benefit Plan",
+      "Mountain Health CO-OP",
+      "Cigna",
+      "Aetna",
+      "First Choice Health",
+      "Montana Medicaid",
+      "Medicare"
+    ],
+    "selfPay": "Without insurance, an established visit is $145 and a new patient visit is $210, payable on the day. There is no separate facility fee. Ask the front desk for the cost of anything before you agree to it.",
+    "visitReasons": [
+      "New patient — first visit",
+      "Annual physical",
+      "Illness or injury",
+      "Ongoing condition follow-up",
+      "Child well visit",
+      "Child sick visit",
+      "Well-woman exam",
+      "Contraception",
+      "Early pregnancy",
+      "School or sports physical",
+      "Medication review",
+      "Something else"
+    ],
+    "bookingNote": "This form sends a request to the front desk. It does not confirm a time. Someone calls you back the same business day to fix the appointment, usually within two hours.",
+    "availability": {
+      "note": "Open slots for the next five business days, updated as they are taken.",
+      "bands": [
+        "Morning",
+        "Midday",
+        "Afternoon"
+      ],
+      "slots": [
+        {
+          "dayOffset": 0,
+          "time": "11:20",
+          "band": "Midday",
+          "provider": "okafor"
+        },
+        {
+          "dayOffset": 0,
+          "time": "15:40",
+          "band": "Afternoon",
+          "provider": "reyes"
+        },
+        {
+          "dayOffset": 1,
+          "time": "08:00",
+          "band": "Morning",
+          "provider": "lindqvist"
+        },
+        {
+          "dayOffset": 1,
+          "time": "09:40",
+          "band": "Morning",
+          "provider": "okafor"
+        },
+        {
+          "dayOffset": 1,
+          "time": "13:20",
+          "band": "Midday",
+          "provider": "raghunathan"
+        },
+        {
+          "dayOffset": 1,
+          "time": "16:00",
+          "band": "Afternoon",
+          "provider": "reyes"
+        },
+        {
+          "dayOffset": 2,
+          "time": "08:20",
+          "band": "Morning",
+          "provider": "reyes"
+        },
+        {
+          "dayOffset": 2,
+          "time": "10:00",
+          "band": "Morning",
+          "provider": "raghunathan"
+        },
+        {
+          "dayOffset": 2,
+          "time": "14:40",
+          "band": "Afternoon",
+          "provider": "lindqvist"
+        },
+        {
+          "dayOffset": 3,
+          "time": "07:40",
+          "band": "Morning",
+          "provider": "okafor"
+        },
+        {
+          "dayOffset": 3,
+          "time": "11:00",
+          "band": "Midday",
+          "provider": "reyes"
+        },
+        {
+          "dayOffset": 3,
+          "time": "15:20",
+          "band": "Afternoon",
+          "provider": "raghunathan"
+        },
+        {
+          "dayOffset": 4,
+          "time": "08:40",
+          "band": "Morning",
+          "provider": "lindqvist"
+        },
+        {
+          "dayOffset": 4,
+          "time": "12:00",
+          "band": "Midday",
+          "provider": "okafor"
+        },
+        {
+          "dayOffset": 4,
+          "time": "14:00",
+          "band": "Afternoon",
+          "provider": "reyes"
+        },
+        {
+          "dayOffset": 4,
+          "time": "16:20",
+          "band": "Afternoon",
+          "provider": "okafor"
+        }
+      ]
+    },
+    "portal": {
+      "name": "Front desk",
+      "credentials": {
+        "user": "frontdesk",
+        "pass": "alder"
+      },
+      "staffName": "Dana Whitfield",
+      "staffRole": "Practice manager",
+      "nav": [
+        {
+          "label": "Today",
+          "href": "schedule"
+        },
+        {
+          "label": "Appointments",
+          "href": "appointments"
+        },
+        {
+          "label": "Patients",
+          "href": "patients"
+        },
+        {
+          "label": "Providers",
+          "href": "providers"
+        },
+        {
+          "label": "Billing",
+          "href": "billing"
+        },
+        {
+          "label": "Settings",
+          "href": "settings"
+        }
+      ]
+    },
+    "seed": {
+      "patients": [
+        {
+          "id": "p1",
+          "name": "Marisol Vega",
+          "dob": "1986-03-14",
+          "phone": "(406) 210-4471",
+          "insurer": "PacificSource",
+          "memberId": "PS-4471903",
+          "provider": "reyes",
+          "since": 2016
+        },
+        {
+          "id": "p2",
+          "name": "Dale Whitcomb",
+          "dob": "1957-11-02",
+          "phone": "(406) 728-3390",
+          "insurer": "Medicare",
+          "memberId": "1EG4-TE5-MK72",
+          "provider": "reyes",
+          "since": 2012
+        },
+        {
+          "id": "p3",
+          "name": "Aisha Bennett",
+          "dob": "1994-07-21",
+          "phone": "(406) 552-8814",
+          "insurer": "Blue Cross Blue Shield of Montana",
+          "memberId": "MTB-88142207",
+          "provider": "raghunathan",
+          "since": 2019
+        },
+        {
+          "id": "p4",
+          "name": "Tomas Ruiz",
+          "dob": "2016-05-09",
+          "phone": "(406) 493-2205",
+          "insurer": "Montana Medicaid",
+          "memberId": "MED-22051609",
+          "provider": "lindqvist",
+          "since": 2016
+        },
+        {
+          "id": "p5",
+          "name": "June Halvorsen",
+          "dob": "1948-01-30",
+          "phone": "(406) 721-6642",
+          "insurer": "Medicare",
+          "memberId": "3KQ8-WW2-PL41",
+          "provider": "okafor",
+          "since": 2009
+        },
+        {
+          "id": "p6",
+          "name": "Nadia Haddad",
+          "dob": "1990-09-12",
+          "phone": "(406) 830-1157",
+          "insurer": "Cigna",
+          "memberId": "CG-90911257",
+          "provider": "raghunathan",
+          "since": 2021
+        },
+        {
+          "id": "p7",
+          "name": "Wes Carmichael",
+          "dob": "1979-12-05",
+          "phone": "(406) 214-7788",
+          "insurer": "Allegiance Benefit Plan",
+          "memberId": "ALG-779120",
+          "provider": "okafor",
+          "since": 2018
+        },
+        {
+          "id": "p8",
+          "name": "Bea Okonkwo",
+          "dob": "2011-02-17",
+          "phone": "(406) 546-9023",
+          "insurer": "First Choice Health",
+          "memberId": "FCH-1102173",
+          "provider": "lindqvist",
+          "since": 2013
+        }
+      ],
+      "appointments": [
+        {
+          "id": "a1",
+          "dayOffset": -1,
+          "time": "08:00",
+          "patient": "p2",
+          "provider": "reyes",
+          "reason": "Ongoing condition follow-up",
+          "service": "Ongoing conditions",
+          "duration": 30,
+          "status": "completed"
+        },
+        {
+          "id": "a2",
+          "dayOffset": -1,
+          "time": "09:20",
+          "patient": "p4",
+          "provider": "lindqvist",
+          "reason": "Child sick visit",
+          "service": "Sick visit",
+          "duration": 20,
+          "status": "completed"
+        },
+        {
+          "id": "a3",
+          "dayOffset": -1,
+          "time": "11:00",
+          "patient": "p6",
+          "provider": "raghunathan",
+          "reason": "Contraception",
+          "service": "Contraception",
+          "duration": 30,
+          "status": "completed"
+        },
+        {
+          "id": "a4",
+          "dayOffset": -1,
+          "time": "14:20",
+          "patient": "p7",
+          "provider": "okafor",
+          "reason": "Illness or injury",
+          "service": "Same-week illness visit",
+          "duration": 20,
+          "status": "cancelled"
+        },
+        {
+          "id": "a5",
+          "dayOffset": 0,
+          "time": "07:40",
+          "patient": "p5",
+          "provider": "okafor",
+          "reason": "Medicare annual wellness",
+          "service": "Medicare annual wellness",
+          "duration": 45,
+          "status": "completed"
+        },
+        {
+          "id": "a6",
+          "dayOffset": 0,
+          "time": "08:40",
+          "patient": "p1",
+          "provider": "reyes",
+          "reason": "Annual physical",
+          "service": "Annual physical",
+          "duration": 40,
+          "status": "waiting",
+          "arrived": "08:31"
+        },
+        {
+          "id": "a7",
+          "dayOffset": 0,
+          "time": "09:40",
+          "patient": "p8",
+          "provider": "lindqvist",
+          "reason": "School or sports physical",
+          "service": "School and sports physical",
+          "duration": 20,
+          "status": "scheduled"
+        },
+        {
+          "id": "a8",
+          "dayOffset": 0,
+          "time": "10:20",
+          "patient": "p3",
+          "provider": "raghunathan",
+          "reason": "Well-woman exam",
+          "service": "Well-woman exam",
+          "duration": 30,
+          "status": "scheduled"
+        },
+        {
+          "id": "a9",
+          "dayOffset": 0,
+          "time": "13:40",
+          "patient": "p7",
+          "provider": "okafor",
+          "reason": "Illness or injury",
+          "service": "Same-week illness visit",
+          "duration": 20,
+          "status": "scheduled"
+        },
+        {
+          "id": "a10",
+          "dayOffset": 0,
+          "time": "14:20",
+          "patient": "p2",
+          "provider": "reyes",
+          "reason": "Medication review",
+          "service": "Ongoing conditions",
+          "duration": 30,
+          "status": "scheduled"
+        },
+        {
+          "id": "a11",
+          "dayOffset": 1,
+          "time": "08:20",
+          "patient": "p4",
+          "provider": "lindqvist",
+          "reason": "Child well visit",
+          "service": "Well-child check",
+          "duration": 30,
+          "status": "scheduled"
+        },
+        {
+          "id": "a12",
+          "dayOffset": 1,
+          "time": "10:40",
+          "patient": "p1",
+          "provider": "reyes",
+          "reason": "Ongoing condition follow-up",
+          "service": "Ongoing conditions",
+          "duration": 30,
+          "status": "scheduled"
+        },
+        {
+          "id": "a13",
+          "dayOffset": 1,
+          "time": "13:00",
+          "patient": "p6",
+          "provider": "raghunathan",
+          "reason": "Early pregnancy",
+          "service": "Early pregnancy",
+          "duration": 40,
+          "status": "scheduled"
+        },
+        {
+          "id": "a14",
+          "dayOffset": 1,
+          "time": "15:40",
+          "patient": "p5",
+          "provider": "okafor",
+          "reason": "Illness or injury",
+          "service": "Same-week illness visit",
+          "duration": 20,
+          "status": "scheduled"
+        }
+      ],
+      "invoices": [
+        {
+          "id": "i1",
+          "dayOffset": -34,
+          "patient": "p3",
+          "provider": "raghunathan",
+          "service": "Well-woman exam",
+          "amount": 195,
+          "status": "paid"
+        },
+        {
+          "id": "i2",
+          "dayOffset": -28,
+          "patient": "p2",
+          "provider": "reyes",
+          "service": "Ongoing conditions",
+          "amount": 165,
+          "status": "paid"
+        },
+        {
+          "id": "i3",
+          "dayOffset": -21,
+          "patient": "p7",
+          "provider": "okafor",
+          "service": "Minor procedures",
+          "amount": 240,
+          "status": "open"
+        },
+        {
+          "id": "i4",
+          "dayOffset": -17,
+          "patient": "p8",
+          "provider": "lindqvist",
+          "service": "Well-child check",
+          "amount": 160,
+          "status": "paid"
+        },
+        {
+          "id": "i5",
+          "dayOffset": -14,
+          "patient": "p1",
+          "provider": "reyes",
+          "service": "Same-week illness visit",
+          "amount": 145,
+          "status": "paid"
+        },
+        {
+          "id": "i6",
+          "dayOffset": -9,
+          "patient": "p5",
+          "provider": "okafor",
+          "service": "Annual physical",
+          "amount": 210,
+          "status": "open"
+        },
+        {
+          "id": "i7",
+          "dayOffset": -6,
+          "patient": "p4",
+          "provider": "lindqvist",
+          "service": "Sick visit",
+          "amount": 140,
+          "status": "paid"
+        },
+        {
+          "id": "i8",
+          "dayOffset": -1,
+          "patient": "p2",
+          "provider": "reyes",
+          "service": "Ongoing conditions",
+          "amount": 165,
+          "status": "open"
+        },
+        {
+          "id": "i9",
+          "dayOffset": -1,
+          "patient": "p4",
+          "provider": "lindqvist",
+          "service": "Sick visit",
+          "amount": 140,
+          "status": "open"
+        },
+        {
+          "id": "i10",
+          "dayOffset": -1,
+          "patient": "p6",
+          "provider": "raghunathan",
+          "service": "Contraception",
+          "amount": 150,
+          "status": "paid"
+        }
+      ],
+      "activity": [
+        {
+          "minutesAgo": 8,
+          "text": "Marisol Vega checked in for her 8:40 with Dr. Reyes."
+        },
+        {
+          "minutesAgo": 26,
+          "text": "Insurance verified for Bea Okonkwo — First Choice Health, active."
+        },
+        {
+          "minutesAgo": 54,
+          "text": "June Halvorsen's wellness visit completed. Invoice raised at $0."
+        },
+        {
+          "minutesAgo": 95,
+          "text": "Wes Carmichael moved from yesterday 2:20 to today 1:40."
+        },
+        {
+          "minutesAgo": 140,
+          "text": "Lab courier collected 6 samples."
+        },
+        {
+          "minutesAgo": 185,
+          "text": "Dr. Lindqvist opened two extra same-day slots for Thursday."
+        }
+      ]
+    }
+  }
+}

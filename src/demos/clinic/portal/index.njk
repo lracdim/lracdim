@@ -1,0 +1,52 @@
+---
+demoTitle: Staff portal
+demoDescription: Front desk sign in.
+portal: true
+---
+<div class="gate">
+  <div class="gate__panel">
+    <div class="gate__head">
+      <div class="side__brand">
+        <span class="brand__mark" data-brand-mark>{{ demo.brand.mark }}</span>
+        <span>
+          <span class="side__name" data-brand-short>{{ demo.brand.shortName }}</span>
+          <span class="side__sub">{{ demo.portal.name }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="gate__body">
+      <h1 class="h3" style="margin-bottom:.35rem">Sign in</h1>
+      <p class="note" style="margin-bottom:1.25rem">
+        This is the screen the front desk uses to run the day.
+      </p>
+
+      <form class="form" data-login-form novalidate>
+        <div class="field">
+          <label for="lg-user">Username</label>
+          <input id="lg-user" name="user" type="text" autocomplete="username" required>
+        </div>
+
+        <div class="field">
+          <label for="lg-pass">Password</label>
+          <input id="lg-pass" name="pass" type="password" autocomplete="current-password" required>
+        </div>
+
+        <span class="field__error" data-login-error></span>
+
+        <button type="submit" class="btn btn--block">Sign in to the portal</button>
+      </form>
+
+      {% if demo.demoMode %}
+        <div class="gate__creds">
+          Demo sign in — username <b>{{ demo.portal.credentials.user }}</b>,
+          password <b>{{ demo.portal.credentials.pass }}</b>.
+        </div>
+      {% endif %}
+
+      <p class="note" style="margin-top:1.25rem">
+        <a class="textlink" href="{{ '/demos/' + demoMeta.slug + '/' }}">Back to the public site</a>
+      </p>
+    </div>
+  </div>
+</div>

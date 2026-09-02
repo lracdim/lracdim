@@ -1,0 +1,102 @@
+---
+layout: layouts/base.njk
+title: Execution Logs
+permalink: /logs/
+description: Real problems, what I built, why I built it that way, and the results. The proof layer.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Proof layer</span>
+    <h1 class="h1" style="margin-top:1rem">Execution Logs</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Real problems, what I built, why I built it that way, and the results.
+      This is the layer that shows I can execute <em>and</em> explain decisions.
+    </p>
+
+    <div class="pagehead__meta">
+      <span class="label label--signal">&#9679; Active system</span>
+      <span class="label label--faint">Total runtime 1,248 hrs</span>
+      <span class="label label--faint">{{ logs.length }} entries</span>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="shell">
+  {% for log in logs %}
+    <article class="log" data-reveal>
+      <div class="log__rail">
+        <span class="label label--faint">{{ log.date }}</span>
+        <h2 class="h3 log__title">LOG_{{ loop.index0 | pad }}: {{ log.title }}</h2>
+
+        <dl class="log__spec">
+          <div>
+            <dt>Architecture</dt>
+            <dd>{{ log.arch }}</dd>
+          </div>
+          <div>
+            <dt>Performance gain</dt>
+            <dd class="signal">{{ log.perf }}</dd>
+          </div>
+        </dl>
+
+        <div class="work__tech" style="margin-top:1.25rem">
+          {% for tag in log.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <div class="log__media">
+          <img src="{{ log.img }}" alt="{{ log.title }} infrastructure" loading="lazy" decoding="async">
+        </div>
+
+        <div class="log__cols">
+          <div class="log__col">
+            <h4>Context</h4>
+            <p>{{ log.context }}</p>
+          </div>
+          <div class="log__col">
+            <h4>Problem</h4>
+            <p>{{ log.problem }}</p>
+          </div>
+          <div class="log__col">
+            <h4>Approach</h4>
+            <p>{{ log.approach }}</p>
+          </div>
+        </div>
+
+        <pre class="codeblock"><code>{% for line in log.code %}{{ line }}
+{% endfor %}</code></pre>
+
+        <dl class="log__outcomes">
+          {% for outcome in log.outcomes %}
+            <div class="outcome">
+              <dt>{{ outcome.label }}</dt>
+              <dd>{{ outcome.value }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="band band--dark section">
+  <div class="shell">
+    <span class="label label--faint">Continue investigation</span>
+    <h2 class="h2" style="max-width:20ch;margin-top:1.25rem">
+      Need a robust architecture for your next high-load system?
+    </h2>
+    <div style="margin-top:2.5rem;display:flex;flex-wrap:wrap;gap:1rem">
+      <a class="btn" href="/start/">
+        Initiate dialogue <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      </a>
+      <a class="btn btn--ghost" href="/capabilities/">
+        View capabilities <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      </a>
+    </div>
+  </div>
+</section>

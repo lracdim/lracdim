@@ -1,0 +1,70 @@
+{# System Diagnostic Protocol v1.0 — ported from the Elimate AnalysisModal. #}
+<div class="modal" id="diagnostic" role="dialog" aria-modal="true"
+     aria-labelledby="diagnostic-protocol" hidden>
+
+  <button type="button" class="modal__backdrop" data-close-diagnostic aria-label="Close diagnostic"></button>
+
+  <div class="modal__panel">
+    <div class="modal__head">
+      <div class="modal__protocol" id="diagnostic-protocol">
+        <span class="modal__led" aria-hidden="true"></span>
+        System Diagnostic Protocol v1.0
+      </div>
+      <button type="button" class="modal__close" data-close-diagnostic aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal__body">
+
+      {# ---- Step 1: input ------------------------------------------------ #}
+      <div class="modal__step" data-step="input">
+        <h2 class="h3" style="margin-bottom:.5rem">Analyze My Website</h2>
+        <p class="body body--sm" style="margin-bottom:1.75rem">
+          We&rsquo;ll scan your public digital footprint and identify operational bottlenecks.
+        </p>
+
+        <form id="diagnostic-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="diag-url">Company website URL</label>
+            <input class="field__input" id="diag-url" name="url" type="text"
+                   inputmode="url" autocomplete="url" required placeholder="company.com">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="diag-pain">Primary operational pain point</label>
+            <input class="field__input" id="diag-pain" name="pain" type="text"
+                   placeholder="Describe your biggest bottleneck...">
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="diag-email">Where should we send the report?</label>
+            <input class="field__input" id="diag-email" name="email" type="email"
+                   autocomplete="email" placeholder="founder@company.com">
+          </div>
+
+          <button type="submit" class="btn btn--block" style="margin-top:1.25rem">
+            Run diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+        </form>
+      </div>
+
+      {# ---- Step 2: scanning --------------------------------------------- #}
+      <div class="modal__step scan" data-step="scanning" hidden>
+        <div class="scan__ring" aria-hidden="true"></div>
+        <h2 class="h3">Analyzing architecture&hellip;</h2>
+        <p class="body body--sm" style="margin:.5rem auto 0">
+          Scanning endpoints. Mapping workflows.
+        </p>
+        <div class="scan__console" data-scan-console role="status" aria-live="polite"></div>
+      </div>
+
+      {# ---- Step 3: report ------------------------------------------------ #}
+      <div class="modal__step" data-step="report" data-report hidden></div>
+
+    </div>
+  </div>
+</div>

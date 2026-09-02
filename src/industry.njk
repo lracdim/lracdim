@@ -1,0 +1,219 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: industries
+  size: 1
+  alias: industry
+permalink: "/industries/{{ industry.slug }}/"
+eleventyComputed:
+  title: "{{ industry.name | safe }}"
+  description: "{{ industry.summary | safe }}"
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <p style="margin-bottom:1.75rem">
+      <a class="link" href="/industries/">
+        <span aria-hidden="true">&#8592;</span> All industries
+      </a>
+    </p>
+
+    <span class="label label--signal">{{ industry.sector }}</span>
+    <h1 class="h1" style="margin-top:1rem">{{ industry.name }}</h1>
+    <p class="pagehead__tagline">{{ industry.tagline }}</p>
+    <p class="lede" style="margin-top:1.5rem">{{ industry.summary }}</p>
+
+    <div class="pagehead__meta">
+      {% for signal in industry.signals %}
+        <span class="label label--faint">{{ signal }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ==================================================== WHERE IT LEAKS === #}
+<section class="band section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Where the work leaks</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">{{ industry.leaks.length }} failure points</span>
+    </div>
+
+    <div class="leaks">
+      {% for leak in industry.leaks %}
+        <article class="leak" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
+          <span class="leak__num">{{ loop.index0 | pad }}</span>
+          <div>
+            <h2 class="leak__title">{{ leak.title }}</h2>
+            <p class="leak__detail">{{ leak.detail }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ======================================================= WHAT I BUILD == #}
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">What I build</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">
+        {{ industry.build.public.length + industry.build.portal.length }} modules
+      </span>
+    </div>
+
+    <div class="module-group">
+      <div class="module-group__head">
+        <h2 class="h3">Public site</h2>
+        <p class="label label--plain label--faint">What the market sees</p>
+      </div>
+      <div class="cells">
+        {% for mod in industry.build.public %}
+          <div class="cell" data-reveal data-reveal-delay="{{ loop.index0 * 55 }}">
+            <span class="cell__num">{{ loop.index0 | pad }}</span>
+            <div class="cell__title">{{ mod.name }}</div>
+            <p class="cell__desc">{{ mod.purpose }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="module-group">
+      <div class="module-group__head">
+        <h2 class="h3">Back office &amp; portal</h2>
+        <p class="label label--plain label--faint">Where the operation actually runs</p>
+      </div>
+      <div class="cells">
+        {% for mod in industry.build.portal %}
+          <div class="cell" data-reveal data-reveal-delay="{{ loop.index0 * 55 }}">
+            <span class="cell__num">{{ loop.index0 | pad }}</span>
+            <div class="cell__title">{{ mod.name }}</div>
+            <p class="cell__desc">{{ mod.purpose }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ====================================================== AUTOMATIONS ==== #}
+<section class="band section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">What stops being someone&rsquo;s job</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="rules">
+      {% for rule in industry.build.automations %}
+        <div class="rule" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+          <div class="rule__trigger">
+            <span class="label label--plain label--faint">When</span>
+            <p>{{ rule.trigger }}</p>
+          </div>
+          <span class="rule__arrow" aria-hidden="true">&#8594;</span>
+          <div class="rule__action">
+            <span class="label label--plain label--faint">The system</span>
+            <p>{{ rule.action }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ========================================================== METRICS ==== #}
+<section class="band section" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">What moves</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">Typical baseline &rarr; target</span>
+    </div>
+
+    <div class="metric-rows">
+      {% for m in industry.metrics %}
+        <div class="metric-row" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+          <span class="metric-row__name">{{ m.name }}</span>
+          <span class="metric-row__from">{{ m.typical }}</span>
+          <span class="metric-row__arrow" aria-hidden="true">&#8594;</span>
+          <span class="metric-row__to">{{ m.target }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <p class="disclaimer">
+      These are sector baselines and the targets a system of this shape is built
+      to hit &mdash; not results measured on a past engagement. Delivered work
+      with real numbers is on <a class="disclaimer__link" href="/logs/">execution logs</a>.
+    </p>
+  </div>
+</section>
+
+{# ================================================ STACK / FIRST BUILD == #}
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="split">
+      <div class="split__lead">
+        <span class="label">Where we start</span>
+        <h2 class="h2" style="margin-top:1.25rem">{{ industry.firstBuild }}</h2>
+
+        {% if industry.note %}
+          <p class="callout" style="margin-top:2rem">{{ industry.note }}</p>
+        {% endif %}
+      </div>
+
+      <div class="split__body">
+        <div class="spec-block">
+          <span class="label label--plain label--faint">Integrations</span>
+          <div class="work__tech" style="margin-top:.75rem">
+            {% for i in industry.integrations %}<span class="tag">{{ i }}</span>{% endfor %}
+          </div>
+        </div>
+
+        <div class="spec-block">
+          <span class="label label--plain label--faint">Typical stack</span>
+          <div class="work__tech" style="margin-top:.75rem">
+            {% for s in industry.stack %}<span class="tag">{{ s }}</span>{% endfor %}
+          </div>
+        </div>
+
+        <div style="margin-top:2.5rem;display:flex;flex-wrap:wrap;gap:1rem">
+          <a class="btn" href="/start/">
+            Start this build <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </a>
+          <button type="button" class="btn btn--ghost" data-open-diagnostic>
+            Diagnose my site <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ============================================================= NEXT ==== #}
+<section class="band section section--tight">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Other sectors</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="work">
+      {% for other in industries %}
+        {% if other.slug != industry.slug %}
+          <a class="work__item work__item--compact" href="/industries/{{ other.slug }}/">
+            <span class="work__index">{{ loop.index0 | pad }}</span>
+            <span><span class="work__title">{{ other.name }}</span></span>
+            <span class="work__meta"><span class="work__desc">{{ other.tagline }}</span></span>
+            <span class="work__glyph" aria-hidden="true">&#8599;</span>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

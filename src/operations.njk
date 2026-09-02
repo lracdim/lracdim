@@ -1,0 +1,80 @@
+---
+layout: layouts/base.njk
+title: Operations
+permalink: /operations/
+description: Roles, scope of responsibility, and measured impact. Proof of operating inside real environments, not side projects.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Credibility layer</span>
+    <h1 class="h1" style="margin-top:1rem">Operations</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Roles, what I actually did, scope of responsibility, and impact. This
+      validates that I&rsquo;ve operated in real environments &mdash; not just
+      built side projects.
+    </p>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">History &amp; achievements</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="timeline">
+      {% for job in operations.history %}
+        <article class="timeline__item" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
+          <div>
+            <span class="label label--signal">{{ job.date }}</span>
+            <h2 class="h3" style="margin-top:1rem">{{ job.title }}</h2>
+            <p class="label label--faint" style="margin-top:.5rem">{{ job.company }}</p>
+            <div class="work__tech"><span class="tag">{{ job.role }}</span></div>
+
+            <div class="impact">
+              <span class="label label--faint">Impact</span>
+              <div class="impact__value">{{ job.impact }}</div>
+            </div>
+          </div>
+
+          <ul class="timeline__points">
+            {% for point in job.points %}
+              <li class="timeline__point"><span>{{ point }}</span></li>
+            {% endfor %}
+          </ul>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band section" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Process optimization workflow</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="cells">
+      {% for phase in operations.process %}
+        <div class="cell" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
+          <span class="cell__num">{{ loop.index0 | pad }}</span>
+          <div class="cell__title">{{ phase.title }}</div>
+          <p class="cell__desc">{{ phase.desc }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band section section--tight" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <p class="label label--faint" style="margin-bottom:2rem">Environments operated in</p>
+    <div class="brands">
+      {% for brand in operations.brands %}<span>{{ brand }}</span>{% endfor %}
+    </div>
+  </div>
+</section>

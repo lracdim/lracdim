@@ -1,0 +1,49 @@
+{% set base = '/demos/' + demoMeta.slug + '/' %}
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <div class="foot__h" data-brand-name>{{ demo.brand.name }}</div>
+        <ul>
+          <li>{{ demo.contact.street }}, {{ demo.contact.suite }}</li>
+          <li>{{ demo.contact.city }}, {{ demo.contact.state }} {{ demo.contact.zip }}</li>
+          <li><a class="textlink" href="tel:{{ demo.contact.phoneHref }}">{{ demo.contact.phone }}</a></li>
+          <li>{{ demo.contact.email }}</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="foot__h">Hours</div>
+        <ul>
+          {% for h in demo.hours %}
+            <li>{{ h.days }} — {% if h.close %}{{ h.open }} to {{ h.close }}{% else %}{{ h.open }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div>
+        <div class="foot__h">Pages</div>
+        <ul>
+          <li><a href="{{ base }}care/">Care we provide</a></li>
+          <li><a href="{{ base }}providers/">Our providers</a></li>
+          <li><a href="{{ base }}visit/">Your visit</a></li>
+          <li><a href="{{ base }}book/">Book a visit</a></li>
+          <li><a href="{{ base }}portal/">Staff portal</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="foot__h">If it cannot wait</div>
+        <ul>
+          <li>{{ demo.contact.afterHours }}</li>
+          <li style="margin-top:.5rem">For an emergency, call 911.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot__legal">
+      <span>&copy; {{ "" | year }} <span data-brand-name>{{ demo.brand.name }}</span>. Independent practice, established {{ demo.brand.established }}.</span>
+      <span>Sample website — not a real medical practice.</span>
+    </div>
+  </div>
+</footer>

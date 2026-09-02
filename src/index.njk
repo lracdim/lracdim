@@ -1,0 +1,234 @@
+---
+layout: layouts/base.njk
+title: false
+description: John Carl Dimatulac builds systems that run operations — real-time tracking, scheduling engines, and scalable web infrastructure. Designed for execution, not presentation.
+---
+
+{# ============================================================ HERO ======= #}
+<section class="hero">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="hero__glow" aria-hidden="true"></div>
+
+  <div class="shell hero__inner">
+    <div class="hero__meta">
+      <span class="label label--signal">{{ site.location }}</span>
+      <span class="label label--faint">{{ site.role }}</span>
+      <span class="label label--faint">Available for systems work</span>
+    </div>
+
+    <h1 class="display">
+      <span class="line-mask"><span data-hero-line>I Build Systems</span></span>
+      <span class="line-mask"><span data-hero-line>That Run</span></span>
+      <span class="line-mask"><span data-hero-line class="signal">Operations.</span></span>
+    </h1>
+
+    <div class="hero__body">
+      <div class="hero__lede">
+        <p class="lede">
+          Web developer and automation engineer. I work on real-time systems,
+          scheduling engines, and scalable web infrastructure &mdash; from
+          concept to deployment.
+        </p>
+      </div>
+
+      <div class="hero__aside">
+        <p class="callout">
+          I don&rsquo;t just build websites.<br>
+          I design systems that handle operations.
+        </p>
+      </div>
+    </div>
+
+    <div class="hero__actions">
+      <a class="btn" href="/builds/">
+        View builds <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      </a>
+
+      <a class="btn btn--ghost" href="/logs/">
+        Execution logs <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ========================================================== TICKER ====== #}
+<div class="band">
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      {% for pass in [1, 2] %}
+        {% for word in ["Real-time tracking", "Workflow automation", "Dashboard architecture", "Scheduling engines", "API integration", "Internal platforms", "HRMS / LMS", "n8n + AI agents"] %}
+          <span class="ticker__item">{{ word }}</span>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{# ====================================================== SELECTED WORK === #}
+<section class="band section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Selected builds</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">{{ builds.length }} systems</span>
+    </div>
+
+    <div class="work">
+      {% for build in builds %}
+        <a class="work__item" href="/builds/" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+          <span class="work__index">{{ loop.index0 | pad }}</span>
+
+          <span>
+            <span class="work__title">{{ build.title }}</span>
+            <span class="work__tech work__meta">
+              {% for t in build.tech %}<span class="tag">{{ t }}</span>{% endfor %}
+            </span>
+          </span>
+
+          <span class="work__meta">
+            <span class="work__desc">{{ build.desc }}</span>
+          </span>
+
+          <span class="work__glyph" aria-hidden="true">&#8599;</span>
+        </a>
+      {% endfor %}
+    </div>
+
+    <p style="margin-top:2.5rem">
+      <a class="link" href="/builds/">
+        View all builds <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      </a>
+    </p>
+  </div>
+</section>
+
+{# ======================================================== WHAT I DO ===== #}
+<section class="band section" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">What I do</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">Not websites. Systems that carry the day-to-day.</h2>
+        <p class="body" style="margin-top:1.5rem">
+          If your workflows are manual, fragmented, or held together by someone
+          remembering to do them, those are system problems. I build the things
+          that remove them.
+        </p>
+        <p style="margin-top:2rem">
+          <a class="link" href="/capabilities/">
+            View capabilities <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </a>
+        </p>
+      </div>
+
+      <div class="split__body">
+        <div class="cells">
+          {% for cap in capabilities.secondary %}
+            <div class="cell" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
+              <span class="cell__num">{{ loop.index0 | pad }}</span>
+              <div class="cell__title">{{ cap.title }}</div>
+              <p class="cell__desc">{{ cap.desc }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ================================================= METHOD + ANALYZER ==== #}
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">How I read a system</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2" style="margin-bottom:1.5rem">
+          Before I build anything, I map where the work actually breaks.
+        </h2>
+        <p class="lede">
+          Five questions I ask of every operation I&rsquo;m brought into.
+        </p>
+
+        <div style="margin-top:2.5rem">
+          <button type="button" class="btn" data-open-diagnostic>
+            Run it on your site <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+          <p class="hero__note">
+            A structural read of your public site. No sales call required.
+          </p>
+        </div>
+      </div>
+
+      <div class="split__body">
+        <div class="chain">
+          {% for step in method %}
+            <div class="chain__step" data-status="{{ step.status }}"
+                 data-reveal data-reveal-delay="{{ loop.index0 * 90 }}">
+              <span class="chain__node" aria-hidden="true"></span>
+              <div class="chain__head">
+                <div>
+                  <span class="label label--plain label--faint">{{ loop.index0 | pad }}</span>
+                  <div class="chain__title">{{ step.title }}</div>
+                  <div class="chain__desc">{{ step.desc }}</div>
+                </div>
+                <span class="chip" data-status="{{ step.status }}">{{ step.status }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================================================== METRICS ===== #}
+<section class="band section section--tight">
+  <div class="shell">
+    <div class="stats">
+      {% for stat in stats %}
+        <div class="stat" data-reveal data-reveal-delay="{{ loop.index0 * 80 }}">
+          <div class="stat__count">{{ stat.count }}</div>
+          <div class="stat__title">{{ stat.title }}</div>
+          <div class="stat__desc">{{ stat.desc }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ======================================================== CONSOLE ======= #}
+<section class="band section" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Interactive console</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">Type &ldquo;help&rdquo;</span>
+    </div>
+
+    {% include "partials/terminal.njk" %}
+  </div>
+</section>
+
+{# ============================================================= CTA ====== #}
+<section class="band band--dark section">
+  <div class="shell" style="text-align:center">
+    <h2 class="h1" style="max-width:18ch;margin-inline:auto">
+      Start a system that actually runs your operations.
+    </h2>
+    <p class="lede" style="margin:1.75rem auto 2.5rem">
+      From concept to deployment &mdash; designed for execution, not just
+      presentation.
+    </p>
+    <a class="btn" href="/start/">
+      Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    </a>
+  </div>
+</section>
