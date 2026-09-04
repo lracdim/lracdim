@@ -64,13 +64,10 @@
   {% include "partials/footer.njk" %}
   {% include "partials/diagnostic.njk" %}
 
-  {# Motion layer: GSAP + ScrollTrigger drive scroll choreography, three.js
-     draws the system graphs behind every page header. Portfolio pages only —
-     demo templates load their own. All three are deferred and the page works
-     without them. #}
+  {# Motion layer: GSAP + ScrollTrigger drive scroll choreography. The hero
+     system map is plain SVG + Web Animations. Portfolio pages only. #}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" defer></script>
   <script type="module" src="/assets/js/main.js"></script>
 </body>
 </html>

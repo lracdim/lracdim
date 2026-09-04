@@ -1,0 +1,111 @@
+---
+layout: layouts/base.njk
+title: Work
+permalink: /work/
+description: Systems in production — what was built, the stack, and what each one measurably changed.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Work</span>
+    <h1 class="h1" style="margin-top:1rem">Systems that exist because of me</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Production systems, the stack decisions behind them, and what each one
+      measurably changed for the people using it.
+    </p>
+    <div class="pagehead__meta">
+      <span class="label label--faint">{{ builds.length }} selected systems</span>
+      <span class="label label--faint">{{ logs.length }} written case notes</span>
+      <span class="label label--faint">{{ site.location }}</span>
+    </div>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Selected systems</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="cards">
+      {% for build in builds %}
+        <article class="card" data-reveal data-reveal-delay="{{ loop.index0 * 80 }}">
+          <div class="card__media">
+            <span class="card__badge">{{ build.category }}</span>
+            <img src="{{ build.img }}" alt="{{ build.title }}" loading="lazy" decoding="async">
+          </div>
+          <div class="card__body">
+            <h2 class="h3">{{ build.title }}</h2>
+            <p class="body body--sm" style="margin-top:.75rem">{{ build.desc }}</p>
+            <div class="work__tech">
+              {% for t in build.tech %}<span class="tag">{{ t }}</span>{% endfor %}
+            </div>
+          </div>
+          <div class="card__foot">
+            <span class="label label--faint">{{ loop.index0 | pad }}</span>
+            <span class="label label--signal">{{ build.metric }}</span>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band section" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Case notes</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">Problem, approach, measured result</span>
+    </div>
+
+    <div class="work">
+      {% for log in logs %}
+        <a class="work__item" href="/logs/#log-{{ loop.index0 | pad }}" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+          <span class="work__index">{{ loop.index0 | pad }}</span>
+          <span>
+            <span class="work__title">{{ log.title | replace('_', ' ') }}</span>
+            <span class="work__tech work__meta">
+              {% for t in log.tags | slice_first(3) %}<span class="tag">{{ t | replace('_', ' ') }}</span>{% endfor %}
+            </span>
+          </span>
+          <span class="work__meta"><span class="work__desc">{{ log.perf }} — {{ log.arch }}</span></span>
+          <span class="work__glyph" aria-hidden="true">&#8599;</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band section section--tight">
+  <div class="shell">
+    <div class="stats">
+      {% for stat in stats %}
+        <div class="stat" data-reveal data-reveal-delay="{{ loop.index0 * 80 }}">
+          <div class="stat__count">{{ stat.count }}</div>
+          <div class="stat__title">{{ stat.title }}</div>
+          <div class="stat__desc">{{ stat.desc }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">Have something like this that needs building?</h2>
+      </div>
+      <div class="split__body">
+        <p class="lede" style="margin-bottom:2rem">
+          Describe the operation and where it leaks. You get a written reply
+          within one business day with a straight answer on fit.
+        </p>
+        <a class="btn" href="/start/">Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -11,9 +11,9 @@
       {% endfor %}
     </nav>
 
-    <button type="button" class="btn header__cta" data-open-diagnostic>
-      Analyze my website <span class="btn__glyph" aria-hidden="true">&#8599;</span>
-    </button>
+    <a class="btn header__cta" href="{{ site.cta.href }}">
+      {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    </a>
 
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="drawer">
       <span data-nav-toggle-label>Menu</span>
@@ -23,16 +23,21 @@
 </header>
 
 <div class="drawer" id="drawer" data-drawer>
-  <nav aria-label="Mobile">
-    {% for item in site.nav %}
-      <a class="drawer__link" href="{{ item.href }}">
-        <span class="drawer__index">{{ loop.index0 | pad }}</span>{{ item.label }}
-      </a>
-    {% endfor %}
-  </nav>
   <div>
-    <button type="button" class="btn btn--block" data-open-diagnostic>
-      Analyze my website <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    <a class="btn btn--block drawer__cta" href="{{ site.cta.href }}">
+      {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    </a>
+    <nav aria-label="Mobile">
+      {% for item in site.nav %}
+        <a class="drawer__link" href="{{ item.href }}">
+          <span class="drawer__index">{{ loop.index0 | pad }}</span>{{ item.label }}
+        </a>
+      {% endfor %}
+    </nav>
+  </div>
+  <div>
+    <button type="button" class="link" data-open-diagnostic>
+      Run a website diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
     </button>
     <p class="label label--faint" style="margin-top:1.25rem">{{ site.location }}</p>
   </div>

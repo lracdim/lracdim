@@ -83,6 +83,13 @@ Language rules carried over:
 The content is entirely this portfolio's own — projects, capabilities, work
 history, and execution logs for John Carl Dimatulac.
 
+## Navigation
+
+Four client-facing pages plus one CTA: **Work · Services · Process · About — Start a project.**
+Secondary destinations (execution logs, the clinic demo, industry blueprints, the
+website diagnostic) live in the footer only. Old URLs (`/builds/`, `/capabilities/`,
+`/operations/`, `/industries/`) redirect on deploy.
+
 ## Deploy — Cloudflare Pages (recommended)
 
 The site is a static build; the only moving parts are two optional integrations

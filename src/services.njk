@@ -1,0 +1,113 @@
+---
+layout: layouts/base.njk
+title: Services
+permalink: /services/
+description: Operations systems, workflow automation, scheduling and tracking, dashboards and reporting, integrations and internal tools — organised around what your team needs.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Services</span>
+    <h1 class="h1" style="margin-top:1rem">What I build for you</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Five kinds of system, organised around the problem you have rather
+      than the technology I use. Most engagements are one of these, with a
+      second added once the first is running.
+    </p>
+    <div class="pagehead__meta">
+      {% for s in services %}<a class="label label--faint" href="#{{ s.id }}">{{ s.title }}</a>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{% for s in services %}
+<section class="band section{% if not loop.first %} section--rule{% endif %}" id="{{ s.id }}">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">{{ s.title }}</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">{{ loop.index0 | pad }} of {{ services.length }}</span>
+    </div>
+
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">{{ s.outcome }}</h2>
+
+        <p class="label label--plain label--faint" style="margin-top:2rem">You need this if</p>
+        <ul class="needlist">
+          {% for n in s.need %}<li>{{ n }}</li>{% endfor %}
+        </ul>
+
+        <p style="margin-top:2rem">
+          <a class="btn" href="/start/">Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+        </p>
+      </div>
+
+      <div class="split__body">
+        <div class="cells">
+          {% for item in s.includes %}
+            <div class="cell" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+              <span class="cell__num">{{ loop.index0 | pad }}</span>
+              <div class="cell__title">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="svc-meta">
+          <div>
+            <span class="label label--plain label--faint">Typical stack</span>
+            <div class="work__tech" style="margin-top:.6rem">
+              {% for t in s.stack %}<span class="tag">{{ t }}</span>{% endfor %}
+            </div>
+          </div>
+          <div>
+            <span class="label label--plain label--faint">Where this shows up</span>
+            <div class="work__tech" style="margin-top:.6rem">
+              {% for slug in s.sectors %}
+                {% for ind in industries %}{% if ind.slug == slug %}
+                  <a class="tag" href="/industries/{{ ind.slug }}/">{{ ind.name }}</a>
+                {% endif %}{% endfor %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+{# ====================================================== BY SECTOR ====== #}
+<section class="band band--dark section" id="sectors">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">By sector</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">{{ industries.length }} reference blueprints</span>
+    </div>
+
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">Every trade leaks work in its own places.</h2>
+        <p class="lede" style="margin-top:1.5rem">
+          These are reference architectures — where the work breaks in each
+          sector and the system that fixes it. Not client case studies; those
+          are on the <a class="link" href="/work/">work</a> page.
+        </p>
+      </div>
+      <div class="split__body">
+        <div class="work">
+          {% for ind in industries %}
+            <a class="work__item work__item--compact" href="/industries/{{ ind.slug }}/">
+              <span class="work__index">{{ loop.index0 | pad }}</span>
+              <span><span class="work__title">{{ ind.name }}</span></span>
+              <span class="work__meta"><span class="work__desc">{{ ind.tagline }}</span></span>
+              <span class="work__glyph" aria-hidden="true">&#8599;</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

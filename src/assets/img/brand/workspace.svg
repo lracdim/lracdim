@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" role="img" aria-label="Workspace">
+  <defs><pattern id="g" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" fill="none" stroke="#eff0f1" stroke-opacity="0.06"/></pattern></defs>
+  <rect width="1200" height="1500" fill="#18191b"/><rect width="1200" height="1500" fill="url(#g)"/>
+  <rect x="150" y="980" width="900" height="14" fill="#2a2c30"/>
+  <rect x="330" y="560" width="540" height="340" rx="10" fill="#202124" stroke="#3a3d43"/>
+  <rect x="350" y="580" width="500" height="300" rx="6" fill="#1e2125"/>
+  <rect x="380" y="620" width="220" height="10" rx="3" fill="#e2d8a3"/>
+  <rect x="380" y="650" width="340" height="6" rx="3" fill="#4a4d54"/>
+  <rect x="380" y="668" width="280" height="6" rx="3" fill="#4a4d54"/>
+  <rect x="380" y="720" width="440" height="120" rx="4" fill="#242830"/>
+  <path d="M400 820 L470 780 L540 800 L610 750 L680 770 L760 730" fill="none" stroke="#4f8ff7" stroke-width="3"/>
+  <rect x="570" y="900" width="60" height="80" fill="#2a2c30"/>
+  <rect x="520" y="978" width="160" height="10" rx="3" fill="#2a2c30"/>
+  <rect x="200" y="930" width="90" height="50" rx="6" fill="#26292e"/>
+  <ellipse cx="900" cy="940" rx="70" ry="40" fill="#26292e"/>
+  <text x="150" y="1420" font-family="JetBrains Mono, Consolas, monospace" font-size="22" fill="#eff0f1" fill-opacity="0.35">PHOTO PENDING — RESTRAINED WORKSPACE PLATE</text>
+</svg>

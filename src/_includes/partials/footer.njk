@@ -4,15 +4,26 @@
 
     <div class="footer__grid">
       <div>
-        <p class="label label--faint">Index</p>
+        <p class="label label--faint">Pages</p>
         {% for item in site.nav %}
           <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
         {% endfor %}
+        <a class="footer__link" href="{{ site.cta.href }}">{{ site.cta.label }}</a>
       </div>
 
       <div>
-        <p class="label label--faint">Elsewhere</p>
-        {% for item in site.social %}{% if item.href %}
+        <p class="label label--faint">More</p>
+        {% for item in site.footerLinks %}
+          <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
+        {% endfor %}
+        <button type="button" class="footer__link footer__link--btn" data-open-diagnostic>Website diagnostic</button>
+      </div>
+
+      <div>
+        <p class="label label--faint">Contact</p>
+        <a class="footer__link" href="mailto:{{ site.email }}">{{ site.email }}</a>
+        <p class="footer__link">{{ site.location }}</p>
+        {% for item in site.social %}{% if item.href and not (item.href.startsWith and item.href.startsWith('mailto:')) and item.label != 'Email' %}
           <a class="footer__link" href="{{ item.href }}" rel="noopener">{{ item.label }}</a>
         {% endif %}{% endfor %}
       </div>
@@ -21,14 +32,9 @@
         <p class="label label--faint">Operator</p>
         <p class="footer__link" style="color:var(--paper)">{{ site.owner }}</p>
         <p class="footer__link">{{ site.role }}</p>
-        <p class="footer__link">{{ site.location }}</p>
-      </div>
-
-      <div>
-        <p class="label label--faint">Start here</p>
-        <button type="button" class="btn" data-open-diagnostic style="margin-top:1rem">
-          Run diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
-        </button>
+        <a class="btn btn--ghost" href="{{ site.cta.href }}" style="margin-top:.75rem">
+          {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+        </a>
       </div>
     </div>
 

@@ -8,7 +8,7 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
 {# ============================================================ HERO ======= #}
 <section class="hero">
   <div class="hero__grid-bg" aria-hidden="true"></div>
-  <div class="hero__scene" data-scene aria-hidden="true"></div>
+  {% include "partials/systemmap.njk" %}
 
   <div class="shell hero__inner">
     <div class="hero__meta">
@@ -41,12 +41,12 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
     </div>
 
     <div class="hero__actions">
-      <a class="btn" href="/builds/">
-        View builds <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      <a class="btn" href="/start/">
+        Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>
 
-      <a class="btn btn--ghost" href="/logs/">
-        Execution logs <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      <a class="btn btn--ghost" href="/work/">
+        See the work <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>
     </div>
   </div>
@@ -76,7 +76,7 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
 
     <div class="work">
       {% for build in builds %}
-        <a class="work__item" href="/builds/" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+        <a class="work__item" href="/work/" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
           <span class="work__index">{{ loop.index0 | pad }}</span>
 
           <span>
@@ -96,7 +96,7 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
     </div>
 
     <p style="margin-top:2.5rem">
-      <a class="link" href="/builds/">
+      <a class="link" href="/work/">
         View all builds <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>
     </p>
@@ -120,20 +120,20 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
           that remove them.
         </p>
         <p style="margin-top:2rem">
-          <a class="link" href="/capabilities/">
-            View capabilities <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          <a class="link" href="/services/">
+            All five services <span class="btn__glyph" aria-hidden="true">&#8599;</span>
           </a>
         </p>
       </div>
 
       <div class="split__body">
         <div class="cells">
-          {% for cap in capabilities.secondary %}
-            <div class="cell" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
+          {% for s in services %}
+            <a class="cell" href="/services/#{{ s.id }}" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
               <span class="cell__num">{{ loop.index0 | pad }}</span>
-              <div class="cell__title">{{ cap.title }}</div>
-              <p class="cell__desc">{{ cap.desc }}</p>
-            </div>
+              <div class="cell__title">{{ s.title }}</div>
+              <p class="cell__desc">{{ s.outcome }}</p>
+            </a>
           {% endfor %}
         </div>
       </div>
@@ -158,13 +158,11 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
           Five questions I ask of every operation I&rsquo;m brought into.
         </p>
 
-        <div style="margin-top:2.5rem">
-          <button type="button" class="btn" data-open-diagnostic>
+        <div style="margin-top:2.5rem;display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-start">
+          <a class="btn" href="/process/">How the work runs <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+          <button type="button" class="btn btn--ghost" data-open-diagnostic>
             Run it on your site <span class="btn__glyph" aria-hidden="true">&#8599;</span>
           </button>
-          <p class="hero__note">
-            A structural read of your public site. No sales call required.
-          </p>
         </div>
       </div>
 

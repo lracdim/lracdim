@@ -7,7 +7,6 @@ description: Real problems, what I built, why I built it that way, and the resul
 
 <section class="pagehead">
   <div class="hero__grid-bg" aria-hidden="true"></div>
-  <div class="pagehead__scene" data-scene data-scene-density="low" aria-hidden="true"></div>
   <div class="shell" style="position:relative;z-index:1">
     <span class="label label--signal">Proof layer</span>
     <h1 class="h1" style="margin-top:1rem">Execution Logs</h1>
@@ -27,7 +26,7 @@ description: Real problems, what I built, why I built it that way, and the resul
 <section class="band">
   <div class="shell">
   {% for log in logs %}
-    <article class="log" data-reveal>
+    <article class="log" id="log-{{ loop.index0 | pad }}" data-reveal>
       <div class="log__rail">
         <span class="label label--faint">{{ log.date }}</span>
         <h2 class="h3 log__title">LOG_{{ loop.index0 | pad }}: {{ log.title }}</h2>
@@ -95,8 +94,8 @@ description: Real problems, what I built, why I built it that way, and the resul
       <a class="btn" href="/start/">
         Initiate dialogue <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>
-      <a class="btn btn--ghost" href="/capabilities/">
-        View capabilities <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      <a class="btn btn--ghost" href="/services/">
+        See the services <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>
     </div>
   </div>

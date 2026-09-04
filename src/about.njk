@@ -1,0 +1,105 @@
+---
+layout: layouts/base.njk
+title: About
+permalink: /about/
+description: John Carl Dimatulac is a web developer and automation engineer in Laguna, Philippines. He builds operational systems for teams whose work has outgrown spreadsheets and manual follow-ups.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">About</span>
+    <h1 class="h1" style="margin-top:1rem;max-width:18ch">I build systems because I have seen what broken operations cost.</h1>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <div class="split">
+      <div class="split__lead">
+        <figure class="portrait" data-reveal>
+          <img src="/assets/img/brand/workspace.svg" alt="" width="1200" height="1500">
+          <figcaption class="label label--plain label--faint">{{ site.owner }} — {{ site.location }}</figcaption>
+        </figure>
+      </div>
+
+      <div class="split__body">
+        <p class="lede">
+          {{ site.owner }} is a web developer and automation engineer based in
+          Laguna, Philippines. He builds operational systems for teams whose
+          day-to-day work has outgrown spreadsheets, disconnected tools, and
+          manual follow-ups.
+        </p>
+
+        <div class="facts-list">
+          <div class="facts-list__item" data-reveal>
+            <span class="facts-list__k">8+ years</span>
+            <span class="facts-list__v">Building web systems, since 2017.</span>
+          </div>
+          <div class="facts-list__item" data-reveal data-reveal-delay="60">
+            <span class="facts-list__k">Inside the operation</span>
+            <span class="facts-list__v">Experience in real operating environments — a security company, an AI automation firm, a network — not only as an outside developer.</span>
+          </div>
+          <div class="facts-list__item" data-reveal data-reveal-delay="120">
+            <span class="facts-list__k">Problems solved</span>
+            <span class="facts-list__v">Scheduling, tracking, workflow automation, internal tools, and reporting.</span>
+          </div>
+          <div class="facts-list__item" data-reveal data-reveal-delay="180">
+            <span class="facts-list__k">How I work</span>
+            <span class="facts-list__v">Direct and practical. The measure of a system is whether the team actually uses it a month later, so that is what everything is built around.</span>
+          </div>
+        </div>
+
+        <p style="margin-top:2.5rem">
+          <a class="btn" href="/start/">Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band section" style="border-top:1px solid var(--ink-14)">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Where I have worked</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="timeline">
+      {% for job in operations.history %}
+        <article class="timeline__item" data-reveal data-reveal-delay="{{ loop.index0 * 70 }}">
+          <div>
+            <span class="label label--signal">{{ job.date }}</span>
+            <h2 class="h3" style="margin-top:1rem">{{ job.title }}</h2>
+            <p class="label label--faint" style="margin-top:.5rem">{{ job.company }}</p>
+            <div class="impact">
+              <span class="label label--faint">Measured</span>
+              <div class="impact__value">{{ job.impact }}</div>
+            </div>
+          </div>
+          <ul class="timeline__points">
+            {% for point in job.points %}<li class="timeline__point"><span>{{ point }}</span></li>{% endfor %}
+          </ul>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="split">
+      <div class="split__lead"><h2 class="h2">Tell me where the work leaks.</h2></div>
+      <div class="split__body">
+        <p class="lede" style="margin-bottom:2rem">
+          A written reply within one business day, with a straight answer on
+          whether it is a fit and what the first build would be.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:1rem">
+          <a class="btn" href="/start/">Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+          <a class="btn btn--ghost" href="/process/">How the work runs <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -7,7 +7,7 @@
 import { initDiagnosticModal } from './modal.js';
 import { initStartForm } from './start.js';
 import { flushQueue } from './leads.js';
-import { initScenes } from './scene.js';
+import { initSystemMap } from './systemmap.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -325,7 +325,7 @@ async function boot() {
 
   await initPreloader();
 
-  initScenes();
+  initSystemMap();
   initHeroLines();
   if (!initScrollMotion()) initReveal();
 }

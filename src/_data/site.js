@@ -36,10 +36,18 @@ export default {
   ],
 
   nav: [
-    { label: 'Builds', href: '/builds/' },
-    { label: 'Industries', href: '/industries/' },
-    { label: 'Capabilities', href: '/capabilities/' },
-    { label: 'Operations', href: '/operations/' },
-    { label: 'Logs', href: '/logs/' }
+    { label: 'Work', href: '/work/' },
+    { label: 'Services', href: '/services/' },
+    { label: 'Process', href: '/process/' },
+    { label: 'About', href: '/about/' }
+  ],
+
+  cta: { label: 'Start a project', href: '/start/' },
+
+  /* Secondary and experimental destinations live in the footer only. */
+  footerLinks: [
+    { label: 'Execution logs', href: '/logs/' },
+    { label: 'Clinic demo template', href: '/demos/clinic/' },
+    { label: 'Industry blueprints', href: '/services/#sectors' }
   ]
 };

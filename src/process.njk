@@ -1,0 +1,108 @@
+---
+layout: layouts/base.njk
+title: Process
+permalink: /process/
+description: Diagnose where work breaks, design the operational system, build and integrate it, then launch, observe and improve it.
+---
+
+<section class="pagehead">
+  <div class="hero__grid-bg" aria-hidden="true"></div>
+  <div class="shell" style="position:relative;z-index:1">
+    <span class="label label--signal">Process</span>
+    <h1 class="h1" style="margin-top:1rem">How the work runs</h1>
+    <p class="lede" style="margin-top:1.5rem">
+      Four steps, in that order, every time. The first one is the one most
+      projects skip, and it is the reason the other three go wrong.
+    </p>
+    <div class="pagehead__meta">
+      {% for step in process %}<span class="label label--faint">{{ step.title }}</span>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <ol class="proc">
+      {% for step in process %}
+        <li class="proc__step" data-reveal data-reveal-delay="{{ loop.index0 * 80 }}">
+          <div class="proc__num">{{ loop.index0 | pad }}</div>
+          <div class="proc__body">
+            <h2 class="h2">{{ step.title }}</h2>
+            <p class="lede" style="margin-top:.85rem">{{ step.lede }}</p>
+            <p class="body" style="margin-top:1rem">{{ step.detail }}</p>
+          </div>
+          <dl class="proc__meta">
+            <div><dt>You get</dt><dd>{{ step.output }}</dd></div>
+            <div><dt>Takes</dt><dd>{{ step.duration }}</dd></div>
+          </dl>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+{# ================================================= THE DIAGNOSIS ======= #}
+<section class="band band--dark section">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">Step one, in detail</span>
+      <span class="eyebrow__rule"></span>
+    </div>
+
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">Five questions I ask of every operation I am brought into.</h2>
+        <p class="lede" style="margin-top:1.5rem">
+          The website diagnostic runs a structural version of this on your
+          public site in about a minute. It is a useful first read, not a
+          substitute for the full week.
+        </p>
+        <div style="margin-top:2.5rem;display:flex;flex-wrap:wrap;gap:1rem">
+          <a class="btn" href="/start/">Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+          <button type="button" class="btn btn--ghost" data-open-diagnostic>
+            Run a diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="split__body">
+        <div class="chain">
+          {% for step in method %}
+            <div class="chain__step" data-status="{{ step.status }}" data-reveal data-reveal-delay="{{ loop.index0 * 90 }}">
+              <span class="chain__node" aria-hidden="true"></span>
+              <div class="chain__head">
+                <div>
+                  <span class="label label--plain label--faint">{{ loop.index0 | pad }}</span>
+                  <div class="chain__title">{{ step.title }}</div>
+                  <div class="chain__desc">{{ step.desc }}</div>
+                </div>
+                <span class="chip" data-status="{{ step.status }}">{{ step.status }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band section">
+  <div class="shell">
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">What this is not</h2>
+      </div>
+      <div class="split__body">
+        <ul class="needlist">
+          <li>Not a redesign of your website with a form on the end.</li>
+          <li>Not a vendor tool you rent and reshape your team around.</li>
+          <li>Not a reveal at the end. You see working software every week from step three.</li>
+          <li>Not finished at launch. It is finished when it is how work gets done.</li>
+        </ul>
+        <p style="margin-top:2rem">
+          <a class="link" href="/about/">Who is doing the work <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
