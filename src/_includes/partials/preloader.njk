@@ -7,7 +7,16 @@
     <div class="preloader__word">{% include "partials/logotype.njk" %}</div>
     <div class="preloader__meta">
       <div>// Please wait</div>
-      <div>// Loading <span data-preloader-pct>000</span></div>
+      <div>// Booting systems</div>
+    </div>
+  </div>
+
+  <div class="preloader__progress" aria-hidden="true">
+    <div class="preloader__pct"><span data-preloader-pct>000</span><small>%</small></div>
+    <div class="preloader__bar"><div class="preloader__fill" data-preloader-fill></div></div>
+    <div class="preloader__meta preloader__meta--dark">
+      <div>// Loading</div>
+      <div>// {{ site.location }}</div>
     </div>
   </div>
 </div>

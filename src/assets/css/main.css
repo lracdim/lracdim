@@ -1772,3 +1772,90 @@ a { color: inherit; text-decoration: none; }
   color: var(--ink);
   border: 1px solid var(--ink-14);
 }
+
+/* ==========================================================================
+   Site-wide motion layer
+   ========================================================================== */
+
+/* Low-density system graph behind every interior page header. */
+.pagehead { position: relative; overflow: hidden; }
+.pagehead__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 80% 90% at 70% 40%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 90% at 70% 40%, #000 30%, transparent 100%);
+}
+.pagehead__scene canvas { display: block; width: 100%; height: 100%; }
+
+/* When GSAP drives reveals, the CSS transition must not fight it. */
+.has-gsap [data-reveal] { transition: none; }
+
+/* Preloader: pure black type on the sand panel, progress in the quadrant below. */
+.preloader__word .logotype__signal,
+.preloader__word .logotype__rest,
+.preloader__panel .preloader__meta { color: #000; }
+
+.preloader__progress {
+  grid-area: 2 / 1;
+  z-index: 1;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1rem;
+  color: var(--paper);
+}
+.preloader__pct {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 7rem);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+.preloader__pct small { font-size: 0.35em; letter-spacing: 0; margin-left: 0.15em; color: var(--paper-50); }
+.preloader__bar { height: 2px; background: var(--paper-14); position: relative; overflow: hidden; }
+.preloader__fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--signal); transition: width 0.2s linear; }
+.preloader__meta--dark { margin-top: 0; color: var(--paper-50); display: flex; justify-content: space-between; }
+
+/* Intake steps: description sits under the title in column 2, never in the
+   number column. */
+.intake-steps li { grid-template-rows: auto auto; }
+.intake-steps li::before { grid-row: 1 / span 2; }
+.intake-steps strong { grid-column: 2; }
+.intake-steps span { grid-column: 2; }
+
+/* ==========================================================================
+   Scroll choreography support
+   ========================================================================== */
+
+/* Page progress: a hairline of signal that fills as you scroll. */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 95;
+  background: var(--signal);
+  transform-origin: left center;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+/* Grids get perspective so cards can tilt in. */
+.has-gsap .cells,
+.has-gsap .cards,
+.has-gsap .stats { perspective: 1200px; }
+.has-gsap .cell,
+.has-gsap .card,
+.has-gsap .stat { transform-style: preserve-3d; backface-visibility: hidden; }
+
+/* Dark bands wipe open as they arrive (driven by GSAP; static without it). */
+.has-gsap .band--dark { will-change: clip-path; }
+
+/* Hard rule: a filled button is always a yellow plate with black text,
+   on every surface. Dark bands inherited --on-signal:#fff from .band. */
+.band--dark { --on-signal: var(--ink); }
+.btn:not(.btn--ghost) { --btn-fg: var(--ink); color: var(--ink); }
+.btn:not(.btn--ghost):hover { color: var(--ink); }

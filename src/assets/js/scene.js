@@ -1,46 +1,44 @@
 /**
- * Hero scene — a system graph in three.js.
+ * System-graph scenes — three.js, one per [data-scene] mount.
  *
  * Nodes scattered in a shallow volume, edges drawn between near neighbours,
- * the whole thing turning slowly with a little mouse parallax. Sand on ink,
- * same as everything else. It sits behind the hero copy and is purely
- * decorative: no interaction is required to use the page, it pauses when the
- * tab is hidden, renders one static frame under prefers-reduced-motion, and
- * is skipped entirely if WebGL or the library is unavailable.
+ * the whole thing turning slowly with pointer parallax. Sand on ink. When
+ * GSAP ScrollTrigger is present the graph also scrubs with scroll: it turns
+ * and recedes as its section leaves the viewport, so the page's motion and
+ * the 3D layer read as one system.
  *
- * Loaded only on the home page, from cdnjs, after the page has parsed.
+ * Density per mount via data-scene-density="high|low" (home hero is high,
+ * interior page headers are low).
+ *
+ * Discipline: renders a single static frame under prefers-reduced-motion,
+ * pauses off-screen and when the tab is hidden, and is skipped entirely if
+ * WebGL or the library is unavailable. Nothing on the page depends on it.
  */
 
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function initScene() {
-  const mount = document.querySelector('[data-scene]');
-  if (!mount || !window.THREE) return;
-
-  const THREE = window.THREE;
-
-  /* --- renderer ------------------------------------------------------- */
+function buildScene(mount, THREE) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
   } catch {
-    return; // no WebGL — the CSS grid behind the hero remains
+    return null;
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
   mount.appendChild(renderer.domElement);
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0, 0, 18);
-
-  /* --- graph ---------------------------------------------------------- */
-  const COUNT = 110;
-  const LINK_DIST = 3.1;
+  const dense = (mount.dataset.sceneDensity || 'high') === 'high';
+  const COUNT = dense ? 110 : 56;
+  const LINK_DIST = dense ? 3.1 : 3.6;
   const SAND = new THREE.Color('#e2d8a3');
 
-  // Deterministic pseudo-random so the graph is the same on every load.
-  let seed = 1337;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, 0, dense ? 18 : 16);
+
+  // Deterministic per mount so each header has its own stable graph.
+  let seed = 1337 + (mount.dataset.sceneSeed ? Number(mount.dataset.sceneSeed) : 0);
   const rand = () => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
@@ -49,12 +47,10 @@ export function initScene() {
   const positions = new Float32Array(COUNT * 3);
   const drift = new Float32Array(COUNT * 3);
   for (let i = 0; i < COUNT; i++) {
-    // Shallow oblate cloud: wide, not tall, not deep.
     const r = Math.pow(rand(), 0.55);
     const a = rand() * Math.PI * 2;
-    const y = (rand() - 0.5) * 8;
     positions[i * 3] = Math.cos(a) * r * 12;
-    positions[i * 3 + 1] = y;
+    positions[i * 3 + 1] = (rand() - 0.5) * (dense ? 8 : 5);
     positions[i * 3 + 2] = Math.sin(a) * r * 5;
     drift[i * 3] = (rand() - 0.5) * 0.004;
     drift[i * 3 + 1] = (rand() - 0.5) * 0.004;
@@ -63,28 +59,19 @@ export function initScene() {
 
   const nodeGeo = new THREE.BufferGeometry();
   nodeGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const nodeMat = new THREE.PointsMaterial({
-    color: SAND,
-    size: 0.11,
-    sizeAttenuation: true,
-    transparent: true,
-    opacity: 0.95,
-    depthWrite: false
-  });
-  const nodes = new THREE.Points(nodeGeo, nodeMat);
+  const nodes = new THREE.Points(
+    nodeGeo,
+    new THREE.PointsMaterial({ color: SAND, size: 0.11, sizeAttenuation: true, transparent: true, opacity: 0.95, depthWrite: false })
+  );
 
-  // Edges: preallocate the worst case, update the draw range each frame.
   const maxEdges = (COUNT * (COUNT - 1)) / 2;
   const edgePos = new Float32Array(maxEdges * 6);
   const edgeGeo = new THREE.BufferGeometry();
   edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePos, 3));
-  const edgeMat = new THREE.LineBasicMaterial({
-    color: SAND,
-    transparent: true,
-    opacity: 0.22,
-    depthWrite: false
-  });
-  const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+  const edges = new THREE.LineSegments(
+    edgeGeo,
+    new THREE.LineBasicMaterial({ color: SAND, transparent: true, opacity: dense ? 0.22 : 0.18, depthWrite: false })
+  );
 
   const group = new THREE.Group();
   group.add(edges);
@@ -109,7 +96,6 @@ export function initScene() {
     edgeGeo.attributes.position.needsUpdate = true;
   }
 
-  /* --- sizing --------------------------------------------------------- */
   function resize() {
     const w = mount.clientWidth || 1;
     const h = mount.clientHeight || 1;
@@ -120,28 +106,36 @@ export function initScene() {
   resize();
   window.addEventListener('resize', resize, { passive: true });
 
-  /* --- pointer parallax ----------------------------------------------- */
-  let targetX = 0, targetY = 0, curX = 0, curY = 0;
-  window.addEventListener(
-    'pointermove',
-    (e) => {
-      targetX = (e.clientX / window.innerWidth - 0.5) * 0.5;
-      targetY = (e.clientY / window.innerHeight - 0.5) * 0.3;
-    },
-    { passive: true }
-  );
+  /* Scroll coupling — scrubbed by GSAP when available. */
+  const scroll = { p: 0 };
+  if (window.gsap && window.ScrollTrigger && !REDUCED) {
+    window.gsap.to(scroll, {
+      p: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: mount.parentElement || mount,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 0.6
+      }
+    });
+  }
 
-  /* --- loop ----------------------------------------------------------- */
-  let raf = 0;
-  let running = false;
-  let t = 0;
+  let targetX = 0, targetY = 0, curX = 0, curY = 0;
+  const onPointer = (e) => {
+    targetX = (e.clientX / window.innerWidth - 0.5) * 0.5;
+    targetY = (e.clientY / window.innerHeight - 0.5) * 0.3;
+  };
+  window.addEventListener('pointermove', onPointer, { passive: true });
+
+  let raf = 0, running = false, t = 0;
+  const baseZ = camera.position.z;
 
   function frame() {
     if (!running) return;
     t += 0.0035;
 
     for (let i = 0; i < COUNT * 3; i++) positions[i] += drift[i];
-    // Keep the cloud loosely bounded by nudging drift back toward centre.
     for (let i = 0; i < COUNT; i++) {
       if (Math.abs(positions[i * 3]) > 13) drift[i * 3] *= -1;
       if (Math.abs(positions[i * 3 + 1]) > 4.5) drift[i * 3 + 1] *= -1;
@@ -152,38 +146,44 @@ export function initScene() {
 
     curX += (targetX - curX) * 0.04;
     curY += (targetY - curY) * 0.04;
-    group.rotation.y = t + curX;
-    group.rotation.x = curY * 0.6;
+
+    // Scroll adds a turn and pushes the camera back as the section exits.
+    group.rotation.y = t + curX + scroll.p * 1.2;
+    group.rotation.x = curY * 0.6 + scroll.p * 0.35;
+    camera.position.z = baseZ + scroll.p * 6;
 
     renderer.render(scene, camera);
     raf = requestAnimationFrame(frame);
   }
 
-  function start() {
-    if (running) return;
-    running = true;
-    raf = requestAnimationFrame(frame);
-  }
-  function stop() {
-    running = false;
-    cancelAnimationFrame(raf);
-  }
+  const start = () => { if (!running) { running = true; raf = requestAnimationFrame(frame); } };
+  const stop = () => { running = false; cancelAnimationFrame(raf); };
 
   rebuildEdges();
 
   if (REDUCED) {
     group.rotation.y = 0.6;
     renderer.render(scene, camera);
-    return;
+    mount.dataset.sceneReady = 'static';
+    return { stop };
   }
 
-  // Only spend GPU while the hero is actually on screen and the tab is visible.
   const io = new IntersectionObserver(
     (entries) => entries.forEach((en) => (en.isIntersecting && !document.hidden ? start() : stop())),
-    { threshold: 0.05 }
+    { threshold: 0.02 }
   );
   io.observe(mount);
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
 
   mount.dataset.sceneReady = 'true';
+  return { stop };
+}
+
+export function initScenes() {
+  if (!window.THREE) return;
+  const mounts = document.querySelectorAll('[data-scene]');
+  mounts.forEach((m, i) => {
+    if (!m.dataset.sceneSeed) m.dataset.sceneSeed = String(i * 97);
+    buildScene(m, window.THREE);
+  });
 }
