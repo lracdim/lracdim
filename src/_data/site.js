@@ -38,10 +38,8 @@ export default {
   nav: [
     { label: 'Builds', href: '/builds/' },
     { label: 'Industries', href: '/industries/' },
-    { label: 'Templates', href: '/demos/' },
     { label: 'Capabilities', href: '/capabilities/' },
     { label: 'Operations', href: '/operations/' },
-    { label: 'Logs', href: '/logs/' },
-    { label: 'Terminal', href: '/terminal/' }
+    { label: 'Logs', href: '/logs/' }
   ]
 };

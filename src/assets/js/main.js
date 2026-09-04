@@ -5,7 +5,6 @@
  */
 
 import { initDiagnosticModal } from './modal.js';
-import { initTerminal } from './terminal.js';
 import { initStartForm } from './start.js';
 import { flushQueue } from './leads.js';
 import { initScenes } from './scene.js';
@@ -321,7 +320,6 @@ async function boot() {
   initHeader();
   initDrawer();
   initDiagnosticModal();
-  initTerminal();
   initStartForm();
   flushQueue();
 

@@ -296,13 +296,6 @@ a { color: inherit; text-decoration: none; }
 .pagehead,
 .footer,
 .modal__head,
-.terminal {
-  --band-bg: var(--ink);
-  --line: var(--paper-14);
-  --dim: var(--paper-70);
-  --faint: var(--paper-35);
-  --signal: #e2d8a3;
-}
 
 .btn--ghost:hover { color: var(--on-signal); }
 .btn--ghost:hover::before { background: var(--signal); transform: none; }
@@ -1034,65 +1027,6 @@ a { color: inherit; text-decoration: none; }
 
 .outcome dt { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint, var(--ink-35)); }
 .outcome dd { margin-top: 0.35rem; font-weight: 500; color: var(--signal); }
-
-/* --------------------------------------------------------------------------
-   Terminal
-   -------------------------------------------------------------------------- */
-
-.terminal { border: 1px solid var(--line, var(--ink-14)); background: var(--ink); color: var(--paper); }
-
-.terminal__bar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid var(--paper-14);
-  background: var(--ink-soft);
-}
-
-.terminal__dot { width: 8px; height: 8px; background: var(--paper-14); transform: rotate(45deg); }
-.terminal__dot--live { background: var(--signal); }
-.terminal__path { margin-left: 0.75rem; font-family: var(--font-mono); font-size: 0.6875rem; color: var(--paper-35); }
-
-.terminal__screen {
-  height: clamp(18rem, 42vh, 25rem);
-  overflow-y: auto;
-  padding: 1.15rem 1.4rem;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  line-height: 1.7;
-  scrollbar-width: thin;
-}
-
-.terminal__line { white-space: pre-wrap; word-break: break-word; }
-.terminal__line--system { color: var(--signal); }
-.terminal__line--input { color: var(--paper); }
-.terminal__line--error { color: var(--crit); }
-.terminal__line--hint { color: var(--paper-35); }
-.terminal__line--output { color: var(--paper-70); }
-
-.terminal__form {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.4rem;
-  border-top: 1px solid var(--paper-14);
-  background: var(--ink-soft);
-}
-
-.terminal__prompt { color: var(--signal); font-family: var(--font-mono); }
-
-.terminal__input {
-  flex: 1;
-  background: none;
-  border: 0;
-  outline: 0;
-  color: var(--paper);
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-}
-
-.terminal__input::placeholder { color: var(--paper-35); }
 
 /* --------------------------------------------------------------------------
    Diagnostic modal
