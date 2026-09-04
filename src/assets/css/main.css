@@ -1683,13 +1683,23 @@ a { color: inherit; text-decoration: none; }
    Brand assets
    ========================================================================== */
 
-.brand__logo { width: 2rem; height: 2rem; object-fit: contain; flex-shrink: 0; }
-.brand__text { line-height: 1; }
+/* Logotype: "//lracdim" in signal, "ension" in paper. One element, sized by
+   context — header, preloader, footer. */
+.logotype {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+.logotype__signal { color: var(--signal); }
+.logotype__rest { color: var(--paper); }
 
-.preloader__logo { width: clamp(9rem, 22vw, 14rem); height: auto; margin-bottom: 1.5rem; }
-
+.brand .logotype { font-size: 1.05rem; }
+.preloader__word .logotype { font-size: clamp(1.6rem, 5vw, 3rem); }
 .footer__mark { margin-bottom: clamp(2rem, 4vw, 3.5rem); }
-.footer__logo { width: clamp(12rem, 34vw, 30rem); height: auto; }
+.footer__mark .logotype { font-size: clamp(2.4rem, 11vw, 9rem); letter-spacing: -0.05em; }
 
 /* ==========================================================================
    Hero scene (three.js) — sits behind the copy, never in front of it
