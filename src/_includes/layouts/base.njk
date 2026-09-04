@@ -20,7 +20,8 @@
   <meta name="twitter:image" content="{{ site.url }}/assets/img/og.png">
   <meta name="theme-color" content="#18191b">
 
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/brand/favicon-64.png" type="image/png" sizes="64x64">
+  <link rel="apple-touch-icon" href="/assets/img/brand/apple-touch-icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,6 +64,10 @@
   {% include "partials/footer.njk" %}
   {% include "partials/diagnostic.njk" %}
 
+  {% if scene %}
+  {# three.js is loaded only on pages that opt in with `scene: true`. #}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js" defer></script>
+  {% endif %}
   <script type="module" src="/assets/js/main.js"></script>
 </body>
 </html>

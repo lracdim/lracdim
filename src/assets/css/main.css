@@ -514,10 +514,14 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   justify-content: space-between;
   transform: translateY(-101%);
-  transition: transform 0.55s var(--ease);
+  /* visibility gates the closed state so an overflowing menu can never bleed
+     past its transform on a short viewport, and its links leave tab order. */
+  visibility: hidden;
+  overflow-y: auto;
+  transition: transform 0.55s var(--ease), visibility 0s linear 0.55s;
 }
 
-.drawer.is-open { transform: translateY(0); }
+.drawer.is-open { transform: translateY(0); visibility: visible; transition-delay: 0s; }
 
 .drawer__link {
   display: flex;
@@ -1674,3 +1678,32 @@ a { color: inherit; text-decoration: none; }
 .intake-steps li::before { content: counter(s, decimal-leading-zero); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--signal); padding-top: 0.3rem; }
 .intake-steps strong { display: block; font-weight: 500; }
 .intake-steps span { display: block; font-size: 0.9375rem; color: var(--dim, var(--ink-55)); margin-top: 0.2rem; }
+
+/* ==========================================================================
+   Brand assets
+   ========================================================================== */
+
+.brand__logo { width: 2rem; height: 2rem; object-fit: contain; flex-shrink: 0; }
+.brand__text { line-height: 1; }
+
+.preloader__logo { width: clamp(9rem, 22vw, 14rem); height: auto; margin-bottom: 1.5rem; }
+
+.footer__mark { margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+.footer__logo { width: clamp(12rem, 34vw, 30rem); height: auto; }
+
+/* ==========================================================================
+   Hero scene (three.js) — sits behind the copy, never in front of it
+   ========================================================================== */
+
+.hero__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Soft edge so the graph fades into the ink at the hero's borders. */
+  mask-image: radial-gradient(ellipse 75% 70% at 62% 50%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 62% 50%, #000 40%, transparent 100%);
+}
+
+.hero__scene canvas { display: block; width: 100%; height: 100%; }
+.hero__inner { position: relative; z-index: 1; }

@@ -8,6 +8,7 @@ import { initDiagnosticModal } from './modal.js';
 import { initTerminal } from './terminal.js';
 import { initStartForm } from './start.js';
 import { flushQueue } from './leads.js';
+import { initScene } from './scene.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -150,6 +151,7 @@ async function boot() {
 
   await initPreloader();
 
+  initScene();
   initHeroLines();
   initReveal();
 }
