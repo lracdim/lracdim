@@ -1717,3 +1717,58 @@ a { color: inherit; text-decoration: none; }
 
 .hero__scene canvas { display: block; width: 100%; height: 100%; }
 .hero__inner { position: relative; z-index: 1; }
+
+/* ==========================================================================
+   Rule: every yellow button carries black text.
+   On dark bands the plate is already sand + ink. On light bands the plate
+   was olive + white; it is now sand + ink with a 1px ink ring (drawn as an
+   outer plate) so the octagon keeps its edge against paper.
+   ========================================================================== */
+
+.band:not(.band--dark) .btn:not(.btn--ghost),
+.modal__panel .btn:not(.btn--ghost),
+.intake .btn:not(.btn--ghost) {
+  --btn-fg: var(--ink);
+}
+
+.band:not(.band--dark) .btn:not(.btn--ghost)::before,
+.modal__panel .btn:not(.btn--ghost)::before,
+.intake .btn:not(.btn--ghost)::before {
+  background: var(--ink);            /* the ring */
+}
+
+.band:not(.band--dark) .btn:not(.btn--ghost)::after,
+.modal__panel .btn:not(.btn--ghost)::after,
+.intake .btn:not(.btn--ghost)::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: #e2d8a3;               /* the yellow plate */
+  clip-path: polygon(
+    var(--cut) 0%,
+    calc(100% - var(--cut)) 0%,
+    100% var(--cut),
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    var(--cut) 100%,
+    0% calc(100% - var(--cut)),
+    0% var(--cut)
+  );
+  transition: background 0.35s var(--ease);
+}
+
+.band:not(.band--dark) .btn:not(.btn--ghost):hover::before,
+.modal__panel .btn:not(.btn--ghost):hover::before,
+.intake .btn:not(.btn--ghost):hover::before { background: var(--ink); transform: none; }
+
+.band:not(.band--dark) .btn:not(.btn--ghost):hover::after,
+.modal__panel .btn:not(.btn--ghost):hover::after,
+.intake .btn:not(.btn--ghost):hover::after { background: #d0c48b; }
+
+/* Yellow badges on light cards: black text, hairline edge. */
+.band:not(.band--dark) .card__badge {
+  background: #e2d8a3;
+  color: var(--ink);
+  border: 1px solid var(--ink-14);
+}
