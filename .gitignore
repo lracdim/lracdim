@@ -9,3 +9,5 @@ _archive/vite-react/node_modules/
 workers/scan/node_modules/
 workers/scan/.wrangler/
 .dev.vars
+.vercel
+.env*
