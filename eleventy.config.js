@@ -1,4 +1,10 @@
 export default function (eleventyConfig) {
+  // Self-host runtime dependencies.
+  eleventyConfig.addPassthroughCopy({ 'node_modules/three/build/three.module.js': 'assets/vendor/three/three.module.js' });
+  eleventyConfig.addPassthroughCopy({ 'node_modules/three/build/three.core.js': 'assets/vendor/three/three.core.js' });
+  eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource/archivo/files/archivo-latin-400-normal.woff2': 'assets/fonts/archivo-400.woff2' });
+  eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource/archivo/files/archivo-latin-600-normal.woff2': 'assets/fonts/archivo-600.woff2' });
+  eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2': 'assets/fonts/mono-400.woff2' });
   // Pass static assets straight through.
   eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
   eleventyConfig.addWatchTarget('src/assets');

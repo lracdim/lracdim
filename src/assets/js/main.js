@@ -7,7 +7,8 @@
 import { initDiagnosticModal } from './modal.js';
 import { initStartForm } from './start.js';
 import { flushQueue } from './leads.js';
-import { initSystemMap } from './systemmap.js';
+import { initHero3D } from './hero3d.js';
+import { initCards3D } from './cards3d.js';
 import { initPipeline } from './pipeline.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -326,7 +327,8 @@ async function boot() {
 
   await initPreloader();
 
-  initSystemMap();
+  initHero3D();
+  initCards3D();
   initPipeline();
   initHeroLines();
   if (!initScrollMotion()) initReveal();

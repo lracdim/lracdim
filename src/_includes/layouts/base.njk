@@ -23,13 +23,8 @@
   <link rel="icon" href="/assets/img/brand/favicon-64.png" type="image/png" sizes="64x64">
   <link rel="apple-touch-icon" href="/assets/img/brand/apple-touch-icon.png">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
-
   <link rel="stylesheet" href="/assets/css/main.css">
-
+  <link rel="stylesheet" href="/assets/css/studio.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -54,7 +49,7 @@
     };
   </script>
 
-  {% include "partials/preloader.njk" %}
+  <a class="skip-link" href="#main">Skip to content</a>
   {% include "partials/header.njk" %}
 
   <main id="main">
@@ -64,10 +59,7 @@
   {% include "partials/footer.njk" %}
   {% include "partials/diagnostic.njk" %}
 
-  {# Motion layer: GSAP + ScrollTrigger drive scroll choreography. The hero
-     system map is plain SVG + Web Animations. Portfolio pages only. #}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-  <script type="module" src="/assets/js/main.js"></script>
+  <script type="module" src="/assets/js/studio.js"></script>
+  {% if scene %}<script type="module" src="/assets/js/system-scene.js"></script>{% endif %}
 </body>
 </html>

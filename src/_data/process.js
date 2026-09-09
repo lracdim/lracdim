@@ -2,7 +2,7 @@
 export default [
   {
     title: 'Diagnose where work breaks',
-    lede: 'Before anything is built, the operation is mapped as it actually runs — not as the org chart says it runs.',
+    lede: 'Before anything is built, the operation is mapped as it actually runs :  not as the org chart says it runs.',
     detail: 'Where work enters, who has to remember what, where things wait, what nobody can see, and what breaks when volume doubles. The public website gets a structural read as part of this.',
     output: 'A one-page map of the failure points, ranked by cost.',
     duration: '1 week'

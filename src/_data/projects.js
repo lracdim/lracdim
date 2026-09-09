@@ -1,11 +1,11 @@
 /**
- * Named projects — every entry and every fact here comes from the résumé
+ * Named projects :  every entry and every fact here comes from the résumé
  * (JCGD_resume.pdf, "Work experience" and "Notable projects"). Status labels
  * preserve the résumé's own distinctions: a demo is a demo, a concept is a
  * concept. No metrics are stated that the résumé does not state.
  *
  * `img` points to a local plate until a real screenshot lands in
- * src/assets/img/projects/<slug>.png — swap the path, nothing else changes.
+ * src/assets/img/projects/<slug>.png :  swap the path, nothing else changes.
  */
 export default [
   /* ---------------- Spade Security Services (June 2025 – present) ------- */
@@ -18,7 +18,7 @@ export default [
     summary:
       'Built and maintained the company WordPress site: 27 long-form SEO articles, service pages, and a local SEO silo targeting Placer County cities. WCAG 2.1 AA compliance implemented with Equalize Digital Accessibility Checker and PHP code snippets.',
     stack: ['WordPress', 'PHP', 'Local SEO', 'WCAG 2.1 AA'],
-    facts: ['27 long-form SEO articles', 'Local SEO silo — Placer County', 'WCAG 2.1 AA'],
+    facts: ['27 long-form SEO articles', 'Local SEO silo :  Placer County', 'WCAG 2.1 AA'],
     img: '/assets/img/projects/spade-website.svg',
     featured: true
   },
