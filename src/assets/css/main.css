@@ -1971,3 +1971,94 @@ a.cell { color: inherit; }
 .pl-packet { fill: var(--signal); }
 .pl-packet--halo { fill: var(--signal); opacity: 0.2; }
 .pl-caption { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint, var(--paper-35)); min-height: 1.2em; }
+
+/* ==========================================================================
+   Hero system map v2 — labels, flow, reactions, readout
+   ========================================================================== */
+
+.sm-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: #6b7c8e;
+  transition: fill 0.4s;
+}
+.sm-node.is-active .sm-label { fill: #4f8ff7; }
+.sm-node.is-done .sm-label { fill: #2fa36b; }
+
+/* Idle routes carry a slow, faint dash flow so the graph is never still. */
+.sm-flow {
+  stroke: #4f8ff7;
+  stroke-width: 1.25;
+  stroke-opacity: 0.22;
+  stroke-dasharray: 3 14;
+  animation: sm-flow 2.4s linear infinite;
+}
+@keyframes sm-flow { to { stroke-dashoffset: -34; } }
+.sm-route.is-live { stroke: #4f8ff7; stroke-opacity: 0.9; }
+
+/* Packet: comet tail + halo + core, rotated along the route. */
+.sm-packet__tail { fill: url(#sm-comet); }
+.sm-packet__halo { fill: #4f8ff7; opacity: 0.18; }
+.sm-packet__core { fill: #7fb0ff; }
+
+/* Request: button press */
+.sm-btn { fill: #3a4656; transition: fill 0.2s; }
+.sm-cursor { fill: #aeb9c6; }
+.sm-node.is-press .sm-btn { fill: #4f8ff7; }
+.sm-node.is-press .sm-cursor { transform: translate(1px, 1px); }
+
+/* Intake: fields fill left to right, in sequence */
+.sm-fill-a, .sm-fill-b, .sm-fill-c { fill: #4f8ff7; opacity: 0.85; }
+.sm-node.is-filled .sm-fill-a { animation: sm-fill 0.5s ease-out forwards; }
+.sm-node.is-filled .sm-fill-b { animation: sm-fill 0.5s ease-out 0.25s forwards; }
+.sm-node.is-filled .sm-fill-c { animation: sm-fill 0.4s ease-out 0.5s forwards; }
+@keyframes sm-fill { from { width: 0; } to { width: 90px; } }
+.sm-node.is-filled .sm-fill-c { --w: 50px; }
+@keyframes sm-fill-c { from { width: 0; } to { width: 50px; } }
+
+/* Workflow: the taken branch lights */
+.sm-diamond { transition: stroke 0.3s; }
+.sm-node.is-active .sm-diamond { stroke: #4f8ff7; }
+.sm-branch, .sm-branch-dot { transition: stroke 0.3s, fill 0.3s; }
+.sm-branch.is-taken { stroke: #4f8ff7; stroke-width: 2; }
+.sm-branch-dot.is-taken { fill: #4f8ff7; }
+
+/* Schedule: booked cell pops */
+.sm-daylbl { fill: #3a4656; }
+.sm-cell { transition: fill 0.3s; }
+.sm-cell--new { animation: sm-pop 0.6s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes sm-pop { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* Database: a row writes in */
+.sm-row { fill: #3a4656; transition: y 0.4s; }
+.sm-row--new { fill: #4f8ff7; }
+.sm-row--new.is-writing { animation: sm-write 0.9s ease-out forwards; }
+@keyframes sm-write { from { width: 0; } to { width: 52px; } }
+
+/* Dashboard: bars grow, "+1" floats */
+.sm-col { transition: y 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.3, 1), fill 0.3s; }
+.sm-kpi { font-family: var(--font-mono); font-size: 11px; fill: #2fa36b; opacity: 0; }
+.sm-node.is-kpi .sm-kpi { animation: sm-float 1.1s ease-out forwards; }
+@keyframes sm-float { 0% { opacity: 0; transform: translateY(6px); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+
+/* Notify: badge bump */
+.sm-badge { fill: #4f8ff7; }
+.sm-badge-n { font-family: var(--font-mono); font-size: 9px; font-weight: 700; fill: #0f1a2b; text-anchor: middle; }
+.sm-node.is-bump .sm-badge, .sm-node.is-bump .sm-badge-n { animation: sm-pop 0.5s ease-out; transform-box: fill-box; transform-origin: center; }
+
+/* Completed: the check draws */
+.sm-check { stroke: #2fa36b; stroke-dasharray: 30; stroke-dashoffset: 30; }
+.sm-node.is-checked .sm-check { animation: sm-draw-check 0.5s ease-out forwards; }
+@keyframes sm-draw-check { to { stroke-dashoffset: 0; } }
+
+/* Readout */
+.sm-readout__k { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; fill: #6b7c8e; }
+.sm-readout__v { font-family: var(--font-display); font-size: 22px; fill: #eff0f1; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 760px) { .sm-readout { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .sm-flow { animation: none; stroke-opacity: 0.12; }
+  .sm-check { stroke-dashoffset: 0; }
+}
