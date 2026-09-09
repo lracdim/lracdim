@@ -7,7 +7,7 @@ export default {
   location: 'Sta. Rosa, Laguna, Philippines',
   url: 'https://lracdimension.com',
   description:
-    'John Carl Dimatulac builds systems that run operations :  real-time tracking, scheduling engines, and scalable web infrastructure. Designed for execution, not presentation.',
+    'John Carl Dimatulac builds systems that run operations — real-time tracking, scheduling engines, and scalable web infrastructure. Designed for execution, not presentation.',
   email: 'lracdim@gmail.com',
 
   /* Public résumé (PDF). Leave empty until a version without personal data
@@ -19,12 +19,12 @@ export default {
      Runtime integrations. Both are optional; the site degrades honestly
      when they are empty.
 
-     scanEndpoint :  URL of the deployed Cloudflare Worker in workers/scan/.
+     scanEndpoint — URL of the deployed Cloudflare Worker in workers/scan/.
        When set, "Analyze my website" fetches the prospect's real HTML
        through it and reports a LIVE scan. When empty, it falls back to the
        modelled profile and says so in the report.
 
-     leadWebhook :  an n8n Webhook node URL (or any endpoint accepting JSON
+     leadWebhook — an n8n Webhook node URL (or any endpoint accepting JSON
        POST). Every diagnostic request and every /start/ submission is sent
        here as { source, ...fields, submittedAt, page }. When empty,
        submissions are kept in localStorage and the UI says a human will

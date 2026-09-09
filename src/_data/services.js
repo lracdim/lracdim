@@ -1,5 +1,5 @@
 /**
- * Services :  organised around what a client needs, not around technology.
+ * Services — organised around what a client needs, not around technology.
  * `sectors` are slugs from _data/industries.js.
  */
 export default [
@@ -58,7 +58,7 @@ export default [
   {
     id: 'integrations',
     title: 'Integrations and internal tools',
-    outcome: 'The tools you already use, connected :  and the small internal tools that retire the last spreadsheets.',
+    outcome: 'The tools you already use, connected — and the small internal tools that retire the last spreadsheets.',
     need: [
       'Data is re-keyed between systems',
       'One important process still runs in a spreadsheet',

@@ -3,7 +3,7 @@
  *
  * These are REFERENCE ARCHITECTURES, not delivered client case studies.
  * Every figure in `metrics` is a typical sector baseline and the target a
- * system like this is built to hit :  never a claim of past measured results.
+ * system like this is built to hit — never a claim of past measured results.
  * Delivered work with real numbers lives in _data/logs.js and operations.js.
  */
 
@@ -46,7 +46,7 @@ export default [
     ],
     build: {
       public: [
-        { name: 'Rate request', purpose: 'Structured lane, weight, and service inputs :  not a contact form' },
+        { name: 'Rate request', purpose: 'Structured lane, weight, and service inputs — not a contact form' },
         { name: 'Shipment tracking', purpose: 'Reference lookup with live status and ETA, no login required' },
         { name: 'Service lanes & coverage', purpose: 'Where you actually run, with transit times' },
         { name: 'Driver recruitment', purpose: 'Applications that land in a pipeline, not an inbox' }
@@ -72,7 +72,7 @@ export default [
       { name: 'Status enquiry calls', typical: 'Daily, per customer', target: '−70% via self-serve tracking' },
       { name: 'Expired compliance docs', typical: 'Found at audit', target: 'Zero, flagged 30 days out' }
     ],
-    firstBuild: 'Tracking page and the rate-request-to-quote pipeline :  the two things that stop the phone ringing.',
+    firstBuild: 'Tracking page and the rate-request-to-quote pipeline — the two things that stop the phone ringing.',
     stack: ['Eleventy / Next.js', 'Node.js', 'PostgreSQL', 'n8n', 'Twilio']
   },
 
@@ -140,9 +140,9 @@ export default [
       { name: 'Recare reactivation', typical: 'Ad hoc', target: 'Systematic weekly queue' },
       { name: 'Intake completed pre-arrival', typical: '0%', target: 'Over 70%' }
     ],
-    firstBuild: 'Online booking with reminders and the waitlist auto-offer :  the fastest path to recovered chair time.',
+    firstBuild: 'Online booking with reminders and the waitlist auto-offer — the fastest path to recovered chair time.',
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'n8n', 'Twilio'],
-    note: 'Built to respect patient data handling rules in your jurisdiction. Clinical scope stays with your practitioners :  this is scheduling, records, and revenue operations.'
+    note: 'Built to respect patient data handling rules in your jurisdiction. Clinical scope stays with your practitioners — this is scheduling, records, and revenue operations.'
   },
 
   /* ======================================================= LAW OFFICE === */
@@ -210,7 +210,7 @@ export default [
       { name: 'WIP to invoice', typical: '45–60 days', target: 'Under 20 days' },
       { name: 'Missed deadline exposure', typical: 'Single point of failure', target: 'Systematised with layered alerts' }
     ],
-    firstBuild: 'Intake with conflict check and SLA clock, plus contemporaneous time capture :  revenue protection first.',
+    firstBuild: 'Intake with conflict check and SLA clock, plus contemporaneous time capture — revenue protection first.',
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'n8n'],
     note: 'Client-fund and trust-account handling is regulated. Ledgers are built to your jurisdiction’s rules and reconciled, never improvised.'
   },
@@ -222,7 +222,7 @@ export default [
     sector: 'Deployment',
     tagline: 'A post is either covered or it is a liability.',
     summary:
-      'Guarding companies sell coverage. The system has to prove coverage happened :  every shift filled, every patrol walked, every incident recorded :  or the contract renewal becomes an argument about trust.',
+      'Guarding companies sell coverage. The system has to prove coverage happened — every shift filled, every patrol walked, every incident recorded — or the contract renewal becomes an argument about trust.',
     signals: [
       'Rosters are built in a spreadsheet each week',
       'Shift no-shows are discovered by the client',
@@ -280,7 +280,7 @@ export default [
       { name: 'Incident report lag', typical: '12–24 hours', target: 'Under 15 minutes, from site' },
       { name: 'Scheduling with expired licence', typical: 'Possible', target: 'Blocked by the system' }
     ],
-    firstBuild: 'Scheduling engine with geo-verified clock-in :  coverage you can schedule and then prove.',
+    firstBuild: 'Scheduling engine with geo-verified clock-in — coverage you can schedule and then prove.',
     stack: ['Next.js', 'PHP / Node.js', 'MySQL', 'n8n', 'Twilio']
   },
 
@@ -349,7 +349,7 @@ export default [
       { name: 'Milestone to claim issued', typical: '2–4 weeks', target: 'Under 3 days' },
       { name: 'Disputed variations', typical: 'Recurring', target: 'Evidenced by signed record' }
     ],
-    firstBuild: 'Change order workflow with e-signature and budget push :  the fastest margin recovery on any build.',
+    firstBuild: 'Change order workflow with e-signature and budget push — the fastest margin recovery on any build.',
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'n8n']
   },
 
@@ -381,7 +381,7 @@ export default [
       {
         title: 'Matching depends on recall',
         detail:
-          'A new instruction should notify every registered buyer whose criteria it fits :  instead it notifies whoever the agent thinks of.'
+          'A new instruction should notify every registered buyer whose criteria it fits — instead it notifies whoever the agent thinks of.'
       },
       {
         title: 'Pipeline is invisible until exchange',
@@ -418,7 +418,7 @@ export default [
       { name: 'Buyers alerted per new listing', typical: 'Whoever is remembered', target: 'Every match, instantly' },
       { name: 'Stalled deals detected', typical: 'At month-end review', target: 'Day 7, automatically' }
     ],
-    firstBuild: 'Lead routing with a response SLA and the saved-search match engine :  instructions won on speed.',
+    firstBuild: 'Lead routing with a response SLA and the saved-search match engine — instructions won on speed.',
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'n8n', 'Twilio']
   },
 
@@ -450,7 +450,7 @@ export default [
       {
         title: 'Progress is invisible to those who paid',
         detail:
-          'Parents and sponsoring employers have no view, so they ask :  and every question is answered manually.'
+          'Parents and sponsoring employers have no view, so they ask — and every question is answered manually.'
       },
       {
         title: 'Content is not a curriculum',
@@ -487,7 +487,7 @@ export default [
       { name: 'Enrolment admin per learner', typical: '30–45 minutes', target: 'Under 5 minutes' },
       { name: 'Certificate issue', typical: 'Days, manual', target: 'Immediate on completion' }
     ],
-    firstBuild: 'Enrolment-to-access pipeline plus the at-risk flag :  stop losing learners you already sold.',
+    firstBuild: 'Enrolment-to-access pipeline plus the at-risk flag — stop losing learners you already sold.',
     stack: ['Eleventy / Next.js', 'PHP / Node.js', 'MySQL', 'n8n']
   },
 
@@ -555,7 +555,7 @@ export default [
       { name: 'On-time filing', typical: 'Achieved by overtime', target: 'Achieved by scheduling' },
       { name: 'Status enquiry emails', typical: 'Constant', target: '−80% via client dashboard' }
     ],
-    firstBuild: 'Document request engine with automated chase :  it returns capacity in the first month.',
+    firstBuild: 'Document request engine with automated chase — it returns capacity in the first month.',
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'n8n']
   },
 
@@ -624,7 +624,7 @@ export default [
       { name: 'Additional work approved', typical: 'Low, unevidenced', target: 'Higher, with photo evidence' },
       { name: 'Rebooking from reminders', typical: 'None sent', target: 'Systematic recall revenue' }
     ],
-    firstBuild: 'Photo inspection with approval-by-link :  it unblocks bays from week one.',
+    firstBuild: 'Photo inspection with approval-by-link — it unblocks bays from week one.',
     stack: ['Next.js', 'Node.js', 'MySQL', 'n8n', 'Twilio']
   },
 
@@ -635,7 +635,7 @@ export default [
     sector: 'Placement',
     tagline: 'Speed to shortlist decides who fills the role.',
     summary:
-      'Agencies compete on how fast a credible shortlist reaches the client. Everything that slows that down :  CVs buried in an inbox, compliance documents chased by hand, timesheets collected on Friday :  is margin.',
+      'Agencies compete on how fast a credible shortlist reaches the client. Everything that slows that down — CVs buried in an inbox, compliance documents chased by hand, timesheets collected on Friday — is margin.',
     signals: [
       'Applications arrive as email attachments',
       'The candidate pipeline is a spreadsheet',
@@ -661,7 +661,7 @@ export default [
       {
         title: 'Timesheet to invoice is manual',
         detail:
-          'Contractor hours are collected, chased, retyped, and only then billed :  delaying cash every single week.'
+          'Contractor hours are collected, chased, retyped, and only then billed — delaying cash every single week.'
       }
     ],
     build: {

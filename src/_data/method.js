@@ -1,9 +1,9 @@
-// How I read a system when I audit one. My own diagnostic method :  this is the
+// How I read a system when I audit one. My own diagnostic method — this is the
 // section that pairs with the analyzer feature on the home page.
 export default [
   {
     title: 'Where work enters',
-    desc: 'Forms, inboxes, calls :  every entry point into the business',
+    desc: 'Forms, inboxes, calls — every entry point into the business',
     status: 'INPUT'
   },
   {
