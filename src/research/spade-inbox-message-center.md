@@ -3,6 +3,7 @@ title: "Spade Inbox: threading email with n8n"
 description: "A message center built on Express, TypeScript, and PostgreSQL, with n8n handling how incoming email is threaded."
 topic: Internal tools
 date: 2026-09-09
+order: 8
 project: spade-inbox
 ---
 

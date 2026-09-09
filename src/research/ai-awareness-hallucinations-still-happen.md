@@ -3,6 +3,7 @@ title: "AI awareness: 96% know chatbots make things up, 72% trust them anyway"
 description: "A 2026 survey shows people know about hallucinations and rely on AI regardless. What that gap means for anyone putting an assistant on a website."
 topic: AI awareness
 date: 2026-09-09
+order: 4
 ---
 
 Tidio's 2026 survey of 974 internet users produced a contradiction worth sitting with. 96% of respondents know that AI chatbots produce false information, and 86% say they have experienced it personally. 72% still trust AI to give reliable, truthful answers. Three quarters of them have been misled by it at least once.

@@ -3,7 +3,7 @@ title: "Is this the end of the WordPress era?"
 description: "WordPress has lost share for the first sustained stretch in twenty years. The numbers say why, and they say something different from the headline."
 topic: Web development
 date: 2026-09-09
-featured: true
+order: 1
 ---
 
 For most of the last two decades the WordPress story only went one way: up. That changed in 2026. According to W3Techs, the tracker most of the industry quotes, WordPress powered 43.2% of all websites in December 2025 and 41.9% by late May 2026. Search Engine Journal counted six consecutive months of decline, a drop of 1.3 percentage points in half a year, which is double the loss for the whole of 2025. On the day this article was written, W3Techs shows 40.7% of all websites and 58.9% of sites with a known CMS.

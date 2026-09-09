@@ -3,6 +3,7 @@ title: "Since 2 August 2026, your website chatbot has to say what it is"
 description: "The EU AI Act's transparency rules are now in force. They reach further than the high-risk headlines suggest, and they apply to ordinary business websites."
 topic: AI updates
 date: 2026-09-09
+order: 5
 ---
 
 Most coverage of the EU AI Act has been about the high-risk tier: hiring tools, credit scoring, biometrics. Those obligations were pushed back in 2026, to December 2027 for stand-alone systems and August 2028 for AI embedded in already-regulated products. What was not delayed is Article 50, the transparency article, which became applicable on 2 August 2026 along with the enforcement powers of the EU's AI Office.

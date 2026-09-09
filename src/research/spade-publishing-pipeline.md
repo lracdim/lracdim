@@ -3,6 +3,7 @@ title: "Four n8n stages behind a WordPress blog"
 description: "How the Spade publishing pipeline moves a topic through research, writing, and SEO generation before it reaches WordPress."
 topic: Automation
 date: 2026-09-09
+order: 7
 project: content-pipeline
 ---
 

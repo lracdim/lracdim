@@ -3,6 +3,7 @@ title: "Spade Academy: a learning platform on two hosts"
 description: "A React and TypeScript learning management system with an Express and PostgreSQL back end, split across Hostinger and Railway."
 topic: Applications
 date: 2026-09-09
+order: 9
 project: spade-academy
 ---
 

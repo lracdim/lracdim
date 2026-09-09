@@ -3,6 +3,7 @@ title: "AI agents: why most pilots stall, and what the ones in production have i
 description: "Adoption surveys show agents everywhere in testing and fewer in production. The difference is rarely the model. It is the workflow around it."
 topic: Automation
 date: 2026-09-09
+order: 6
 ---
 
 Zapier's survey of more than 500 enterprise leaders gives the cleanest picture of where AI agents stand: 72% of organisations are using or testing them, 40% run multiple agents in production, and 32% are still in pilots. 84% intend to increase investment in the next twelve months. Among smaller companies the picture is thinner and earlier. Upwork's 2026 report on SMBs found 41% of leaders running pilots to test agents in decision-making, while conceding that the productivity gains have not yet matched the confidence placed in them.

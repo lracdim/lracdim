@@ -3,7 +3,7 @@ title: "AI Overviews cut clicks by 40%. What a small business website does now"
 description: "A randomised experiment has finally isolated what Google's AI answers do to organic traffic. The response is not to write more articles."
 topic: SEO
 date: 2026-09-09
-featured: true
+order: 3
 ---
 
 For two years the argument about Google's AI Overviews ran on before-and-after traffic charts, which are easy to dispute. In 2026 two researchers ran the experiment properly. Saharsh Agarwal of the Indian School of Business and Ananya Sen of Carnegie Mellon recruited 1,065 desktop Chrome users, installed a browser extension, and randomly hid AI Overviews for some of them between January and February 2026.

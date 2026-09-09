@@ -3,7 +3,7 @@ title: "Vibe and verify: the responsible way to ship AI-written code"
 description: "AI assistants now write syntactically correct code almost every time. The security pass rate has not moved in two years. Here is what that means for how a developer should work."
 topic: Responsible AI
 date: 2026-09-09
-featured: true
+order: 2
 ---
 
 Two numbers describe the state of AI-assisted development in 2026. The first is 84%: the share of developers in Stack Overflow's 2025 survey who use or plan to use AI tools, with just over half of professionals using them daily. The second is 55%: the share of AI-generated code that passes a basic security check in Veracode's spring 2026 update, a figure the report notes has barely moved in two years while syntax correctness climbed past 95%.
