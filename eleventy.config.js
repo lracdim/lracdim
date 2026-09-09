@@ -13,6 +13,9 @@ export default function (eleventyConfig) {
   // outside it — theme CSS and app JS are loaded only by layouts/demo.njk.
   eleventyConfig.addPassthroughCopy({ 'src/assets/demos': 'assets/demos' });
 
+  // Google Search Console ownership file (kept outside src so it is copied raw).
+  eleventyConfig.addPassthroughCopy({ 'verify/google1cc6471cb9d979e9.html': 'google1cc6471cb9d979e9.html' });
+
   // Cloudflare Pages / Netlify platform files.
   eleventyConfig.addPassthroughCopy({ 'src/_headers': '_headers' });
   eleventyConfig.addPassthroughCopy({ 'src/_redirects': '_redirects' });
