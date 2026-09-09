@@ -5,6 +5,8 @@ import projects from './projects.js';
 const featureOrder = ['spade-website', 'meridian', 'st-clair'];
 // Real screenshots only. Projects without one render without an image.
 const images = { 'spade-website': 'spade', meridian: 'meridian', 'st-clair': 'st-clair' };
+// Intrinsic pixel size of each screenshot, for width/height attributes.
+const sizes = { spade: [1265, 648], meridian: [1265, 712], 'st-clair': [1265, 712] };
 const notes = {
   meridian: 'Portfolio demo, not a live medical transport operation. Any demo testimonials inside it are placeholders, not endorsements.',
   'st-clair': 'Independent redesign concept. It does not imply an official client relationship or a production booking system.',
@@ -23,6 +25,8 @@ export default projects
     tech: project.stack || [],
     features: project.facts || [],
     image: images[project.slug],
+    imageWidth: (sizes[images[project.slug]] || [1265, 712])[0],
+    imageHeight: (sizes[images[project.slug]] || [1265, 712])[1],
     featured: featureOrder.includes(project.slug),
     role: project.role || 'Design and development',
     context: project.context || project.summary,
