@@ -44,6 +44,7 @@ export default {
     { label: 'Work', href: '/work/' },
     { label: 'Services', href: '/services/' },
     { label: 'Process', href: '/process/' },
+    { label: 'Research', href: '/research/' },
     { label: 'About', href: '/about/' }
   ],
 
@@ -51,7 +52,7 @@ export default {
 
   /* Secondary and experimental destinations live in the footer only. */
   footerLinks: [
-    { label: 'Build notes', href: '/logs/' },
+    { label: 'Research', href: '/research/' },
     { label: 'Resume', href: '/resume/' },
     { label: 'Clinic demo template', href: '/demos/clinic/' },
     { label: 'Industry blueprints', href: '/services/#sectors' },

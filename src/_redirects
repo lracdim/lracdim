@@ -1,5 +1,6 @@
 /admin  /demos/clinic/portal/  302
-/logs.html  /logs/  301
+/logs.html  /research/  301
+/logs/  /research/  301
 /demos/  /  301
 /terminal/  /  301
 /builds/  /work/  301

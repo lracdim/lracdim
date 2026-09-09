@@ -33,6 +33,11 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addFilter('year', () => new Date().getFullYear());
 
+  // "9 September 2026" for article dates.
+  eleventyConfig.addFilter('date_long', (d) =>
+    new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  );
+
   // First N items of an array — used for card previews.
   eleventyConfig.addFilter('slice_first', (arr, n) =>
     Array.isArray(arr) ? arr.slice(0, n) : []

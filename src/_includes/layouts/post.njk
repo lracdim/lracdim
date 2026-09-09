@@ -1,0 +1,20 @@
+---
+layout: layouts/base.njk
+---
+<article class="case-study shell post">
+  <a class="text-link" href="/research/">← All research</a>
+  <header class="page-intro">
+    <p class="overline">{{ topic }} / {{ page.date | date_long }}</p>
+    <h1>{{ title }}</h1>
+    {% if description %}<p>{{ description }}</p>{% endif %}
+  </header>
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+  {% if project %}
+    {% for p in portfolio %}{% if p.slug == project %}
+      <p class="case-note">Related project: <a href="/work/{{ p.slug }}/">{{ p.title }}</a> — {{ p.kind }}.</p>
+    {% endif %}{% endfor %}
+  {% endif %}
+</article>
+{% include "partials/studio-contact.njk" %}
