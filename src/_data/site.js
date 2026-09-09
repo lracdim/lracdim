@@ -5,9 +5,9 @@ export default {
   initials: 'J.C.D',
   role: 'Full-Stack Web Developer · WordPress & Automation Engineer',
   location: 'Sta. Rosa, Laguna, Philippines',
-  url: 'https://lracdimension.com',
+  url: 'https://lracdimension.vercel.app',
   description:
-    'John Carl Dimatulac builds systems that run operations — real-time tracking, scheduling engines, and scalable web infrastructure. Designed for execution, not presentation.',
+    'John Carl Dimatulac is a full-stack web developer and WordPress & automation engineer in Laguna, Philippines. Web applications, WordPress platforms, n8n automation, and AI integration for teams that need their operations to run.',
   email: 'lracdim@gmail.com',
 
   /* Public résumé (PDF). Leave empty until a version without personal data

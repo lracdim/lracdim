@@ -1,10 +1,11 @@
 ---
 layout: layouts/base.njk
+ogType: article
 ---
 <article class="case-study shell post">
   <a class="text-link" href="/research/">← All research</a>
   <header class="page-intro">
-    <p class="overline">{{ topic }} / {{ page.date | date_long }}</p>
+    <p class="overline">{{ topic }} / {{ page.date | date_long }} / {{ content | reading_time }} min read</p>
     <h1>{{ title }}</h1>
     {% if description %}<p>{{ description }}</p>{% endif %}
   </header>

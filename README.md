@@ -95,15 +95,28 @@ website diagnostic) live in the footer only. Old URLs (`/builds/`, `/capabilitie
 The site is a static build; the only moving parts are two optional integrations
 configured in `src/_data/site.js`.
 
-1. Push this repo to GitHub.
-2. Cloudflare dashboard → Workers & Pages → Create → Pages → connect the repo.
-   - Build command: `npm run build`
-   - Output directory: `_site`
-   - Node version: 22 (read from `.nvmrc`)
-3. Add your custom domain. `src/_headers` and `src/_redirects` are copied into
-   the build and picked up automatically.
+The canonical URL is `https://lracdimension.vercel.app` (`site.url` in
+`src/_data/site.js`). Every canonical tag, Open Graph URL, sitemap entry, and
+JSON-LD `@id` is derived from it, so change it in one place if the domain moves.
 
-Netlify works identically (same build command and output directory).
+**Vercel (primary).** Push the repo to GitHub and import it in Vercel. `vercel.json`
+already sets the build command (`npm run build`), the output directory (`_site`),
+trailing slashes, the redirects for retired URLs, security headers, long-lived
+caching for `/assets/`, and `noindex` for `/demos/`. Node 22 is read from `.nvmrc`.
+
+**Cloudflare Pages or Netlify.** Same build command and output directory.
+`src/_headers` and `src/_redirects` carry the equivalent rules and are copied
+into the build.
+
+### SEO checklist after the first deploy
+
+- Submit `https://lracdimension.vercel.app/sitemap.xml` in Google Search Console.
+- Confirm `/robots.txt` resolves and points at the sitemap.
+- Test one article at `https://validator.schema.org/` (Article + BreadcrumbList)
+  and the home page (Person + WebSite).
+- New research articles are single markdown files in `src/research/` with
+  `title`, `description`, `topic`, and `date` front matter; reading time,
+  Open Graph, and structured data are generated.
 
 ### Live scanner (turns the diagnostic from modelled to measured)
 

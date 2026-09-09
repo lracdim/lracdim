@@ -4,6 +4,7 @@ pagination:
   data: industries
   size: 1
   alias: industry
+  addAllPagesToCollections: true
 permalink: "/industries/{{ industry.slug }}/"
 eleventyComputed:
   title: "{{ industry.name | safe }}"

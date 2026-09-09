@@ -33,6 +33,17 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addFilter('year', () => new Date().getFullYear());
 
+  eleventyConfig.addFilter('date_iso', (d) => new Date(d).toISOString());
+
+  // Minutes to read at ~220 wpm, minimum 1. Strips tags and front matter.
+  eleventyConfig.addFilter('reading_time', (html) => {
+    const words = String(html || '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.round(words / 220));
+  });
+  eleventyConfig.addFilter('word_count', (html) =>
+    String(html || '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length
+  );
+
   // "9 September 2026" for article dates.
   eleventyConfig.addFilter('date_long', (d) =>
     new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
