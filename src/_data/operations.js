@@ -1,57 +1,47 @@
+/**
+ * Work history — exactly as on the résumé (JCGD_resume.pdf). `delivered`
+ * lists what the résumé says was built or done; no figures are added.
+ */
 export default {
   history: [
     {
       date: 'June 2025 — Present',
-      role: 'Technical Lead',
-      title: 'Web Developer, System Solutions & AI Lead',
-      company: 'Spade Security Services — Rocklin, CA',
+      role: 'Freelance',
+      title: 'Freelance Full-Stack Web Developer',
+      company: 'Spade Security Services — Rocklin, CA (remote)',
       points: [
-        'Redeveloped and upgraded the company website to enhance system functionality and user interface.',
-        'Architected and implemented backend system improvements using PHP and MySQL.',
-        'Designed custom web solutions to support specific operational requirements.'
+        'Built and maintained the company WordPress website, including 27 long-form SEO blog articles, service pages, and a local SEO silo architecture targeting Placer County cities.',
+        'Developed the Argus AI chatbot (WordPress REST API + NVIDIA-hosted MiniMax) with full markdown rendering and session memory.',
+        'Built Spade Handler, an internal blog publisher and social media automation tool (Next.js / Node.js / MongoDB, deployed on Railway).',
+        'Created Spade Inbox (Express / TypeScript / PostgreSQL) for message-center automation with n8n email threading.',
+        'Implemented WCAG 2.1 AA accessibility compliance using Equalize Digital Accessibility Checker and PHP code snippets.',
+        'Developed an n8n blog automation pipeline: Researcher, Writer, SEO Generator, WordPress publisher.'
       ],
-      impact: '40% improvement in system performance'
+      delivered: 'Company site, Argus, Spade Handler, Spade Inbox, content pipeline'
     },
     {
-      date: 'January 2025 — Present',
-      role: 'Founder',
-      title: 'Founder / Web Strategist',
-      company: 'Elimate Web Automation',
-      points: [
-        'Founded a venture focused on transforming standard websites into AI-powered automated platforms.',
-        'Develop intelligent automation tools tailored to client needs using advanced system integrations.',
-        'Provide direct customer support, ongoing technical maintenance, and troubleshooting for AI-integrated applications.'
-      ],
-      impact: 'Serving 8+ enterprise clients'
-    },
-    {
-      date: 'November 2024 — July 2025',
-      role: 'Senior Engineer',
-      title: 'Automation Engineer',
-      company: 'AgentGenius.ai — Toronto, Canada',
-      points: [
-        'Developed and deployed AI-powered web applications and integrated automation tools into existing enterprise systems.',
-        'Optimized web performance and user experience using data-driven AI insights.'
-      ],
-      impact: 'Reduced operational costs by 70%'
+      date: 'August 2023 — 2026',
+      role: 'IT staff',
+      title: 'IT Staff / Web Developer',
+      company: 'Sumitomo Mitsui Construction Co. / SaGabuilt Development Corp. — Calumpit, Bulacan',
+      points: ['Supported IT infrastructure and internal digital tools for construction yard operations.'],
+      delivered: 'IT infrastructure and internal tools for yard operations'
     },
     {
       date: 'April 2017 — March 2018',
-      role: 'IT Specialist',
+      role: 'Network admin',
       title: 'Network Administrator',
-      company: 'Pistevo Incorporated',
-      points: [
-        'Maintained agent computer systems to ensure zero downtime during operating hours.',
-        'Created the company ESL website, Pistevo Learn, using WordPress.'
-      ],
-      impact: 'Zero downtime achieved'
+      company: 'Pistevo Incorporated — Cabuyao, Laguna',
+      points: ['Managed the local area network, hardware maintenance, and IT support for office staff.'],
+      delivered: 'LAN, hardware maintenance, IT support'
+    },
+    {
+      date: 'May 2016 — January 2017',
+      role: 'Clerk',
+      title: 'Accounting Clerk',
+      company: 'Bulalacao Municipal Hall — Bulalacao, Oriental Mindoro',
+      points: ['Handled financial records and clerical accounting duties for the municipal government.'],
+      delivered: 'Financial records for the municipal government'
     }
-  ],
-  process: [
-    { title: 'Analysis', desc: 'Identify bottlenecks and opportunities' },
-    { title: 'Design', desc: 'Architect custom solutions' },
-    { title: 'Implement', desc: 'Build and integrate systems' },
-    { title: 'Optimize', desc: 'Monitor and improve performance' }
-  ],
-  brands: ['SPADE_SEC', 'ELIM8_WEB', 'AGENT_GENIUS', 'PISTEVO_INC', 'AUTO_STRAT']
+  ]
 };

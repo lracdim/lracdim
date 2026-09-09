@@ -3,12 +3,17 @@ export default {
   shortName: 'LRACDIM',
   owner: 'John Carl Dimatulac',
   initials: 'J.C.D',
-  role: 'System Builder / Automation Engineer',
-  location: 'Laguna, Philippines 4025',
+  role: 'Full-Stack Web Developer · WordPress & Automation Engineer',
+  location: 'Sta. Rosa, Laguna, Philippines',
   url: 'https://lracdimension.com',
   description:
     'John Carl Dimatulac builds systems that run operations — real-time tracking, scheduling engines, and scalable web infrastructure. Designed for execution, not presentation.',
-  email: 'john@spadesecurityservices.com',
+  email: 'lracdim@gmail.com',
+
+  /* Public résumé (PDF). Leave empty until a version without personal data
+     and references is exported; the link is hidden while empty. */
+  resumeUrl: '',
+  portrait: '/assets/img/brand/portrait-1200.jpg',
 
   /* ------------------------------------------------------------------
      Runtime integrations. Both are optional; the site degrades honestly
@@ -31,8 +36,8 @@ export default {
   /* Public profiles. Only entries with a real URL are rendered. */
   social: [
     { label: 'GitHub', href: '' },
-    { label: 'LinkedIn', href: '' },
-    { label: 'Email', href: 'mailto:john@spadesecurityservices.com' }
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/carl-dimatulac/' },
+    { label: 'Email', href: 'mailto:lracdim@gmail.com' }
   ],
 
   nav: [
@@ -48,6 +53,7 @@ export default {
   footerLinks: [
     { label: 'Execution logs', href: '/logs/' },
     { label: 'Clinic demo template', href: '/demos/clinic/' },
-    { label: 'Industry blueprints', href: '/services/#sectors' }
+    { label: 'Industry blueprints', href: '/services/#sectors' },
+    { label: 'Elimate Web Automation', href: 'https://elimate.vercel.app' }
   ]
 };

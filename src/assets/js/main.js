@@ -8,6 +8,7 @@ import { initDiagnosticModal } from './modal.js';
 import { initStartForm } from './start.js';
 import { flushQueue } from './leads.js';
 import { initSystemMap } from './systemmap.js';
+import { initPipeline } from './pipeline.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -326,6 +327,7 @@ async function boot() {
   await initPreloader();
 
   initSystemMap();
+  initPipeline();
   initHeroLines();
   if (!initScrollMotion()) initReveal();
 }

@@ -1,0 +1,51 @@
+{#
+  Researcher → Writer → SEO Generator → WordPress publisher.
+  The four n8n stages of the Spade content pipeline, drawn as a track.
+  pipeline.js sends a packet stage to stage and lights each stage as the
+  packet arrives. Static under prefers-reduced-motion.
+#}
+<div class="pipeline" data-pipeline aria-label="Content pipeline: Researcher, Writer, SEO Generator, WordPress publisher">
+  <svg viewBox="0 0 640 220" focusable="false">
+    <path class="pl-track" data-track d="M96 88 H176 M256 88 H336 M416 88 H496"/>
+
+    {# Researcher: magnifier over a document #}
+    <g class="pl-stage" data-stage="0" transform="translate(16 48)">
+      <rect width="80" height="80" rx="8"/>
+      <rect class="pl-ico" x="22" y="18" width="30" height="40" rx="3"/>
+      <circle class="pl-ico" cx="48" cy="52" r="9"/>
+      <path class="pl-ico" d="M55 59 L64 68"/>
+      <text x="40" y="104" text-anchor="middle">Researcher</text>
+    </g>
+
+    {# Writer: lines being written #}
+    <g class="pl-stage" data-stage="1" transform="translate(176 48)">
+      <rect width="80" height="80" rx="8"/>
+      <rect class="pl-fill" x="20" y="24" width="40" height="4" rx="2"/>
+      <rect class="pl-fill" x="20" y="36" width="34" height="4" rx="2"/>
+      <rect class="pl-fill" x="20" y="48" width="40" height="4" rx="2"/>
+      <rect class="pl-fill" x="20" y="60" width="22" height="4" rx="2"/>
+      <text x="40" y="104" text-anchor="middle">Writer</text>
+    </g>
+
+    {# SEO Generator: tag and rising bars #}
+    <g class="pl-stage" data-stage="2" transform="translate(336 48)">
+      <rect width="80" height="80" rx="8"/>
+      <path class="pl-ico" d="M22 30 H40 L52 42 L40 54 H22 Z"/>
+      <rect class="pl-fill" x="30" y="60" width="6" height="8"/>
+      <rect class="pl-fill" x="40" y="54" width="6" height="14"/>
+      <rect class="pl-fill" x="50" y="46" width="6" height="22"/>
+      <text x="40" y="104" text-anchor="middle">SEO Gen.</text>
+    </g>
+
+    {# WordPress publisher: globe with a W-ish stroke #}
+    <g class="pl-stage" data-stage="3" transform="translate(496 48)">
+      <rect width="80" height="80" rx="8"/>
+      <circle class="pl-ico" cx="40" cy="40" r="18"/>
+      <path class="pl-ico" d="M26 34 L32 50 L40 32 L48 50 L54 34"/>
+      <text x="40" y="104" text-anchor="middle">Publisher</text>
+    </g>
+
+    <g data-packets></g>
+  </svg>
+  <p class="pl-caption" data-caption>Topic in</p>
+</div>

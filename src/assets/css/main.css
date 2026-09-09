@@ -1924,3 +1924,50 @@ a.cell { color: inherit; }
   .sm-route { stroke-dashoffset: 0; animation: none; }
   .sm-node { opacity: 1; animation: none; }
 }
+
+/* ==========================================================================
+   Projects: status labels, detail blocks
+   ========================================================================== */
+
+.status {
+  display: inline-block;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--line, var(--ink-14));
+  color: var(--dim, var(--ink-55));
+}
+.status--live { color: var(--ok); border-color: rgba(21, 122, 99, 0.45); }
+.status--demo { color: var(--amber); border-color: rgba(232, 163, 60, 0.45); }
+.status--concept { color: var(--faint, var(--ink-35)); border-style: dashed; }
+.status--plugin { color: var(--signal); border-color: var(--signal-30); }
+
+.project { scroll-margin-top: 5.5rem; }
+.project__facts { display: grid; gap: 0.35rem; margin-top: 0.9rem; }
+.project__facts li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); gap: 0.35rem; font-size: 0.875rem; color: var(--dim, var(--ink-55)); }
+.project__facts li::before { content: '//'; font-family: var(--font-mono); font-size: 0.625rem; color: var(--signal); padding-top: 0.3rem; }
+.project__links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; margin-top: 1rem; }
+
+.portrait img { aspect-ratio: 1; object-fit: cover; }
+
+/* ==========================================================================
+   Pipeline walkthrough — SVG, sand packets, stages light in sequence
+   ========================================================================== */
+
+.pipeline { width: 100%; }
+.pipeline svg { width: 100%; height: auto; display: block; }
+.pl-track { stroke: var(--paper-14); stroke-width: 1.5; fill: none; }
+.pl-stage rect { fill: var(--ink-soft); stroke: var(--paper-14); stroke-width: 1; transition: stroke 0.5s; }
+.pl-stage text { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; fill: var(--paper-50); text-transform: uppercase; transition: fill 0.5s; }
+.pl-stage .pl-ico { fill: none; stroke: var(--paper-50); stroke-width: 1.5; transition: stroke 0.5s; }
+.pl-stage .pl-fill { fill: var(--paper-35); transition: fill 0.5s; }
+.pl-stage.is-on rect { stroke: var(--signal); }
+.pl-stage.is-on text { fill: var(--paper); }
+.pl-stage.is-on .pl-ico { stroke: var(--signal); }
+.pl-stage.is-on .pl-fill { fill: var(--signal); }
+.pl-packet { fill: var(--signal); }
+.pl-packet--halo { fill: var(--signal); opacity: 0.2; }
+.pl-caption { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint, var(--paper-35)); min-height: 1.2em; }

@@ -1,7 +1,7 @@
 {
   "name": "lracdimension",
   "version": "1.0.0",
-  "description": "LRACDIMENSION \u2014 systems portfolio of John Carl Dimatulac. Built with Eleventy.",
+  "description": "LRACDIMENSION — systems portfolio of John Carl Dimatulac. Built with Eleventy.",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,5 +16,11 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "gsap": "^3.15.0",
+    "three": "^0.186.0"
   }
 }

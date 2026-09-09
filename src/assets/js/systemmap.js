@@ -88,10 +88,15 @@ export function initSystemMap() {
        { offsetDistance: '94%', opacity: 1, offset: 0.92 }, { offsetDistance: '100%', opacity: 0 }],
       { duration, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
     );
-    anim.onfinish = () => {
+    let landed = false;
+    const land = () => {
+      if (landed) return;
+      landed = true;
       g.remove();
       if (dest) arrive(dest);
     };
+    anim.onfinish = land;
+    setTimeout(land, duration + 800); // throttled tab: still clean up and land
   }
 
   function loop() {

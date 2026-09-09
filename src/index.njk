@@ -71,33 +71,29 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
     <div class="eyebrow">
       <span class="label">Selected builds</span>
       <span class="eyebrow__rule"></span>
-      <span class="label label--plain label--faint">{{ builds.length }} systems</span>
+      <span class="label label--plain label--faint">{{ projects.length }} named projects</span>
     </div>
 
     <div class="work">
-      {% for build in builds %}
-        <a class="work__item" href="/work/" data-reveal data-reveal-delay="{{ loop.index0 * 60 }}">
+      {% for p in projects %}{% if p.featured %}
+        <a class="work__item" href="/work/#{{ p.slug }}" data-reveal data-reveal-delay="{{ loop.index0 * 50 }}">
           <span class="work__index">{{ loop.index0 | pad }}</span>
-
           <span>
-            <span class="work__title">{{ build.title }}</span>
+            <span class="work__title">{{ p.name }}</span>
             <span class="work__tech work__meta">
-              {% for t in build.tech %}<span class="tag">{{ t }}</span>{% endfor %}
+              <span class="status status--{{ p.status }}">{{ p.status }}</span>
+              {% for t in p.stack | slice_first(3) %}<span class="tag">{{ t }}</span>{% endfor %}
             </span>
           </span>
-
-          <span class="work__meta">
-            <span class="work__desc">{{ build.desc }}</span>
-          </span>
-
+          <span class="work__meta"><span class="work__desc">{{ p.facts[0] }}{% if p.facts[1] %} — {{ p.facts[1] }}{% endif %}</span></span>
           <span class="work__glyph" aria-hidden="true">&#8599;</span>
         </a>
-      {% endfor %}
+      {% endif %}{% endfor %}
     </div>
 
     <p style="margin-top:2.5rem">
       <a class="link" href="/work/">
-        View all builds <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+        All {{ projects.length }} projects <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>
     </p>
   </div>
@@ -183,6 +179,32 @@ description: John Carl Dimatulac builds systems that run operations — real-tim
             </div>
           {% endfor %}
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ======================================================== PIPELINE ===== #}
+<section class="band band--dark section" id="pipeline">
+  <div class="shell">
+    <div class="eyebrow">
+      <span class="label">One automation, end to end</span>
+      <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">Spade Security Services · n8n</span>
+    </div>
+    <div class="split">
+      <div class="split__lead">
+        <h2 class="h2">A blog programme that runs without a person driving each step.</h2>
+        <p class="lede" style="margin-top:1.5rem">
+          Four n8n stages. A topic goes in; a published WordPress post comes
+          out. This is the pipeline behind the 27 articles on the Spade site.
+        </p>
+        <p style="margin-top:2rem">
+          <a class="link" href="/logs/#log-03">Read the case note <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+        </p>
+      </div>
+      <div class="split__body">
+        {% include "partials/pipeline.njk" %}
       </div>
     </div>
   </div>

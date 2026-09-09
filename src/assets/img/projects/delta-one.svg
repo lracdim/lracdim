@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="DELTA ONE">
+  <defs><pattern id="h" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(5)"><rect width="14" height="1" fill="#eff0f1" fill-opacity="0.09"/></pattern></defs>
+  <rect width="1200" height="750" fill="#18191b"/><rect width="1200" height="750" fill="url(#h)"/>
+  <rect width="1200" height="64" fill="#202124"/>
+  <text x="48" y="41" font-family="JetBrains Mono, Consolas, monospace" font-size="18" fill="#e2d8a3">//</text>
+  <text x="80" y="41" font-family="JetBrains Mono, Consolas, monospace" font-size="18" fill="#eff0f1" fill-opacity="0.6">SPEC / CONCEPT</text>
+  <text x="48" y="420" font-family="Archivo, Helvetica, Arial, sans-serif" font-size="84" letter-spacing="-3" fill="#eff0f1">DELTA ONE</text>
+  <rect x="48" y="450" width="220" height="4" fill="#e2d8a3"/>
+  <text x="48" y="700" font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#eff0f1" fill-opacity="0.38">SCREENSHOT PENDING</text>
+</svg>

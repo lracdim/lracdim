@@ -2,7 +2,7 @@
 layout: layouts/base.njk
 title: About
 permalink: /about/
-description: John Carl Dimatulac is a web developer and automation engineer in Laguna, Philippines. He builds operational systems for teams whose work has outgrown spreadsheets and manual follow-ups.
+description: John Carl Dimatulac is a full-stack web developer and automation engineer in Sta. Rosa, Laguna. He builds operational systems for teams whose work has outgrown spreadsheets and manual follow-ups.
 ---
 
 <section class="pagehead">
@@ -18,41 +18,52 @@ description: John Carl Dimatulac is a web developer and automation engineer in L
     <div class="split">
       <div class="split__lead">
         <figure class="portrait" data-reveal>
-          <img src="/assets/img/brand/workspace.svg" alt="" width="1200" height="1500">
+          <img src="{{ site.portrait }}" alt="{{ site.owner }}" width="1200" height="1200" loading="eager" decoding="async">
           <figcaption class="label label--plain label--faint">{{ site.owner }} — {{ site.location }}</figcaption>
         </figure>
       </div>
 
       <div class="split__body">
         <p class="lede">
-          {{ site.owner }} is a web developer and automation engineer based in
-          Laguna, Philippines. He builds operational systems for teams whose
-          day-to-day work has outgrown spreadsheets, disconnected tools, and
-          manual follow-ups.
+          {{ site.owner }} is a full-stack web developer and automation engineer
+          based in Sta. Rosa, Laguna, Philippines. He builds operational systems
+          for teams whose day-to-day work has outgrown spreadsheets,
+          disconnected tools, and manual follow-ups.
         </p>
 
         <div class="facts-list">
           <div class="facts-list__item" data-reveal>
             <span class="facts-list__k">8+ years</span>
-            <span class="facts-list__v">Building web systems, since 2017.</span>
+            <span class="facts-list__v">Building web applications, WordPress plugins and themes, and automation pipelines.</span>
           </div>
           <div class="facts-list__item" data-reveal data-reveal-delay="60">
             <span class="facts-list__k">Inside the operation</span>
-            <span class="facts-list__v">Experience in real operating environments — a security company, an AI automation firm, a network — not only as an outside developer.</span>
+            <span class="facts-list__v">IT staff at a construction yard, network administrator for an office, and now the freelance developer behind a security company's site and internal tools. Not only an outside developer.</span>
           </div>
           <div class="facts-list__item" data-reveal data-reveal-delay="120">
             <span class="facts-list__k">Problems solved</span>
-            <span class="facts-list__v">Scheduling, tracking, workflow automation, internal tools, and reporting.</span>
+            <span class="facts-list__v">Scheduling, tracking, workflow automation, internal tools, and reporting, for clients in security services, logistics, education, and government.</span>
           </div>
           <div class="facts-list__item" data-reveal data-reveal-delay="180">
             <span class="facts-list__k">How I work</span>
-            <span class="facts-list__v">Direct and practical. The measure of a system is whether the team actually uses it a month later, so that is what everything is built around.</span>
+            <span class="facts-list__v">Direct and practical. The measure of a system is whether the team is still using it a month later, so that is what everything is built around.</span>
+          </div>
+          <div class="facts-list__item" data-reveal data-reveal-delay="240">
+            <span class="facts-list__k">Stack</span>
+            <span class="facts-list__v">React, Next.js, TypeScript, Node.js, Express, PHP and WordPress; PostgreSQL, MySQL, MongoDB and Firebase; n8n and AI content pipelines; Vercel, Railway, Cloudflare and GitHub Actions.</span>
           </div>
         </div>
 
-        <p style="margin-top:2.5rem">
+        <div style="margin-top:2.5rem;display:flex;flex-wrap:wrap;gap:1rem;align-items:center">
           <a class="btn" href="/start/">Start a project <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
-        </p>
+          {% if site.resumeUrl %}
+            <a class="btn btn--ghost" href="{{ site.resumeUrl }}" rel="noopener" target="_blank">Résumé (PDF) <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+          {% endif %}
+          <a class="link" href="mailto:{{ site.email }}">{{ site.email }}</a>
+          {% for s in site.social %}{% if s.label == 'LinkedIn' and s.href %}
+            <a class="link" href="{{ s.href }}" rel="noopener" target="_blank">LinkedIn <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
+          {% endif %}{% endfor %}
+        </div>
       </div>
     </div>
   </div>
@@ -63,6 +74,7 @@ description: John Carl Dimatulac is a web developer and automation engineer in L
     <div class="eyebrow">
       <span class="label">Where I have worked</span>
       <span class="eyebrow__rule"></span>
+      <span class="label label--plain label--faint">As on the résumé</span>
     </div>
 
     <div class="timeline">
@@ -73,8 +85,8 @@ description: John Carl Dimatulac is a web developer and automation engineer in L
             <h2 class="h3" style="margin-top:1rem">{{ job.title }}</h2>
             <p class="label label--faint" style="margin-top:.5rem">{{ job.company }}</p>
             <div class="impact">
-              <span class="label label--faint">Measured</span>
-              <div class="impact__value">{{ job.impact }}</div>
+              <span class="label label--faint">Delivered</span>
+              <div class="impact__value">{{ job.delivered }}</div>
             </div>
           </div>
           <ul class="timeline__points">
@@ -83,6 +95,13 @@ description: John Carl Dimatulac is a web developer and automation engineer in L
         </article>
       {% endfor %}
     </div>
+
+    <p class="body body--sm" style="margin-top:2rem">
+      Also: <a class="link" href="{{ site.elimate }}" rel="noopener" target="_blank">Elimate Web Automation</a>,
+      a personal venture turning standard websites into automated platforms.
+      BS Information Technology, Occidental Mindoro State College. NC II Computer
+      Hardware Servicing, NC IV Computer Programming.
+    </p>
   </div>
 </section>
 

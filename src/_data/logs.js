@@ -1,94 +1,92 @@
 /**
- * Execution logs — real engagements, drawn from the same record as
- * _data/operations.js. Every figure here also appears on the Operations
- * page; nothing is claimed that the résumé does not.
- *
- * Images are local SVG plates until real screenshots are dropped into
- * src/assets/img/ — swap the `img` path, nothing else changes.
+ * Execution logs — case notes on real work. Every fact and figure here is
+ * on the résumé (JCGD_resume.pdf). Where the résumé gives no number, none
+ * is claimed.
  */
 export default [
   {
     date: '2025.06 — present',
-    title: 'Spade_Web_Rebuild',
-    arch: 'PHP / MySQL, custom modules',
-    perf: '+40% system performance',
-    tags: ['PHP', 'MYSQL', 'CUSTOM_MODULES', 'OPERATIONS'],
-    img: '/assets/img/log-spade.svg',
+    title: 'Spade_Local_SEO',
+    arch: 'WordPress · local SEO silo · WCAG 2.1 AA',
+    perf: '27 long-form articles',
+    tags: ['WORDPRESS', 'LOCAL_SEO', 'WCAG_2.1_AA', 'PHP'],
+    img: '/assets/img/projects/spade-website.svg',
     context:
-      'Spade Security Services, Rocklin CA. A guarding company whose public site and internal tooling had grown separately and were both showing their age. Brought on as web developer and lead for system solutions and AI.',
+      'Spade Security Services, Rocklin, California — a guarding company serving Placer County. Brought on as a freelance full-stack web developer to build and maintain the company website.',
     problem:
-      'The website presented the company but did not serve it. Operational needs — scheduling, client-facing information, internal requests — were handled outside the system, so the site and the business had drifted apart.',
+      'A security firm competes city by city. A single generic site does not rank for the towns it actually serves, and an inaccessible one exposes a business to complaints it cannot afford.',
     approach:
-      'Redeveloped the site and the backend behind it together. Backend improvements in PHP and MySQL, then custom web modules built around the specific operational requirements the team actually had, rather than a generic admin panel.',
+      'Built the WordPress site around a local SEO silo: service pages and 27 long-form articles structured to target Placer County cities individually. Implemented WCAG 2.1 AA compliance using the Equalize Digital Accessibility Checker with PHP code snippets for the fixes the theme could not make on its own.',
     code: [
-      '// Request routing — one entry point, explicit handlers',
-      '$router->post("/ops/request", function (Request $r) {',
-      '  $req = OpsRequest::fromForm($r->all());',
-      '  $req->validate()->persist();',
-      '  Notify::ops($req);           // lands with the right team',
-      '  return Response::json(["id" => $req->id], 201);',
+      '// Accessibility fix registered as a snippet, not a theme hack',
+      "add_filter('nav_menu_link_attributes', function ($atts, $item) {",
+      "  if (in_array('current-menu-item', $item->classes, true)) {",
+      "    $atts['aria-current'] = 'page';",
+      '  }',
+      '  return $atts;',
+      '}, 10, 2);'
+    ],
+    outcomes: [
+      { label: 'Delivered', value: '27 long-form SEO articles and service pages' },
+      { label: 'Structure', value: 'Local SEO silo targeting Placer County cities' },
+      { label: 'Compliance', value: 'WCAG 2.1 AA' }
+    ]
+  },
+  {
+    date: '2025 — present',
+    title: 'Spade_Automation_Stack',
+    arch: 'Argus · Spade Handler · Spade Inbox',
+    perf: 'Three internal systems',
+    tags: ['WP_REST_API', 'NVIDIA_MINIMAX', 'NEXT_JS', 'EXPRESS', 'POSTGRESQL', 'N8N'],
+    img: '/assets/img/projects/argus.svg',
+    context:
+      'The same client, once the site was in place. Enquiries, publishing and inbound messages were each being handled by hand, in three different places.',
+    problem:
+      'A chatbot that forgets the conversation is worse than none. Publishing that needs a person to copy posts to each channel does not happen. An inbox nobody threads becomes a queue nobody clears.',
+    approach:
+      'Three systems, each on the stack that fit it. Argus: an AI chatbot on the WordPress REST API with an NVIDIA-hosted MiniMax model, full markdown rendering and session memory. Spade Handler: an internal blog publisher and social media automation tool in Next.js and Node.js on MongoDB, deployed on Railway. Spade Inbox: message-center automation in Express and TypeScript on PostgreSQL, with n8n handling email threading.',
+    code: [
+      '// Spade Inbox — thread an inbound message before it is stored',
+      'router.post("/inbound", async (req, res) => {',
+      '  const msg = parseInbound(req.body);',
+      '  const thread = await threads.findOrCreate(msg.references);',
+      '  await messages.insert({ ...msg, threadId: thread.id });',
+      '  io.to(thread.id).emit("message", msg);',
+      '  res.sendStatus(202);',
       '});'
     ],
     outcomes: [
-      { label: 'Measured', value: '40% improvement in system performance' },
-      { label: 'Delivered', value: 'Custom web solutions for operational needs' },
-      { label: 'Role', value: 'Web dev, system solutions and AI lead' }
+      { label: 'Argus', value: 'Markdown replies with session memory' },
+      { label: 'Spade Handler', value: 'Blog publishing and social automation on Railway' },
+      { label: 'Spade Inbox', value: 'n8n email threading on Express / TypeScript / PostgreSQL' }
     ]
   },
   {
-    date: '2024.11 — 2025.07',
-    title: 'Agent_Pipeline',
-    arch: 'AI-integrated web applications',
-    perf: '−70% operational cost',
-    tags: ['AI_AGENTS', 'AUTOMATION', 'ENTERPRISE_INTEGRATION', 'WEB_APPS'],
-    img: '/assets/img/log-agentgenius.svg',
+    date: '2025 — present',
+    title: 'Content_Pipeline',
+    arch: 'n8n · four-stage AI content pipeline',
+    perf: 'Researcher → Writer → SEO → WordPress',
+    tags: ['N8N', 'AI_CONTENT_PIPELINE', 'WORDPRESS', 'PROMPT_ENGINEERING'],
+    img: '/assets/img/projects/content-pipeline.svg',
     context:
-      'AgentGenius.ai, Toronto. Automation engineer building AI-powered web applications and integrating automation tooling into enterprise systems that already existed and could not be replaced.',
+      'Twenty-seven articles is a content programme, not a one-off. Keeping it going by hand would have meant the programme stopping the first busy month.',
     problem:
-      'Work that should have been handled by a system was being handled by people: repetitive processing, hand-offs between tools, and performance tuning done by intuition rather than data.',
+      'Each article needed research, drafting, SEO work and publishing — four different kinds of attention, from one person, every time.',
     approach:
-      'Built and deployed AI-powered web applications, then integrated automation into the client’s existing enterprise systems instead of alongside them. Web performance and user experience optimised using data-driven AI insights rather than guesswork.',
+      'An n8n pipeline with four stages, each a separate step with its own prompt and its own output: Researcher gathers and structures the source material, Writer drafts against it, SEO Generator produces the title, meta and heading structure, and the WordPress publisher posts the result through the REST API.',
     code: [
-      '// Agent step — bounded, logged, retryable',
-      'const result = await agent.run({',
-      '  input: job.payload,',
-      '  tools: [crm.lookup, docs.extract, mail.draft],',
-      '  maxSteps: 6,',
-      '});',
-      'await queue.ack(job, { trace: result.trace });'
+      '// n8n — the four stages, as nodes',
+      '[',
+      '  { "name": "Researcher",   "type": "ai",        "out": "brief" },',
+      '  { "name": "Writer",       "type": "ai",        "in": "brief",   "out": "draft" },',
+      '  { "name": "SEO Generator","type": "ai",        "in": "draft",   "out": "post" },',
+      '  { "name": "Publisher",    "type": "wordpress", "in": "post",    "op": "create" }',
+      ']'
     ],
     outcomes: [
-      { label: 'Measured', value: 'Reduced operational costs by 70%' },
-      { label: 'Delivered', value: 'AI web apps integrated into existing enterprise systems' },
-      { label: 'Approach', value: 'Data-driven performance and UX optimisation' }
-    ]
-  },
-  {
-    date: '2025.01 — present',
-    title: 'Site_to_System',
-    arch: 'n8n workflows, webhooks, AI integration',
-    perf: '8+ clients on automated platforms',
-    tags: ['N8N', 'WEBHOOKS', 'AI_INTEGRATION', 'WORDPRESS_JETENGINE'],
-    img: '/assets/img/log-elimate.svg',
-    context:
-      'Elimate Web Automation — founded to turn standard business websites into AI-powered automated platforms. Founder and web strategist; also the person the clients call.',
-    problem:
-      'Most small-business websites collect a form and stop. Everything after that — follow-up, qualification, scheduling, reporting — falls on whoever remembers to do it, and it leaks.',
-    approach:
-      'Intelligent automation tailored to each client, built on system integrations: n8n workflows triggered by site events, webhooks into the tools the client already pays for, and AI steps where a judgement call used to need a person. Direct support, maintenance and troubleshooting for every AI-integrated application shipped.',
-    code: [
-      '// n8n — form submission → qualify → route',
-      '{ "nodes": [',
-      '  { "type": "webhook",   "path": "/lead" },',
-      '  { "type": "ai.classify", "labels": ["hot","warm","cold"] },',
-      '  { "type": "switch",    "on": "label" },',
-      '  { "type": "crm.create", "when": "hot" }',
-      ']}'
-    ],
-    outcomes: [
-      { label: 'Measured', value: 'Serving 8+ enterprise clients' },
-      { label: 'Delivered', value: 'Websites converted into automated platforms' },
-      { label: 'Ongoing', value: 'Direct support, maintenance and troubleshooting' }
+      { label: 'Stages', value: 'Research, write, SEO, publish' },
+      { label: 'Output', value: 'Posts created through the WordPress REST API' },
+      { label: 'Effect', value: 'The content programme runs without a person driving each step' }
     ]
   }
 ];

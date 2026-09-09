@@ -1,6 +1,6 @@
-/* Every figure here is also on the Operations page. */
+/* Every figure here is on the résumé. */
 export default [
-  { count: '8+', title: 'Years building', desc: 'Web systems since 2017' },
-  { count: '4', title: 'Organisations', desc: 'Operated inside, not alongside' },
-  { count: '8+', title: 'Clients served', desc: 'On automated platforms via Elimate' }
+  { count: '8+', title: 'Years building', desc: 'Web systems, since 2017' },
+  { count: '15', title: 'Named projects', desc: 'Live, internal, demo and concept, labelled as such' },
+  { count: '4', title: 'Sectors served', desc: 'Security, logistics, education, government' }
 ];
