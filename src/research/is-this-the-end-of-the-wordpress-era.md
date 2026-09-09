@@ -3,6 +3,8 @@ title: "Is this the end of the WordPress era?"
 description: "WordPress has lost share for the first sustained stretch in twenty years. The numbers say why, and they say something different from the headline."
 topic: Web development
 date: 2026-09-09
+image: /assets/img/research/wordpress-era.webp
+imageAlt: "A tower built from stacked website wireframes, one edge breaking into small drifting tiles"
 order: 1
 ---
 

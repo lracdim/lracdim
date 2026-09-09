@@ -3,6 +3,8 @@ title: "AI awareness: 96% know chatbots make things up, 72% trust them anyway"
 description: "A 2026 survey shows people know about hallucinations and rely on AI regardless. What that gap means for anyone putting an assistant on a website."
 topic: AI awareness
 date: 2026-09-09
+image: /assets/img/research/hallucinations.webp
+imageAlt: "A solid gold speech bubble whose shadow breaks into scattered fragments"
 order: 4
 ---
 

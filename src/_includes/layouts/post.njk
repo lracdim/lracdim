@@ -9,6 +9,7 @@ ogType: article
     <h1>{{ title }}</h1>
     {% if description %}<p>{{ description }}</p>{% endif %}
   </header>
+  {% if image %}<figure class="case-image post-hero"><img src="{{ image }}" alt="{{ imageAlt or title }}" width="1024" height="572" decoding="async" fetchpriority="high"></figure>{% endif %}
   <div class="prose">
     {{ content | safe }}
   </div>

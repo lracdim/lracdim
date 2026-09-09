@@ -3,6 +3,8 @@ title: "AI agents: why most pilots stall, and what the ones in production have i
 description: "Adoption surveys show agents everywhere in testing and fewer in production. The difference is rarely the model. It is the workflow around it."
 topic: Automation
 date: 2026-09-09
+image: /assets/img/research/ai-agents.webp
+imageAlt: "Two rows of small robots: one idle inside a glass box, one passing packages along a conveyor"
 order: 6
 ---
 

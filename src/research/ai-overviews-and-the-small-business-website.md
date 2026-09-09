@@ -3,6 +3,8 @@ title: "AI Overviews cut clicks by 40%. What a small business website does now"
 description: "A randomised experiment has finally isolated what Google's AI answers do to organic traffic. The response is not to write more articles."
 topic: SEO
 date: 2026-09-09
+image: /assets/img/research/ai-overviews.webp
+imageAlt: "A glowing summary box above a row of website blocks fading into the dark"
 order: 3
 ---
 

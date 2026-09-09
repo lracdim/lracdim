@@ -82,7 +82,7 @@
     "wordCount": content | word_count,
     "author": { "@type": "Person", "@id": site.url ~ "/#person", "name": site.owner },
     "publisher": { "@type": "Person", "@id": site.url ~ "/#person", "name": site.owner },
-    "image": site.url ~ "/assets/img/og.png",
+    "image": site.url ~ (image or "/assets/img/og.png"),
     "mainEntityOfPage": site.url ~ page.url,
     "inLanguage": "en"
   } | json | safe }}

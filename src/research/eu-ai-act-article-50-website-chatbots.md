@@ -3,6 +3,8 @@ title: "Since 2 August 2026, your website chatbot has to say what it is"
 description: "The EU AI Act's transparency rules are now in force. They reach further than the high-risk headlines suggest, and they apply to ordinary business websites."
 topic: AI updates
 date: 2026-09-09
+image: /assets/img/research/eu-ai-act.webp
+imageAlt: "A chat widget with a small tag label, ringed by twelve faint stars"
 order: 5
 ---
 

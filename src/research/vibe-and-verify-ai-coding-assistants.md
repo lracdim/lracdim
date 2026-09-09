@@ -3,6 +3,8 @@ title: "Vibe and verify: the responsible way to ship AI-written code"
 description: "AI assistants now write syntactically correct code almost every time. The security pass rate has not moved in two years. Here is what that means for how a developer should work."
 topic: Responsible AI
 date: 2026-09-09
+image: /assets/img/research/vibe-and-verify.webp
+imageAlt: "A robotic hand offers a block of code tiles while a human hand inspects a cracked tile with a magnifying glass"
 order: 2
 ---
 
