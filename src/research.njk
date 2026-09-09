@@ -2,9 +2,9 @@
 layout: layouts/base.njk
 title: Research
 permalink: /research/
-description: "Articles on how John Carl Dimatulac builds publishing pipelines, internal tools, and learning platforms."
+description: "Sourced articles by John Carl Dimatulac on AI, web development, and the responsible use of both."
 ---
-<section class="shell portfolio-section page-intro"><p class="overline">Research</p><h1>What sits<br>behind the interface.</h1><p>Articles on the systems behind my work: how they are put together, what each part does, and why it is built that way.</p></section>
+<section class="shell portfolio-section page-intro"><p class="overline">Research</p><h1>Notes from<br>the field.</h1><p>Sourced, dated articles on AI, web development, and the responsible use of both. Written to be read in a few minutes and checked against the numbers.</p></section>
 <section class="shell portfolio-section notes-list">
 {% set posts = collections.research | sort(false, false, "data.order") %}
 {% for post in posts %}
