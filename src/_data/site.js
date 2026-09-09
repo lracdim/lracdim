@@ -47,7 +47,7 @@ export default {
     { label: 'About', href: '/about/' }
   ],
 
-  cta: { label: 'Start a project', href: '/start/' },
+  cta: { label: 'Hire me', href: '/start/' },
 
   /* Secondary and experimental destinations live in the footer only. */
   footerLinks: [
