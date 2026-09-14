@@ -10,10 +10,10 @@
         <a class="nav__link nav__link--dim" href="{{ d.href }}" data-index="{{ d.index }}"
            {% if page.url == d.href or (page.url.startsWith(d.href) and d.href != '/') %}aria-current="page"{% endif %}>{{ d.name }}</a>
       {% endfor %}
+      <a class="nav__link nav__link--dim nav__link--about" href="/about/" {% if page.url == '/about/' %}aria-current="page"{% endif %}>About</a>
     </nav>
 
     <div class="header__secondary">
-      <a class="nav__link nav__link--muted" href="/about/" {% if page.url == '/about/' %}aria-current="page"{% endif %}>About</a>
       <a class="btn header__cta" href="{{ site.cta.href }}">
         {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
       </a>

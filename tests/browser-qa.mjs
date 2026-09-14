@@ -53,7 +53,7 @@ await page.setViewport({ width: 1440, height: 900 });
 // 2. Navigation and dimensions
 await page.goto(SITE + '/', { waitUntil: 'networkidle2' });
 const nav = await page.$$eval('.header__nav a', (as) => as.map((a) => a.textContent.trim()));
-check('primary nav is the five dimensions', JSON.stringify(nav) === JSON.stringify(['Work', 'Vector', 'Signal', 'Forge', 'Research']), nav.join(','));
+check('primary nav is the five dimensions plus About', JSON.stringify(nav) === JSON.stringify(['Work', 'Vector', 'Signal', 'Forge', 'Research', 'About']), nav.join(','));
 check('dimension selector has five cards', (await page.$$('.dim-card')).length === 5);
 for (const p of ['/work/', '/vector/', '/signal/', '/forge/', '/research/']) {
   await page.goto(SITE + p, { waitUntil: 'networkidle2' });
