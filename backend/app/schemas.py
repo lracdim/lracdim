@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_serializer, field_validator
 
 from .services.contact_service import PROJECT_TYPES
 
@@ -11,6 +11,19 @@ from .services.contact_service import PROJECT_TYPES
 class Error(BaseModel):
     code: str
     message: str
+
+
+class UTCModel(BaseModel):
+    """Datetimes are stored in UTC; SQLite returns them naive. Always emit an
+    explicit UTC offset so browsers do not read them as local time."""
+
+    model_config = {"from_attributes": True}
+
+    @field_serializer("*", when_used="json")
+    def _utc(self, value):
+        if isinstance(value, datetime):
+            return (value if value.tzinfo else value.replace(tzinfo=timezone.utc)).isoformat().replace("+00:00", "Z")
+        return value
 
 
 class AuditCreate(BaseModel):
@@ -23,7 +36,7 @@ class StageOut(BaseModel):
     state: Literal["pending", "active", "done", "failed"]
 
 
-class AuditOut(BaseModel):
+class AuditOut(UTCModel):
     id: str
     url: str
     status: Literal["queued", "running", "completed", "failed"]
@@ -77,7 +90,7 @@ class AuditResultsOut(BaseModel):
     methodology: str
 
 
-class AuditHistoryItem(BaseModel):
+class AuditHistoryItem(UTCModel):
     id: str
     health_score: int | None
     scores: dict[str, int]
@@ -91,7 +104,7 @@ class TargetCreate(BaseModel):
     url: str = Field(min_length=3, max_length=2048)
 
 
-class TargetOut(BaseModel):
+class TargetOut(UTCModel):
     id: str
     name: str
     url: str
@@ -108,7 +121,7 @@ class TargetOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class EventOut(BaseModel):
+class EventOut(UTCModel):
     id: str
     target_id: str
     kind: str
