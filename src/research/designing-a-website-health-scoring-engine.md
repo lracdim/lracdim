@@ -5,6 +5,8 @@ topic: Engineering
 category: Architecture
 technologies: [Python, FastAPI, PostgreSQL]
 date: 2026-09-14
+image: /assets/img/research/scoring-engine.webp
+imageAlt: "A tall gauge of stacked grey segments beside a gold rule, with three segments lifted away"
 order: 0
 ---
 

@@ -5,6 +5,8 @@ topic: Engineering
 category: Security
 technologies: [Python, httpx, dnspython]
 date: 2026-09-14
+image: /assets/img/research/safe-crawler.webp
+imageAlt: "A wide dark plane with one narrow gold path passing through a gate while side paths stop at barriers"
 order: 0.5
 ---
 

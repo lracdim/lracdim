@@ -3,6 +3,8 @@ title: "Build log: turning a portfolio into five dimensions"
 description: "How LRACDIMENSION was restructured from a conventional portfolio into Work, Vector, Signal, Forge, and Research without throwing away the existing site."
 topic: Build log
 date: 2026-09-14
+image: /assets/img/research/build-log.webp
+imageAlt: "Five open grey rooms on a dark base plate, linked by thin gold lines, one room lit from inside"
 order: 0
 ---
 

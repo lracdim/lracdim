@@ -13,6 +13,9 @@ export default function (eleventyConfig) {
   // outside it — theme CSS and app JS are loaded only by layouts/demo.njk.
   eleventyConfig.addPassthroughCopy({ 'src/assets/demos': 'assets/demos' });
 
+  // Root favicon: search engines request /favicon.ico directly.
+  eleventyConfig.addPassthroughCopy({ 'src/assets/img/brand/favicon.ico': 'favicon.ico' });
+
   // Cloudflare Pages / Netlify platform files.
   eleventyConfig.addPassthroughCopy({ 'src/_headers': '_headers' });
   eleventyConfig.addPassthroughCopy({ 'src/_redirects': '_redirects' });
