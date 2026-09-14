@@ -99,11 +99,11 @@
   ],
   "rewrites": [
     {
-      "source": "/vector/audit/:id",
+      "source": "/vector/audit/:id{/}?",
       "destination": "/vector/audit/"
     },
     {
-      "source": "/signal/site/:id",
+      "source": "/signal/site/:id{/}?",
       "destination": "/signal/site/"
     }
   ]
