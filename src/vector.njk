@@ -2,51 +2,10 @@
 layout: layouts/base.njk
 title: Vector — Web Clinic
 permalink: /vector/
-description: "Vector examines a public website, scores its structure, lists issues by severity, and produces a prioritised prescription. Runs in the browser; Python engine next."
+description: "Vector examines a public website with seven analyzers, scores it, lists every issue with evidence, and produces a prioritised prescription. Stored reports and history per website."
 ---
 {% set dim = dimensions[1] %}
-{% set dimLede = "Examine a website. Find the structural problems. Get a prioritised prescription." %}
+{% set dimLede = "Examine a website. Find the structural problems. Get a prioritised prescription. Run it again and watch the score move." %}
 {% include "partials/dimension-head.njk" %}
-
-<section class="shell portfolio-section vector" data-vector>
-  <form class="vector-form" data-vector-form novalidate>
-    <label for="vector-url" class="label">Enter website URL</label>
-    <div class="vector-inline__row">
-      <input id="vector-url" name="url" type="text" inputmode="url" autocomplete="url" placeholder="company.com" required aria-describedby="vector-help">
-      <button type="submit" class="btn" data-vector-submit>Examine ↗</button>
-    </div>
-    <p id="vector-help" class="fine-print">Public websites only. One examination at a time. The report states whether it read the live document or a modelled profile.</p>
-    <p class="intake__error" data-vector-error role="alert"></p>
-  </form>
-
-  <div class="vector-state" data-vector-state="examining" hidden aria-live="polite">
-    <p class="overline">Examining</p>
-    <pre class="vector-console" data-vector-console></pre>
-  </div>
-
-  <div class="vector-state" data-vector-state="failed" hidden role="alert">
-    <p class="overline">Examination failed</p>
-    <h2 class="vector-state__title">The target website could not be examined.</h2>
-    <p class="vector-state__reason">Reason: <span data-vector-reason></span></p>
-    <button type="button" class="text-link" data-vector-reset>Try another URL ↗</button>
-  </div>
-
-  <div class="vector-report" data-vector-state="report" data-vector-report hidden></div>
-</section>
-
-<section class="shell portfolio-section capabilities" id="coverage">
-  <div><p class="overline">What it reads today</p><h2>Measured,<br>not implied.</h2><p class="studio-intro">Every score comes from the HTML document. When the live scanner is connected the document is fetched from the site; otherwise Vector builds a modelled profile from the URL and labels the report as such. It never presents a modelled run as a live one.</p></div>
-  <div class="capability-list">
-    <article><h3>Structure</h3><p>DOM depth, element count, and the ratio of interactive elements to markup.</p></article>
-    <article><h3>Assets</h3><p>Script, stylesheet, and image counts, and load time when the document was fetched live.</p></article>
-    <article><h3>Accessibility basics</h3><p>Missing image alt text, a document language attribute, and semantic landmarks.</p></article>
-    <article><h3>On-page SEO</h3><p>Title presence and length, meta description presence and length, H1 count, alt coverage.</p></article>
-    <article><h3>Content weight</h3><p>Word count and the ratio of text to markup.</p></article>
-    <article><h3>Not measured yet</h3><p>Security headers, broken links, mobile rendering, Core Web Vitals, and crawl across pages. These belong to the Python analysis engine, the next build.</p></article>
-  </div>
-</section>
-
-<section class="pipeline-section" id="engine"><div class="shell"><div class="section-title"><p class="overline">Next build / Phase 2</p><h2>The analysis engine.</h2><p>Vector is designed so the browser diagnostic can be replaced by a service without changing the report. The planned path is a FastAPI endpoint that creates an audit job, a Python worker that runs independent analyzers, a scoring engine, and PostgreSQL for results and history.</p></div>
-<ol class="engine-path" aria-label="Planned architecture">{% for step in ["Frontend request","FastAPI","Audit job","Analyzers","Scoring engine","PostgreSQL","Diagnostic report"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
-<p class="fine-print">Analyzers planned: Technical, SEO, Performance, Accessibility, Security, Content, Links. Each with one responsibility. Public examinations will be rate-limited and every outbound fetch validated against private networks before a job runs.</p></div></section>
+{% include "partials/vector-body.njk" %}
 {% include "partials/studio-contact.njk" %}

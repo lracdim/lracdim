@@ -2,33 +2,23 @@
 layout: layouts/base.njk
 title: Signal — Analytics and monitoring
 permalink: /signal/
-description: "Signal will turn website, SEO, and technical activity into measured signals: uptime, response time, SSL, indexing, and alerts. In build; nothing is shown until it is real."
+description: "Signal monitors websites on a schedule: uptime, response time, HTTP status, and SSL expiry, with every check and status change stored as an event."
 ---
 {% set dim = dimensions[2] %}
-{% set dimLede = "Turn activity into measurable signals. Uptime, response time, SSL, search performance, and the alerts that follow when a threshold is crossed." %}
+{% set dimLede = "Measure. Monitor. Detect. Understand. Scheduled checks, stored events, and alerts when a threshold is crossed. Every number here is a stored measurement." %}
 {% include "partials/dimension-head.njk" %}
 
-<section class="shell portfolio-section">
-  <div class="signal-empty" role="status">
-    <p class="overline">System status</p>
-    <h2>No monitoring targets yet.</h2>
-    <p>Signal collects nothing until a target is registered and a scheduled check has run against it. When that exists, this panel shows the real state of each target: operational, degraded, or down, with the time of the last check. Until then there is nothing honest to display here, so nothing is displayed.</p>
-  </div>
+<section class="shell portfolio-section" data-signal>
+  <p class="overline">System status <span class="fine-print" data-signal-status></span></p>
+  <div data-signal-board><div class="signal-empty" role="status"><p class="overline">Loading</p><h2>Reading stored checks…</h2></div></div>
+  <div class="signal-feed" data-signal-feed><p class="overline" style="margin-top:44px">Events</p><div data-signal-events><p class="fine-print">Loading…</p></div></div>
 </section>
 
-<section class="shell portfolio-section capabilities" id="scope">
-  <div><p class="overline">What it will measure</p><h2>Four kinds<br>of signal.</h2><p class="studio-intro">Built in the order a small business feels the pain: is the site up, is it fast, is the certificate valid, is Google still sending people.</p></div>
-  <div class="capability-list">
-    <article><h3>Website</h3><p>Uptime, response time, HTTP errors, SSL expiry, DNS resolution.</p></article>
-    <article><h3>SEO</h3><p>Indexed pages, ranking changes, keyword visibility, search performance from Search Console.</p></article>
-    <article><h3>Technical</h3><p>API availability, latency, error rates, scheduled-job success.</p></article>
-    <article><h3>Business</h3><p>Traffic, conversions, leads, and engagement, once the sources above are reliable.</p></article>
-  </div>
-</section>
-
-<section class="pipeline-section" id="alerts"><div class="shell"><div class="section-title"><p class="overline">Alert model</p><h2>Condition, threshold,<br>signal, notification.</h2><p>A monitoring target produces measurements on a schedule. A condition compares a measurement to a threshold. When it is crossed, a signal event is recorded, an incident is opened, and a notification is sent. Every step is a row in the database, so the history is real and re-readable.</p></div>
-<ol class="engine-path" aria-label="Alert flow">{% for step in ["Condition","Threshold","Signal","Notification"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
-<pre class="vector-console" aria-label="Example rule">IF uptime &lt; 99% over 24h
-THEN open incident, notify, record event</pre>
-<p class="fine-print">Build order: website uptime and response time first, then SSL expiry, then historical data, then alerts. Python scheduled workers run the checks; PostgreSQL stores targets, signals, and events. This dimension goes live when the first real check has run, not before.</p></div></section>
+<section class="pipeline-section" id="alerts"><div class="shell"><div class="section-title"><p class="overline">How it works</p><h2>Scheduler, check,<br>event, notification.</h2><p>A scheduler enqueues a sweep every interval. Each target gets an HTTP check and, for https targets, a certificate inspection. The result is stored as a check event. When status changes between operational, degraded, and unavailable, an incident, warning, or recovery event is stored and a notification goes to the configured channels: email over SMTP and a webhook.</p></div>
+<ol class="engine-path" aria-label="Alert flow">{% for step in ["Scheduler","Monitoring job","HTTP check","Signal processor","PostgreSQL","Dashboard"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
+<pre class="vector-console" aria-label="Rules">IF the check fails or returns 5xx      THEN status = unavailable → incident
+IF status is 4xx or response &gt; 1500 ms  THEN status = degraded → warning
+IF the certificate expires within 14 days THEN ssl warning
+IF status returns to operational         THEN recovered</pre>
+<p class="fine-print">Targets are registered by the operator with an admin key; the dashboard is public and read-only. Degraded and unavailable thresholds are configuration, not code.</p></div></section>
 {% include "partials/studio-contact.njk" %}

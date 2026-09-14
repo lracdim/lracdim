@@ -8,10 +8,18 @@
     "dev": "eleventy --serve --quiet",
     "build": "eleventy",
     "clean": "rimraf _site",
-    "worker:deploy": "cd workers/scan && npx wrangler deploy"
+    "worker:deploy": "cd workers/scan && npx wrangler deploy",
+    "test": "node tests/browser-qa.mjs",
+    "lint": "node tests/lint.mjs",
+    "format": "node tests/lint.mjs --check-format",
+    "backend:install": "cd backend && python -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt",
+    "backend:dev": "cd backend && .venv/Scripts/python -m uvicorn app.main:app --reload --port 8000",
+    "backend:test": "cd backend && .venv/Scripts/python -m pytest -q",
+    "backend:migrate": "cd backend && .venv/Scripts/python -m alembic upgrade head"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",
+    "puppeteer-core": "^23.11.1",
     "rimraf": "^6.0.1"
   },
   "engines": {

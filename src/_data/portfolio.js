@@ -14,6 +14,8 @@ const notes = {
   rankking: 'The SaaS version at rankking.io is planned and is not presented as a launched product.',
   'spade-website': 'The screenshot shows the public website. Internal application screens are not publicly displayed.'
 };
+const groups = { 'spade-website': 'Websites', argus: 'Applications', 'spade-handler': 'Business Systems', 'spade-inbox': 'Business Systems', 'content-pipeline': 'Automation', 'spade-academy': 'Applications', rankking: 'Applications', meridian: 'Experiments', paha: 'Business Systems', eskwela: 'Experiments', 'st-clair': 'Websites', 'delta-one': 'Websites', brewfest: 'Applications', bakerich: 'Websites', lracdimension: 'Experiments' };
+const related = { 'spade-website': ['argus', 'content-pipeline', 'spade-handler'], argus: ['spade-website', 'spade-inbox'], 'spade-handler': ['content-pipeline', 'spade-inbox'], 'spade-inbox': ['spade-handler', 'argus'], 'content-pipeline': ['spade-handler', 'spade-website'], 'spade-academy': ['paha', 'spade-website'], rankking: ['spade-website', 'lracdimension'], meridian: ['st-clair', 'delta-one'], paha: ['spade-academy', 'brewfest'], eskwela: ['spade-academy', 'paha'], 'st-clair': ['meridian', 'delta-one'], 'delta-one': ['st-clair', 'spade-website'], brewfest: ['paha', 'bakerich'], bakerich: ['brewfest', 'argus'], lracdimension: ['rankking', 'spade-website'] };
 const kinds = { live: 'Application', internal: 'Internal tool', built: 'Application', demo: 'Portfolio demo', concept: 'Redesign concept', plugin: 'WordPress plugin' };
 
 export default projects
@@ -24,6 +26,8 @@ export default projects
     field: project.category,
     tech: project.stack || [],
     features: project.facts || [],
+    group: groups[project.slug] || 'Applications',
+    related: related[project.slug] || [],
     image: images[project.slug],
     imageWidth: (sizes[images[project.slug]] || [1265, 712])[0],
     imageHeight: (sizes[images[project.slug]] || [1265, 712])[1],

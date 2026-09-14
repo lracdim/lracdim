@@ -111,6 +111,7 @@
   <script>
     /* Runtime integrations, from _data/site.js. Empty strings degrade honestly. */
     window.LRACDIM = {
+      apiBase: {{ site.apiBase | json | safe }},
       scanEndpoint: {{ site.scanEndpoint | json | safe }},
       leadWebhook: {{ site.leadWebhook | json | safe }},
       email: {{ site.email | json | safe }}

@@ -1,0 +1,46 @@
+{# Shared by /vector/ and /vector/audit/<id>/ #}
+<section class="shell portfolio-section vector" data-vector>
+  <form class="vector-form" data-vector-form novalidate>
+    <label for="vector-url" class="label">Enter website URL</label>
+    <div class="vector-inline__row">
+      <input id="vector-url" name="url" type="text" inputmode="url" autocomplete="url" placeholder="https://example.com" required aria-describedby="vector-help">
+      <button type="submit" class="btn" data-vector-submit>Examine website ↗</button>
+    </div>
+    <p id="vector-help" class="fine-print" data-vector-modenote>Public websites only. One examination at a time.</p>
+    <p class="intake__error" data-vector-error role="alert"></p>
+  </form>
+
+  <div class="vector-state" data-vector-state="examining" hidden aria-live="polite">
+    <p class="overline">Examining website</p>
+    <ol class="vector-stages" data-vector-stages aria-label="Progress"></ol>
+    <pre class="vector-console" data-vector-console hidden></pre>
+  </div>
+
+  <div class="vector-state" data-vector-state="failed" hidden role="alert">
+    <p class="overline">Examination failed</p>
+    <h2 class="vector-state__title">The website could not be examined.</h2>
+    <p class="vector-state__reason">Reason: <span data-vector-reason></span></p>
+    <p class="fine-print">Possible causes</p>
+    <ul class="vector-causes" data-vector-causes></ul>
+    <button type="button" class="text-link" data-vector-reset>Try another URL ↗</button>
+  </div>
+
+  <div class="vector-report" data-vector-state="report" data-vector-report hidden></div>
+</section>
+
+<section class="shell portfolio-section capabilities" id="coverage">
+  <div><p class="overline">What the engine measures</p><h2>Measured,<br>not implied.</h2><p class="studio-intro">Seven analyzers read the live document, its response headers, robots.txt, the sitemap, and a bounded sample of links. Each finding carries its evidence. Scores are deducted from findings only; the methodology is printed with every report.</p></div>
+  <div class="capability-list">
+    <article><h3>Technical</h3><p>Status code, redirects, HTTPS, content type, doctype, language, viewport, canonical, heading hierarchy, document size.</p></article>
+    <article><h3>SEO</h3><p>Title and description length, canonical, robots meta and X-Robots-Tag, Open Graph, image alt coverage, robots.txt, sitemap.</p></article>
+    <article><h3>Performance</h3><p>Response time, document weight, script and stylesheet counts, render-blocking and third-party scripts, image sizing and lazy loading, compression, caching. Not Core Web Vitals.</p></article>
+    <article><h3>Accessibility</h3><p>Alt attributes, form labels, button and link names, landmarks, skip link, language, generic link text. Contrast needs a rendered page and is not measured.</p></article>
+    <article><h3>Security</h3><p>HTTPS, HSTS, CSP, X-Content-Type-Options, framing protection, Referrer-Policy, version disclosure, mixed content, insecure forms. A header review, not a vulnerability scan.</p></article>
+    <article><h3>Links and content</h3><p>Broken links, redirect chains, insecure internal links, internal link presence; word count, text ratio, headings, paragraph length, placeholder text.</p></article>
+  </div>
+</section>
+
+<section class="pipeline-section" id="engine"><div class="shell"><div class="section-title"><p class="overline">Architecture</p><h2>The analysis engine.</h2><p>A request creates an audit record and returns its id immediately. A worker runs the analyzers in sequence, writing the stage to the record as it goes, then the scoring engine derives category scores and the health score and the prescription is stored. The page polls the record and never waits on the crawl.</p></div>
+<ol class="engine-path" aria-label="Pipeline">{% for step in ["Frontend request","FastAPI","Audit job","Analyzers","Scoring engine","PostgreSQL","Diagnostic report"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
+<p class="fine-print">Every outbound request passes an SSRF policy: http and https only, no private, loopback, link-local, or cloud-metadata addresses, DNS results checked, every redirect re-validated, response size and time capped, at most a fixed number of links checked per examination. Public examinations are rate-limited per client.</p>
+<p class="fine-print"><a class="text-link" href="/research/designing-a-website-health-scoring-engine/">Research: designing the scoring engine ↗</a> · <a class="text-link" href="/research/building-a-safe-website-crawler/">Research: the crawler's safety policy ↗</a></p></div></section>

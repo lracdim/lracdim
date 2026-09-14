@@ -5,9 +5,10 @@ ogType: article
 <article class="case-study shell post">
   <a class="text-link" href="/research/">← All research</a>
   <header class="page-intro">
-    <p class="overline">{{ topic }} / {{ page.date | date_long }} / {{ content | reading_time }} min read</p>
+    <p class="overline">{{ topic }}{% if category %} / {{ category }}{% endif %} / {{ page.date | date_long }} / {{ content | reading_time }} min read</p>
     <h1>{{ title }}</h1>
     {% if description %}<p>{{ description }}</p>{% endif %}
+    {% if technologies %}<div class="tech-list">{% for t in technologies %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
   </header>
   {% if image %}<figure class="case-image post-hero"><img src="{{ image }}" alt="{{ imageAlt or title }}" width="1024" height="572" decoding="async" fetchpriority="high"></figure>{% endif %}
   <div class="prose">

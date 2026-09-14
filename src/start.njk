@@ -83,11 +83,13 @@ description: "Describe the operation and what is leaking. You get a written repl
               <label for="st-need">Project type</label>
               <select id="st-need" name="need" required>
                 <option value="">Choose one</option>
-                <option>A website that runs an operation, not just a brochure</option>
-                <option>Automation between tools I already use</option>
-                <option>An internal system (HRMS, LMS, portal, dashboard)</option>
-                <option>One of the templates, rebranded to my business</option>
-                <option>A diagnosis first — I am not sure yet</option>
+                <option>Website</option>
+                <option>Web Application</option>
+                <option>Business System</option>
+                <option>Automation</option>
+                <option>Data / Analytics</option>
+                <option>AI System</option>
+                <option>Other</option>
               </select>
               <span class="intake__error" data-error></span>
             </div>
@@ -135,6 +137,13 @@ description: "Describe the operation and what is leaking. You get a written repl
             <textarea id="st-msg" name="message" required></textarea>
             <span class="intake__error" data-error></span>
           </div>
+
+          <div class="intake__field">
+            <label for="st-additional">Additional information</label>
+            <span class="intake__hint">Links, deadlines, anything else that helps.</span>
+            <textarea id="st-additional" name="additional" rows="3"></textarea>
+          </div>
+          <div class="intake__field" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="st-website2">Leave this empty</label><input id="st-website2" name="website2" type="text" tabindex="-1" autocomplete="off"></div>
 
           <button type="submit" class="btn btn--block">
             Send it <span class="btn__glyph" aria-hidden="true">&#8599;</span>

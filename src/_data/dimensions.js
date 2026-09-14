@@ -2,7 +2,7 @@
  * The five Dimensions. This is the primary information architecture: each
  * entry is a capability environment, not a page label. `status` is honest
  * about what is live today: 'live' means the dimension works in the browser
- * now; 'building' means the page exists and says what it will do.
+ * now; 'building' means the page exists and says what it will do (none at present).
  */
 export default [
   {
@@ -24,7 +24,7 @@ export default [
     href: '/vector/',
     identity: 'Diagnosis',
     descriptor: 'Web Clinic',
-    summary: 'Examine a website, find the structural problems, and get a prioritised prescription. The diagnostic runs in the browser today; the Python analysis engine is the next build.',
+    summary: 'Examine a website with seven analyzers, get every issue with its evidence, and a prioritised prescription. Reports are stored, shareable, and comparable over time.',
     verbs: ['Examine', 'Diagnose', 'Prescribe', 'Improve'],
     status: 'live',
     proves: 'Analytical engineering'
@@ -36,9 +36,9 @@ export default [
     href: '/signal/',
     identity: 'Telemetry',
     descriptor: 'Analytics and monitoring',
-    summary: 'Uptime, response time, SSL, and search signals as measured data. In build: the page describes the system; no metrics are shown until they are real.',
+    summary: 'Scheduled checks of uptime, response time, HTTP status, and SSL expiry, stored as events, with incidents and warnings when thresholds are crossed. Only measured data is shown.',
     verbs: ['Measure', 'Monitor', 'Detect', 'Understand'],
-    status: 'building',
+    status: 'live',
     proves: 'Monitoring and data systems'
   },
   {
@@ -48,7 +48,7 @@ export default [
     href: '/forge/',
     identity: 'Construction',
     descriptor: 'Web and developer tools',
-    summary: 'Practical tools that run in your browser: JSON, URLs, slugs, timestamps, and text. Nothing you paste leaves the page.',
+    summary: 'Eleven practical tools. Six run in your browser and never send what you paste; five fetch other sites through the engine's validated fetcher.',
     verbs: ['Build', 'Transform', 'Validate', 'Generate'],
     status: 'live',
     proves: 'Practical development'

@@ -30,6 +30,9 @@ export default {
        submissions are kept in localStorage and the UI says a human will
        not see them yet.
      ------------------------------------------------------------------ */
+  // Backend API origin (FastAPI). Set LRACDIM_API_BASE at build time on Vercel.
+  // Locally it defaults to the dev API so the dimensions work end to end.
+  apiBase: process.env.LRACDIM_API_BASE || (process.env.VERCEL ? '' : 'http://localhost:8000'),
   scanEndpoint: '',
   leadWebhook: '',
 

@@ -1,0 +1,16 @@
+---
+layout: layouts/base.njk
+title: Signal — Target
+permalink: /signal/site/
+noindex: true
+description: "A monitored website: status, response-time history, and events."
+---
+{% set dim = dimensions[2] %}
+{% set dimLede = "One monitored website: status, response-time history, and every event since it was registered." %}
+{% include "partials/dimension-head.njk" %}
+<section class="shell portfolio-section" data-signal>
+  <p class="overline"><a class="text-link" href="/signal/">← All targets</a> <span class="fine-print" data-signal-status></span></p>
+  <div data-signal-board><div class="signal-empty" role="status"><p class="overline">Loading</p><h2>Reading stored checks…</h2></div></div>
+  <div data-signal-feed hidden><div data-signal-events></div></div>
+</section>
+{% include "partials/studio-contact.njk" %}

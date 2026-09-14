@@ -6,6 +6,11 @@
   "trailingSlash": true,
   "redirects": [
     {
+      "source": "/contact{/}?",
+      "destination": "/start/",
+      "permanent": true
+    },
+    {
       "source": "/admin{/}?",
       "destination": "/demos/clinic/portal/",
       "permanent": false
@@ -90,6 +95,16 @@
           "value": "noindex, nofollow"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/vector/audit/:id",
+      "destination": "/vector/audit/"
+    },
+    {
+      "source": "/signal/site/:id",
+      "destination": "/signal/site/"
     }
   ]
 }
