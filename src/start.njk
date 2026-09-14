@@ -80,7 +80,7 @@ description: "Describe the operation and what is leaking. You get a written repl
 
           <div class="intake__row">
             <div class="intake__field">
-              <label for="st-need">What you need</label>
+              <label for="st-need">Project type</label>
               <select id="st-need" name="need" required>
                 <option value="">Choose one</option>
                 <option>A website that runs an operation, not just a brochure</option>
@@ -104,8 +104,33 @@ description: "Describe the operation and what is leaking. You get a written repl
             </div>
           </div>
 
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="st-current">Current system</label>
+              <span class="intake__hint">What runs it today: WordPress, spreadsheets, a CRM, nothing yet.</span>
+              <input id="st-current" name="current" type="text">
+            </div>
+            <div class="intake__field">
+              <label for="st-timeline">Timeline</label>
+              <select id="st-timeline" name="timeline">
+                <option value="">Not decided yet</option>
+                <option>As soon as possible</option>
+                <option>Within 1 month</option>
+                <option>1 to 3 months</option>
+                <option>3 to 6 months</option>
+                <option>Exploring for now</option>
+              </select>
+            </div>
+          </div>
+
           <div class="intake__field">
-            <label for="st-msg">Where does the work leak today?</label>
+            <label for="st-outcome">Desired outcome</label>
+            <span class="intake__hint">What should be true when this is done.</span>
+            <input id="st-outcome" name="outcome" type="text">
+          </div>
+
+          <div class="intake__field">
+            <label for="st-msg">The problem</label>
             <span class="intake__hint">Who has to remember what, where things wait, what breaks when volume doubles.</span>
             <textarea id="st-msg" name="message" required></textarea>
             <span class="intake__error" data-error></span>

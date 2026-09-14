@@ -31,6 +31,8 @@ export default [
       'Service pages, 27 long-form SEO blog articles, and a local SEO silo architecture targeting Placer County cities. WCAG 2.1 AA accessibility compliance implemented with the Equalize Digital Accessibility Checker and PHP code snippets.',
     result:
       'The site is live at spadesecurityservices.com and remains under my maintenance. Traffic and ranking figures are not published here.',
+    challenge:
+      'Reaching WCAG 2.1 AA on a live marketing site without a rebuild: the fixes had to be applied through the Equalize Digital checker and PHP snippets while the site kept publishing.',
     stack: ['WordPress', 'PHP', 'Local SEO', 'WCAG 2.1 AA'],
     facts: ['27 long-form SEO articles', 'Service pages', 'Local SEO silo targeting Placer County cities', 'WCAG 2.1 AA compliance'],
     img: '/assets/img/projects/spade-website.svg',
@@ -52,6 +54,8 @@ export default [
       'Built on the WordPress REST API with an NVIDIA-hosted MiniMax model. Replies render full markdown, and the bot keeps session memory across a conversation.',
     result:
       'Developed for the Spade website as part of the ongoing engagement. Usage figures are not published here.',
+    challenge:
+      'Keeping a conversational assistant inside WordPress without a separate application: the REST API carries the exchange, and session memory has to survive page loads on a site that was not built for it.',
     stack: ['WordPress REST API', 'NVIDIA MiniMax', 'Markdown rendering', 'Session memory'],
     facts: ['WordPress REST API integration', 'NVIDIA-hosted MiniMax model', 'Full markdown rendering', 'Session memory'],
     img: '/assets/img/projects/argus.svg',
@@ -94,6 +98,8 @@ export default [
       'Express and TypeScript service on PostgreSQL, with n8n workflows handling email threading.',
     result:
       'Delivered as an internal tool for the client. Screens are not shown publicly.',
+    challenge:
+      'Threading rules live in n8n so they can change without a deploy, which means the application and the workflow have to agree on one message schema and never both write the same record.',
     stack: ['Express', 'TypeScript', 'PostgreSQL', 'n8n'],
     facts: ['Message center automation', 'n8n email threading', 'Express / TypeScript / PostgreSQL'],
     img: '/assets/img/projects/spade-inbox.svg',
@@ -112,9 +118,9 @@ export default [
     context:
       'The automation behind blog publishing on the Spade Security Services website.',
     approach:
-      'Four n8n stages in sequence: a Researcher, a Writer, an SEO Generator, and a WordPress publisher. The home page walkthrough illustrates the stages.',
+      'Four n8n stages in sequence: a Researcher, a Writer, an SEO Generator, and a WordPress publisher. The walkthrough on this page illustrates the stages.',
     result:
-      'Publishes to the Spade WordPress site. The walkthrough on this site is an illustration and does not generate content.',
+      'Publishes to the Spade WordPress site. The walkthrough on this page is an illustration and does not generate content.',
     stack: ['n8n', 'AI content pipeline', 'WordPress'],
     facts: ['Researcher stage', 'Writer stage', 'SEO Generator stage', 'WordPress publisher stage'],
     img: '/assets/img/projects/content-pipeline.svg',
@@ -138,6 +144,8 @@ export default [
       'React and TypeScript front end hosted on Hostinger, with an Express and PostgreSQL back end on Railway.',
     result:
       'Delivered with video progress tracking, quizzes, and certificate generation. Learner numbers are not published here.',
+    challenge:
+      'Front end and back end live on different hosts, so authentication, video progress writes, and certificate generation all cross an origin boundary that had to be designed in from the start.',
     stack: ['React', 'TypeScript', 'Express', 'PostgreSQL', 'Hostinger', 'Railway'],
     facts: ['Video progress tracking', 'Quizzes', 'Certificate generation'],
     img: '/assets/img/projects/spade-academy.svg',

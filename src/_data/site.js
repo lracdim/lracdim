@@ -7,7 +7,7 @@ export default {
   location: 'Sta. Rosa, Laguna, Philippines',
   url: 'https://lracdimension.vercel.app',
   description:
-    'John Carl Dimatulac is a full-stack web developer and WordPress & automation engineer in Laguna, Philippines. Web applications, WordPress platforms, n8n automation, and AI integration for teams that need their operations to run.',
+    'LRACDIMENSION is the engineering environment of John Carl Dimatulac: web systems, automation, and the tools behind them. Work, Vector, Signal, Forge, and Research are working dimensions, not pages.',
   email: 'lracdim@gmail.com',
 
   /* Public résumé (PDF). Leave empty until a version without personal data
@@ -40,22 +40,24 @@ export default {
     { label: 'Email', href: 'mailto:lracdim@gmail.com' }
   ],
 
+  // Primary navigation is the five Dimensions (see _data/dimensions.js).
+  // `nav` is kept for any template that still reads it.
   nav: [
     { label: 'Work', href: '/work/' },
-    { label: 'Services', href: '/services/' },
-    { label: 'Process', href: '/process/' },
-    { label: 'Research', href: '/research/' },
-    { label: 'About', href: '/about/' }
+    { label: 'Vector', href: '/vector/' },
+    { label: 'Signal', href: '/signal/' },
+    { label: 'Forge', href: '/forge/' },
+    { label: 'Research', href: '/research/' }
   ],
 
   cta: { label: 'Hire me', href: '/start/' },
 
   /* Secondary and experimental destinations live in the footer only. */
   footerLinks: [
-    { label: 'Research', href: '/research/' },
+    { label: 'Services', href: '/services/' },
+    { label: 'Process', href: '/process/' },
     { label: 'Resume', href: '/resume/' },
     { label: 'Clinic demo template', href: '/demos/clinic/' },
-    { label: 'Industry blueprints', href: '/services/#sectors' },
-    { label: 'Elimate Web Automation', href: 'https://elimate.vercel.app' }
+    { label: 'Industry blueprints', href: '/services/#sectors' }
   ]
 };

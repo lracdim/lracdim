@@ -1,19 +1,23 @@
 <header class="header" data-header>
   <div class="shell header__inner">
-    <a class="brand" href="/">
-      <img class="brand__logo" src="/assets/img/brand/mark.png" width="72" height="72" alt="{{ site.name }}">
+    <a class="brand" href="/" aria-label="{{ site.name }} home">
+      <img class="brand__logo" src="/assets/img/brand/mark.png" width="72" height="72" alt="">
+      <span class="brand__word">{{ site.name }}</span>
     </a>
 
-    <nav class="nav header__nav" aria-label="Primary">
-      {% for item in site.nav %}
-        <a class="nav__link" href="{{ item.href }}"
-           {% if page.url == item.href %}aria-current="page"{% endif %}>{{ item.label }}</a>
+    <nav class="nav header__nav" aria-label="Dimensions">
+      {% for d in dimensions %}
+        <a class="nav__link nav__link--dim" href="{{ d.href }}" data-index="{{ d.index }}"
+           {% if page.url == d.href or (page.url.startsWith(d.href) and d.href != '/') %}aria-current="page"{% endif %}>{{ d.name }}</a>
       {% endfor %}
     </nav>
 
-    <a class="btn header__cta" href="{{ site.cta.href }}">
-      {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
-    </a>
+    <div class="header__secondary">
+      <a class="nav__link nav__link--muted" href="/about/" {% if page.url == '/about/' %}aria-current="page"{% endif %}>About</a>
+      <a class="btn header__cta" href="{{ site.cta.href }}">
+        {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+      </a>
+    </div>
 
     <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="drawer">
       <span data-nav-toggle-label>Menu</span>
@@ -27,18 +31,17 @@
     <a class="btn btn--block drawer__cta" href="{{ site.cta.href }}">
       {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
     </a>
-    <nav aria-label="Mobile">
-      {% for item in site.nav %}
-        <a class="drawer__link" href="{{ item.href }}">
-          <span class="drawer__index">{{ loop.index0 | pad }}</span>{{ item.label }}
+    <nav aria-label="Dimensions">
+      {% for d in dimensions %}
+        <a class="drawer__link" href="{{ d.href }}">
+          <span class="drawer__index">{{ d.index }}</span>{{ d.name }}<span class="drawer__desc">{{ d.descriptor }}</span>
         </a>
       {% endfor %}
+      <a class="drawer__link drawer__link--muted" href="/about/"><span class="drawer__index">—</span>About</a>
     </nav>
   </div>
   <div>
-    <button type="button" class="link" data-open-diagnostic>
-      Run a website diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
-    </button>
+    <a class="link" href="/vector/">Examine a website <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
     <p class="label label--faint" style="margin-top:1.25rem">{{ site.location }}</p>
   </div>
 </div>

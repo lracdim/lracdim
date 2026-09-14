@@ -4,19 +4,19 @@
 
     <div class="footer__grid">
       <div>
-        <p class="label label--faint">Pages</p>
-        {% for item in site.nav %}
-          <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
+        <p class="label label--faint">Dimensions</p>
+        {% for d in dimensions %}
+          <a class="footer__link" href="{{ d.href }}"><span class="footer__index">{{ d.index }}</span> {{ d.name }} <span class="footer__dim">— {{ d.descriptor }}</span></a>
         {% endfor %}
-        <a class="footer__link" href="{{ site.cta.href }}">{{ site.cta.label }}</a>
       </div>
 
       <div>
         <p class="label label--faint">More</p>
+        <a class="footer__link" href="/about/">About</a>
         {% for item in site.footerLinks %}
           <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
         {% endfor %}
-        <button type="button" class="footer__link footer__link--btn" data-open-diagnostic>Website diagnostic</button>
+        <a class="footer__link" href="{{ site.cta.href }}">{{ site.cta.label }}</a>
       </div>
 
       <div>

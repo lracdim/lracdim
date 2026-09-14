@@ -1,0 +1,11 @@
+{#
+  Standard head for a dimension page. Expects `dim` (an entry from
+  _data/dimensions.js) and optional `dimLede` text set by the page.
+#}
+<section class="shell portfolio-section page-intro dim-head" data-dimension="{{ dim.slug }}">
+  <p class="overline"><span class="dim-head__index">{{ dim.index }}</span> / {{ dim.name }} / {{ dim.identity }}</p>
+  <h1>{{ dim.name | upper }}<br><span class="dim-head__descriptor">{{ dim.descriptor }}</span></h1>
+  <p class="dim-head__verbs" aria-label="Purpose">{% for v in dim.verbs %}<span>{{ v }}</span>{% if not loop.last %}<span class="dim-head__arrow" aria-hidden="true">→</span>{% endif %}{% endfor %}</p>
+  {% if dimLede %}<p>{{ dimLede }}</p>{% endif %}
+  {% if dim.status == 'building' %}<p class="dim-status dim-status--building"><span></span>In build. No data is shown until it is measured.</p>{% endif %}
+</section>

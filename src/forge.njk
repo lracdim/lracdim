@@ -1,0 +1,59 @@
+---
+layout: layouts/base.njk
+title: Forge — Web and developer tools
+permalink: /forge/
+description: "Forge is a set of practical web and developer tools built by LRACDIMENSION. JSON, URLs, slugs, timestamps, and text, all running in your browser."
+---
+{% set dim = dimensions[3] %}
+{% set dimLede = "Practical tools, built to be used. These five run entirely in your browser: nothing you paste is sent anywhere. Server-side tools for heavier work arrive with the Python engine." %}
+{% include "partials/dimension-head.njk" %}
+
+<section class="shell portfolio-section" data-forge>
+  <nav class="forge-index" aria-label="Tools">
+    <a href="#json">01 JSON formatter</a><a href="#url">02 URL parser</a><a href="#slug">03 Slug generator</a><a href="#time">04 Timestamp converter</a><a href="#text">05 Text counter</a>
+  </nav>
+
+  <article class="forge-tool" id="json" data-tool="json">
+    <header><p class="project-type">01 / Developer / Client-side</p><h2>JSON formatter and validator</h2><p>Paste JSON. Get it formatted, minified, or told exactly where it breaks.</p></header>
+    <div class="forge-grid">
+      <div class="forge-field"><label for="json-in">Input</label><textarea id="json-in" rows="10" spellcheck="false" placeholder='{"key": "value"}'></textarea></div>
+      <div class="forge-field"><label for="json-out">Output</label><textarea id="json-out" rows="10" readonly spellcheck="false" aria-live="polite"></textarea></div>
+    </div>
+    <div class="forge-actions"><button type="button" class="btn" data-action="format">Format ↗</button><button type="button" class="btn btn--ghost" data-action="minify">Minify</button><button type="button" class="btn btn--ghost" data-action="copy">Copy output</button></div>
+    <p class="forge-status" data-status role="status"></p>
+  </article>
+
+  <article class="forge-tool" id="url" data-tool="url">
+    <header><p class="project-type">02 / URL / Client-side</p><h2>URL parser, encoder, decoder</h2><p>Break a URL into its parts and read the query string as a table. Encode or decode a string for safe use in a URL.</p></header>
+    <div class="forge-field"><label for="url-in">URL or text</label><input id="url-in" type="text" spellcheck="false" placeholder="https://example.com/path?utm_source=x&page=2#top"></div>
+    <div class="forge-actions"><button type="button" class="btn" data-action="parse">Parse ↗</button><button type="button" class="btn btn--ghost" data-action="encode">Encode</button><button type="button" class="btn btn--ghost" data-action="decode">Decode</button></div>
+    <div class="forge-output" data-output aria-live="polite"></div>
+    <p class="forge-status" data-status role="status"></p>
+  </article>
+
+  <article class="forge-tool" id="slug" data-tool="slug">
+    <header><p class="project-type">03 / Content / Client-side</p><h2>Slug generator</h2><p>Turn a title into a URL-safe slug. Lowercase, hyphenated, accents stripped, stop-words optional.</p></header>
+    <div class="forge-field"><label for="slug-in">Title</label><input id="slug-in" type="text" placeholder="Is this the end of the WordPress era?"></div>
+    <div class="forge-actions"><label class="forge-check"><input type="checkbox" data-opt="stopwords"> Drop common words (a, the, of, is)</label><button type="button" class="btn btn--ghost" data-action="copy">Copy slug</button></div>
+    <div class="forge-field"><label for="slug-out">Slug</label><output id="slug-out" for="slug-in" data-output></output></div>
+  </article>
+
+  <article class="forge-tool" id="time" data-tool="time">
+    <header><p class="project-type">04 / Developer / Client-side</p><h2>Timestamp converter</h2><p>Unix seconds or milliseconds to ISO 8601 and your local time, and back.</p></header>
+    <div class="forge-grid">
+      <div class="forge-field"><label for="time-in">Unix timestamp or ISO date</label><input id="time-in" type="text" spellcheck="false" placeholder="1788974391 or 2026-09-10T00:00:00Z"></div>
+      <div class="forge-actions forge-actions--inline"><button type="button" class="btn" data-action="convert">Convert ↗</button><button type="button" class="btn btn--ghost" data-action="now">Now</button></div>
+    </div>
+    <div class="forge-output" data-output aria-live="polite"></div>
+    <p class="forge-status" data-status role="status"></p>
+  </article>
+
+  <article class="forge-tool" id="text" data-tool="text">
+    <header><p class="project-type">05 / Content / Client-side</p><h2>Text counter</h2><p>Words, characters, sentences, paragraphs, and reading time at 220 words a minute. Counts update as you type.</p></header>
+    <div class="forge-field"><label for="text-in">Text</label><textarea id="text-in" rows="8" placeholder="Paste or type."></textarea></div>
+    <div class="forge-output forge-output--stats" data-output aria-live="polite"></div>
+  </article>
+
+  <p class="fine-print">Planned for the server-side set: robots.txt validator, sitemap validator, metadata checker, redirect checker. Those need to fetch other sites, so they wait for the same validated, rate-limited fetch layer that Vector's engine will use.</p>
+</section>
+{% include "partials/studio-contact.njk" %}

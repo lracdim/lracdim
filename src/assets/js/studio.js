@@ -97,3 +97,7 @@ document.querySelectorAll('[data-print]').forEach(button => {button.hidden=false
 initDiagnosticModal();
 initStartForm();
 window.addEventListener('pagehide',()=>{stop();stopCycle();entering.disconnect();},{once:true});
+
+// Dimension modules load only on their pages.
+if (document.querySelector('[data-vector]')) import('./vector.js').then((m) => m.initVector());
+if (document.querySelector('[data-forge]')) import('./forge.js').then((m) => m.initForge());

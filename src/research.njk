@@ -4,7 +4,7 @@ title: Research
 permalink: /research/
 description: "Sourced articles by John Carl Dimatulac on AI, web development, and the responsible use of both."
 ---
-<section class="shell portfolio-section page-intro"><p class="overline">Research</p><h1>Notes from<br>the field.</h1><p>Sourced, dated articles on AI, web development, and the responsible use of both. Written to be read in a few minutes and checked against the numbers.</p></section>
+{% set dim = dimensions[4] %}{% set dimLede = "Sourced articles, build logs, and technical investigations. Written to show the reasoning, not only the conclusion, and checked against the numbers." %}{% include "partials/dimension-head.njk" %}
 <section class="shell portfolio-section notes-list">
 {% set posts = collections.research | sort(false, false, "data.order") %}
 {% for post in posts %}

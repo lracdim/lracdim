@@ -56,6 +56,9 @@ export function initStartForm() {
       website: form.elements.website.value.trim(),
       need: form.elements.need.value,
       budget: form.elements.budget.value,
+      current: form.elements.current ? form.elements.current.value.trim() : '',
+      outcome: form.elements.outcome ? form.elements.outcome.value.trim() : '',
+      timeline: form.elements.timeline ? form.elements.timeline.value : '',
       message: form.elements.message.value.trim()
     };
 

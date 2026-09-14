@@ -170,15 +170,17 @@ export function detectBottlenecks(metrics) {
   const list = [];
   let id = 1;
 
-  const add = (severity, title, explanation, fix) =>
-    list.push({ id: `b-${id++}`, severity, title, explanation, fix });
+  const add = (severity, title, explanation, fix, why = '', impact = '') =>
+    list.push({ id: `b-${id++}`, severity, title, explanation, fix, why, impact });
 
   if (metrics.scriptCount > 15) {
     add(
       'High',
       'Excessive JavaScript Execution',
       `Recovered ${metrics.scriptCount} script tags. This blocks the main thread.`,
-      'Defer non-essential scripts and code-split bundles.'
+      'Defer non-essential scripts and code-split bundles.',
+      'Every script tag is parsed and executed before the page is interactive; the main thread cannot respond to the visitor while it works.',
+      'Faster time to interactive and fewer abandoned visits on slower devices.'
     );
   }
 
@@ -187,7 +189,9 @@ export function detectBottlenecks(metrics) {
       'Medium',
       'High Asset Request Count',
       `Found ${metrics.imageCount} images on landing. Increases round-trip latency.`,
-      'Lazy load below-fold images and serve WebP/AVIF.'
+      'Lazy load below-fold images and serve WebP/AVIF.',
+      'Each image is a separate request. Above a few dozen, the browser queues them and the visible page waits.',
+      'Lower page weight and an earlier first meaningful paint.'
     );
   }
 
@@ -196,7 +200,9 @@ export function detectBottlenecks(metrics) {
       'Medium',
       'Missing Image Descriptions',
       `${metrics.missingAlt} images lack ALT attributes, hurting accessibility and SEO.`,
-      'Add descriptive alt text to all informational images.'
+      'Add descriptive alt text to all informational images.',
+      'Screen readers announce nothing useful for these images, and search engines cannot index what they show.',
+      'Accessible images and better image search coverage.'
     );
   }
 
@@ -205,7 +211,9 @@ export function detectBottlenecks(metrics) {
       'Low',
       'Missing HTML Lang Attribute',
       'Document declaration lacks a language specifier.',
-      'Add lang="en" (or the appropriate code) to the <html> tag.'
+      'Add lang="en" (or the appropriate code) to the <html> tag.',
+      'Assistive technology and translation tools guess the language when it is not declared, and often guess wrong.',
+      'Correct pronunciation in screen readers and accurate language handling.'
     );
   }
 
@@ -214,7 +222,9 @@ export function detectBottlenecks(metrics) {
       'Medium',
       'Excessive DOM Depth',
       `DOM tree depth is ${metrics.domDepth}, causing layout thrashing.`,
-      'Flatten HTML structure and reduce wrapper divs.'
+      'Flatten HTML structure and reduce wrapper divs.',
+      'Deep trees make style and layout calculations slower on every interaction, not only at load.',
+      'Smoother scrolling and interaction, and simpler CSS.'
     );
   }
 
@@ -223,7 +233,9 @@ export function detectBottlenecks(metrics) {
       'Low',
       'Thin Semantic Structure',
       `Only ${metrics.semanticCount} semantic landmarks detected. Machines cannot map the page.`,
-      'Introduce header, nav, main, and footer landmarks.'
+      'Introduce header, nav, main, and footer landmarks.',
+      'Landmarks are how assistive technology and crawlers understand which part of the page is which.',
+      'Keyboard and screen-reader users can jump straight to content; crawlers read the page as intended.'
     );
   }
 
