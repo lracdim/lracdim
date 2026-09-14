@@ -2,23 +2,37 @@
 layout: layouts/base.njk
 title: Signal — Analytics and monitoring
 permalink: /signal/
-description: "Signal monitors websites on a schedule: uptime, response time, HTTP status, and SSL expiry, with every check and status change stored as an event."
+description: "Signal measures a domain now and keeps measuring it: uptime, response time, SSL, SEO and technical scores, and which analytics tools the site loads. Every number is a stored measurement."
 ---
 {% set dim = dimensions[2] %}
-{% set dimLede = "Measure. Monitor. Detect. Understand. Scheduled checks, stored events, and alerts when a threshold is crossed. Every number here is a stored measurement." %}
+{% set dimLede = "Enter a domain. Signal measures it now: availability, response time, SSL, SEO and technical scores, and the analytics tools it loads. Then it keeps checking on a schedule and stores every event." %}
 {% include "partials/dimension-head.njk" %}
 
 <section class="shell portfolio-section" data-signal>
-  <p class="overline">System status <span class="fine-print" data-signal-status></span></p>
+  <form class="vector-form" data-signal-form novalidate>
+    <label for="signal-url" class="label">Enter your domain</label>
+    <div class="vector-inline__row">
+      <input id="signal-url" name="url" type="text" inputmode="url" autocomplete="url" placeholder="company.com" required aria-describedby="signal-help">
+      <button type="submit" class="btn" data-signal-submit>Measure ↗</button>
+    </div>
+    <p id="signal-help" class="fine-print" data-signal-modenote>Public websites only. The domain is registered for scheduled checks so its history builds over time.</p>
+    <p class="intake__error" data-signal-error role="alert"></p>
+  </form>
+
+  <div class="vector-state" data-signal-state="scanning" hidden aria-live="polite"><p class="overline">Measuring</p><ol class="vector-stages"><li data-state="active"><span aria-hidden="true">●</span>Checking availability, response time, and SSL</li><li data-state="pending"><span aria-hidden="true">○</span>Reading the page for SEO, technical, and analytics signals</li><li data-state="pending"><span aria-hidden="true">○</span>Storing the snapshot</li></ol></div>
+  <div class="vector-state" data-signal-state="failed" hidden role="alert"><p class="overline">Measurement failed</p><h2 class="vector-state__title">The domain could not be measured.</h2><p class="vector-state__reason">Reason: <span data-signal-reason></span></p><button type="button" class="text-link" data-signal-reset>Try another domain ↗</button></div>
+  <div class="vector-report" data-signal-state="result" data-signal-result hidden></div>
+
+  <p class="overline" style="margin-top:56px">Monitored by the operator <span class="fine-print" data-signal-status></span></p>
   <div data-signal-board><div class="signal-empty" role="status"><p class="overline">Loading</p><h2>Reading stored checks…</h2></div></div>
   <div class="signal-feed" data-signal-feed><p class="overline" style="margin-top:44px">Events</p><div data-signal-events><p class="fine-print">Loading…</p></div></div>
 </section>
 
-<section class="pipeline-section" id="alerts"><div class="shell"><div class="section-title"><p class="overline">How it works</p><h2>Scheduler, check,<br>event, notification.</h2><p>A scheduler enqueues a sweep every interval. Each target gets an HTTP check and, for https targets, a certificate inspection. The result is stored as a check event. When status changes between operational, degraded, and unavailable, an incident, warning, or recovery event is stored and a notification goes to the configured channels: email over SMTP and a webhook.</p></div>
-<ol class="engine-path" aria-label="Alert flow">{% for step in ["Scheduler","Monitoring job","HTTP check","Signal processor","PostgreSQL","Dashboard"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
+<section class="pipeline-section" id="alerts"><div class="shell"><div class="section-title"><p class="overline">How it works</p><h2>Scan now,<br>then keep measuring.</h2><p>A scan fetches the page once, runs the technical, SEO, performance, and content analyzers, and looks for analytics tools in the markup. The HTTP check and certificate read are the same ones the scheduler runs. Everything is stored as events, so a domain scanned today has a history next month.</p></div>
+<ol class="engine-path" aria-label="Flow">{% for step in ["Domain","HTTP + SSL check","Analyzers","Analytics detection","Snapshot event","Scheduled checks"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
 <pre class="vector-console" aria-label="Rules">IF the check fails or returns 5xx      THEN status = unavailable → incident
 IF status is 4xx or response &gt; 1500 ms  THEN status = degraded → warning
 IF the certificate expires within 14 days THEN ssl warning
 IF status returns to operational         THEN recovered</pre>
-<p class="fine-print">Targets are registered by the operator with an admin key; the dashboard is public and read-only. Degraded and unavailable thresholds are configuration, not code.</p></div></section>
+<p class="fine-print">The analytics score reflects which tracking tools the page loads. Signal does not read any analytics account; traffic figures would need Search Console or GA access and are not shown. Scores use Vector's documented scoring.</p></div></section>
 {% include "partials/studio-contact.njk" %}

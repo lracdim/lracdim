@@ -36,8 +36,8 @@ body{background:#18191b;color:#f1f0eb}html{scroll-behavior:smooth;scroll-padding
 
 /* ---- Dimensions: navigation ------------------------------------------ */
 .brand{display:flex;align-items:center;gap:12px}.brand__word{font:600 11px/1 var(--font-mono);letter-spacing:.14em;color:var(--paper);text-transform:uppercase}
-.header__nav .nav__link--dim{display:inline-flex;align-items:baseline;gap:6px;text-transform:uppercase}.header__nav .nav__link--dim::before{content:attr(data-index);font:10px var(--font-mono);color:#7d7e76;letter-spacing:0}.header__nav .nav__link--dim[aria-current]::before,.header__nav .nav__link--dim:hover::before{color:var(--signal)}
-.header__secondary{display:flex;align-items:center;gap:22px}.nav__link--muted{font-size:11px;letter-spacing:.07em;color:#8f9089;text-transform:uppercase}.nav__link--muted:hover,.nav__link--muted[aria-current]{color:var(--paper)}
+.header__inner{display:flex;align-items:stretch;justify-content:space-between;gap:24px}.header__nav{display:flex;align-items:stretch;height:100%}.header__nav .nav__link--dim{display:flex;align-items:center;gap:7px;height:100%;padding-inline:clamp(.6rem,1.3vw,1.25rem);text-transform:uppercase;white-space:nowrap}.header__nav .nav__link--dim::before{content:attr(data-index);font:10px var(--font-mono);color:#7d7e76;letter-spacing:0}.header__nav .nav__link--dim[aria-current]::before,.header__nav .nav__link--dim:hover::before{color:var(--signal)}
+.header__secondary{display:flex;align-items:center;gap:22px;height:100%}.header__secondary .nav__link--muted{height:100%;padding-inline:10px;font-size:11px;letter-spacing:.07em;color:#8f9089;text-transform:uppercase}.brand{height:100%}.nav__link--muted:hover,.nav__link--muted[aria-current]{color:var(--paper)}
 .drawer__desc{display:block;font:10px var(--font-mono);color:#8f9089;letter-spacing:.06em;margin-top:2px}.drawer__link--muted{opacity:.75}
 .footer__index{font:10px var(--font-mono);color:#7d7e76;margin-right:4px}.footer__dim{color:#7d7e76}
 @media(max-width:1180px){.brand__word{display:none}}
@@ -124,3 +124,6 @@ body{background:#18191b;color:#f1f0eb}html{scroll-behavior:smooth;scroll-padding
 
 /* ---- Work: related ---------------------------------------------------------- */
 .related-list{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:0}.related-list li{border-top:1px solid #363739}.related-list a{display:block;padding:14px 0;color:var(--paper);font-size:17px}.related-list a:hover{color:var(--signal)}.related-list .project-type{display:block;margin-bottom:4px}
+
+/* ---- Signal: snapshot layout ---- */
+.signal-two{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:22px}@media(max-width:800px){.signal-two{grid-template-columns:1fr}}

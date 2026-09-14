@@ -105,6 +105,7 @@ class MonitoringTarget(Base):
     url: Mapped[str] = mapped_column(String(2048))
     host: Mapped[str] = mapped_column(String(255), index=True)
     enabled: Mapped[int] = mapped_column(Integer, default=1)
+    source: Mapped[str] = mapped_column(String(16), default="admin", index=True)  # admin|public
     status: Mapped[str] = mapped_column(String(16), default="unknown")  # operational|degraded|unavailable|unknown
     last_status_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
     last_response_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)

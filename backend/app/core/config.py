@@ -49,6 +49,7 @@ class Settings:
     rate_limit_audits: str = os.environ.get("RATE_LIMIT_AUDITS", "6/hour")
     rate_limit_tools: str = os.environ.get("RATE_LIMIT_TOOLS", "60/hour")
     rate_limit_contact: str = os.environ.get("RATE_LIMIT_CONTACT", "5/hour")
+    rate_limit_signal: str = os.environ.get("RATE_LIMIT_SIGNAL", "10/hour")
 
     @property
     def is_sqlite(self) -> bool:

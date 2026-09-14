@@ -109,6 +109,7 @@ class TargetOut(UTCModel):
     name: str
     url: str
     host: str
+    source: str
     status: str
     last_status_code: int | None
     last_response_ms: int | None
@@ -171,3 +172,19 @@ class ContactOut(BaseModel):
     id: str
     received: bool
     notified: bool
+
+
+class ScanIn(BaseModel):
+    url: str = Field(min_length=3, max_length=2048)
+
+
+class ScanOut(BaseModel):
+    target: TargetOut | None
+    persisted: bool
+    snapshot: dict
+
+
+class SnapshotOut(UTCModel):
+    id: str | None
+    created_at: datetime | None
+    data: dict | None

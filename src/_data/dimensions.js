@@ -36,7 +36,7 @@ export default [
     href: '/signal/',
     identity: 'Telemetry',
     descriptor: 'Analytics and monitoring',
-    summary: 'Scheduled checks of uptime, response time, HTTP status, and SSL expiry, stored as events, with incidents and warnings when thresholds are crossed. Only measured data is shown.',
+    summary: 'Enter a domain and get measured SEO, technical, performance, and analytics signals now; then scheduled checks of uptime, response time, and SSL are stored as events. Only measured data is shown.',
     verbs: ['Measure', 'Monitor', 'Detect', 'Understand'],
     status: 'live',
     proves: 'Monitoring and data systems'

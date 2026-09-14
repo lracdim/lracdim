@@ -134,6 +134,20 @@ if (apiUp && signal.cards > 0) {
   check('signal target page renders events', (await page.$$('.signal-events li')).length > 0);
 }
 
+// 5b. Signal public scan
+if (apiUp) {
+  await page.goto(SITE + '/signal/', { waitUntil: 'networkidle2' });
+  await page.type('#signal-url', 'example.com');
+  await page.click('[data-signal-submit]');
+  let ok = false;
+  for (let i = 0; i < 45 && !ok; i++) {
+    await wait(1000);
+    ok = await page.evaluate(() => !document.querySelector('[data-signal-result]').hidden || !document.querySelector('[data-signal-state="failed"]').hidden);
+  }
+  const scan = await page.evaluate(() => ({ result: !document.querySelector('[data-signal-result]').hidden, scores: document.querySelectorAll('[data-signal-result] .vector-table tr').length, analytics: !!document.querySelector('[data-signal-result] .vector-mode') }));
+  check('signal public scan renders scores', scan.result && scan.scores === 5, JSON.stringify(scan));
+}
+
 // 6. Intake form
 await page.goto(SITE + '/start/', { waitUntil: 'networkidle2' });
 await page.click('button[type="submit"]');
