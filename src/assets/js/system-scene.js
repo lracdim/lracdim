@@ -11,12 +11,25 @@ const descriptions = [
   'Data gives it structure. PostgreSQL, MongoDB, and Firebase.'
 ];
 let selected=0, updateScene=()=>{};
-buttons.forEach((button,index)=>button.addEventListener('click',()=>{
+function selectLayer(index){
   selected=index;
   buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));
   document.querySelector('[data-layer-description]').textContent=descriptions[index];
   updateScene();
-}));
+}
+// Layers advance every 10 s while the page is visible and motion is allowed;
+// a click selects a layer and restarts the countdown.
+const LAYER_CYCLE_MS=10000;
+let layerTimer=null;
+function startLayerCycle(){
+  if(layerTimer||reduced.matches||document.hidden||!buttons.length) return;
+  layerTimer=setInterval(()=>selectLayer((selected+1)%buttons.length),LAYER_CYCLE_MS);
+}
+function stopLayerCycle(){clearInterval(layerTimer);layerTimer=null;}
+buttons.forEach((button,index)=>button.addEventListener('click',()=>{selectLayer(index);stopLayerCycle();startLayerCycle();}));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopLayerCycle();else startLayerCycle();});
+reduced.addEventListener('change',()=>{stopLayerCycle();startLayerCycle();});
+startLayerCycle();
 
 async function init(){
   const THREE=await import('/assets/vendor/three/three.module.js');
@@ -119,7 +132,7 @@ async function init(){
   const onPointer=e=>{if(e.pointerType==='touch')return;const r=host.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width-.5;pointer.y=(e.clientY-r.top)/r.height-.5;};
   host.addEventListener('pointermove',onPointer);
   host.addEventListener('pointerleave',()=>{pointer.x=0;pointer.y=0;});
-  pause.addEventListener('click',()=>{paused=!paused;syncPause();requestDraw();});
+  pause.addEventListener('click',()=>{paused=!paused;syncPause();requestDraw();if(paused)stopLayerCycle();else startLayerCycle();});
   const onReduced=()=>{paused=reduced.matches;syncPause();requestDraw();};reduced.addEventListener('change',onReduced);
   const onVisibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else requestDraw();};document.addEventListener('visibilitychange',onVisibility);
   renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(frame);frame=0;stage.classList.remove('scene-ready');pause.hidden=true;});
