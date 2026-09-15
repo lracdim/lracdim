@@ -6,11 +6,11 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
-from app.db import Base
+from app.db import Base, normalize_url
 from app import models  # noqa: F401  (register tables)
 
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("sqlalchemy.url", normalize_url(settings.database_url).replace("%", "%%"))
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
