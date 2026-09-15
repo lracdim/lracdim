@@ -32,18 +32,24 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="LRACDIMENSION API", version="1.0.0", lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json")
 
-app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "X-Admin-Key"], max_age=600)
-
-
 @app.middleware("http")
 async def limit_body(request: Request, call_next):
     length = request.headers.get("content-length")
     if length and int(length) > MAX_BODY:
         return JSONResponse(status_code=413, content={"error": {"code": "too_large", "message": "Request body is too large."}})
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception:  # noqa: BLE001 - last line of defence; keeps the JSON envelope and CORS headers on 500s
+        log.exception("unhandled error on %s %s", request.method, request.url.path)
+        response = JSONResponse(status_code=500, content={"error": {"code": "internal", "message": "Something went wrong on our side. It has been logged."}})
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Cache-Control"] = "no-store"
     return response
+
+
+# Added last so it is the outermost layer: every response, including the
+# 500 envelope above, carries the CORS headers the browser needs.
+app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "X-Admin-Key"], max_age=600)
 
 
 @app.exception_handler(StarletteHTTPException)
