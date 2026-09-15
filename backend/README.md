@@ -93,3 +93,18 @@ The static site lives on Vercel; this service runs separately. Railway, Render, 
 - Set `CORS_ORIGINS` to the site origin and `ADMIN_KEY` to a long random string.
 
 Then set `LRACDIM_API_BASE=https://<api host>` in the Vercel project so the frontend build points at it.
+
+### Current production
+
+The API runs on Railway (project `lracdimension-api`, service `api`) at
+`https://api-production-6e09c.up.railway.app`. `railway.json` sets the start
+command (migrations, then uvicorn), the `/api/health` check, and the restart
+policy; `.python-version` pins 3.11; `.railwayignore` keeps the venv, local
+databases, and tests out of the upload. Deploy from this folder with
+`railway up --service api`.
+
+`DATABASE_URL` accepts the plain `postgresql://` form hosted databases hand
+out; `app.db.normalize_url` adds the psycopg driver. Until a Postgres service
+is attached and referenced as `DATABASE_URL=${{Postgres.DATABASE_URL}}`, the
+service falls back to SQLite on the container disk, which resets on every
+deploy.

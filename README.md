@@ -68,7 +68,7 @@ tests/                          browser-qa.mjs, lint.mjs
 
 **Site (Vercel).** Import the repo. `vercel.json` sets the build command, output directory, trailing slashes, redirects for retired URLs, rewrites for addressable reports and targets, security headers, and `noindex` for `/demos/`. Set `LRACDIM_API_BASE` to the API origin.
 
-**API.** Deploy `backend/` separately (Railway, Render, Fly). Provide `DATABASE_URL` (PostgreSQL), `ADMIN_KEY`, `CORS_ORIGINS`, optional `REDIS_URL`, SMTP or `NOTIFY_WEBHOOK` for notifications. The `Procfile` defines release (migrations), web, and worker processes.
+**API.** Deployed from `backend/` to Railway at `https://api-production-6e09c.up.railway.app` (see `backend/README.md`). Any host works: Railway, Render, Fly. Provide `DATABASE_URL` (PostgreSQL), `ADMIN_KEY`, `CORS_ORIGINS`, optional `REDIS_URL`, SMTP or `NOTIFY_WEBHOOK` for notifications. The `Procfile` defines release (migrations), web, and worker processes.
 
 ## Content rules
 
