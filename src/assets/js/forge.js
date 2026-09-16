@@ -215,6 +215,7 @@ function initServer(root) {
   const out = root.querySelector('[data-output]');
   const slug = root.dataset.tool;
   if (!hasApi()) {
+    form.addEventListener('submit', (e) => e.preventDefault()); // Enter must not reload the page
     btn.disabled = true;
     setStatus(root, 'The engine is not connected on this deployment, so this tool cannot fetch other sites here.', true);
     return;

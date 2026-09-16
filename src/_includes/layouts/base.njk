@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  {%- set pageTitle = (title ~ " — " ~ site.name) if title else (site.name ~ " — " ~ site.role) -%}
+  {%- set pageTitle = (title ~ " — " ~ site.name) if title else site.homeTitle -%}
   {%- set pageDesc = description or site.description -%}
   {%- set pageUrl = site.url ~ page.url -%}
   {%- set ogImage = site.url ~ (image or '/assets/img/og.png') -%}
@@ -111,15 +111,8 @@
 </head>
 
 <body data-contact-email="{{ site.email }}">
-  <script>
-    /* Runtime integrations, from _data/site.js. Empty strings degrade honestly. */
-    window.LRACDIM = {
-      apiBase: {{ site.apiBase | json | safe }},
-      scanEndpoint: {{ site.scanEndpoint | json | safe }},
-      leadWebhook: {{ site.leadWebhook | json | safe }},
-      email: {{ site.email | json | safe }}
-    };
-  </script>
+  {#- Runtime integrations, from _data/site.js. Data, not a script: the CSP forbids inline scripts. Empty strings degrade honestly. -#}
+  <script type="application/json" id="lracdim-config">{{ {"apiBase": site.apiBase, "scanEndpoint": site.scanEndpoint, "leadWebhook": site.leadWebhook, "email": site.email} | json | safe }}</script>
 
   <a class="skip-link" href="#main">Skip to content</a>
   {% include "partials/header.njk" %}

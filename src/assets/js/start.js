@@ -4,8 +4,7 @@
 
 import { postLead } from './leads.js';
 import { api, hasApi } from './api.js';
-
-const CFG = window.LRACDIM || {};
+import { CFG } from './config.js';
 
 export function initStartForm() {
   const form = document.querySelector('[data-start-form]');
@@ -86,7 +85,10 @@ export function initStartForm() {
             desired_outcome: fields.outcome || null,
             timeline: fields.timeline || null,
             budget_range: fields.budget || null,
-            additional: (form.elements.additional && form.elements.additional.value.trim()) || null,
+            additional: [
+              (form.elements.additional && form.elements.additional.value.trim()) || '',
+              fields.lastDiagnostic ? `Last Vector examination: ${fields.lastDiagnostic.url} scored ${fields.lastDiagnostic.health}/100 on ${fields.lastDiagnostic.timestamp || 'this session'}${fields.lastDiagnostic.id ? ` · report /vector/audit/${fields.lastDiagnostic.id}/` : ''}` : ''
+            ].filter(Boolean).join('\n\n') || null,
             website: fields.website || null,
             honeypot: (form.elements.website2 && form.elements.website2.value) || null
           }

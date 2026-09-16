@@ -4,7 +4,7 @@
  */
 import { api, esc, hasApi, relTime } from './api.js';
 
-const STATUS_LABEL = { operational: 'Operational', degraded: 'Degraded', unavailable: 'Unavailable', unknown: 'Not yet checked' };
+const STATUS_LABEL = { operational: 'Operational', degraded: 'Degraded', unavailable: 'Unavailable', protected: 'Up, bot-protected', unknown: 'Not yet checked' };
 const grade = (s) => (s >= 80 ? 'good' : s >= 50 ? 'warn' : 'bad');
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -74,6 +74,7 @@ export async function initSignal() {
 
   if (!hasApi()) {
     if (form) {
+      form.addEventListener('submit', (e) => e.preventDefault()); // Enter must not reload the page
       form.querySelector('[data-signal-submit]').disabled = true;
       form.querySelector('[data-signal-modenote]').textContent = 'The monitoring engine is not connected on this deployment, so domains cannot be measured here.';
     }
@@ -113,7 +114,7 @@ export async function initSignal() {
         const res = await api('/api/signal/scan', { method: 'POST', body: { url }, timeout: 45000 });
         const t = res.target;
         resultEl.innerHTML = `
-          <div class="vector-report__head"><div><p class="overline">Measured · ${esc(t ? t.host : url)}</p><h2 class="vector-report__url">${esc(res.snapshot.final_url)}</h2><p class="fine-print">${t && res.persisted ? `Registered for scheduled checks. History and events at <a class="text-link text-link--inline" href="/signal/site/${esc(t.id)}/">/signal/site/${esc(t.id)}/</a>.` : 'The public monitoring cap is reached, so this domain was measured but not registered.'}</p></div><button type="button" class="text-link" data-signal-reset>Measure another ↗</button></div>
+          <div class="vector-report__head"><div><p class="overline">Measured · ${esc(t ? t.host : url)}</p><h2 class="vector-report__url">${esc(res.snapshot.final_url)}</h2><p class="fine-print">${t && res.persisted ? `Registered for scheduled checks. <a class="text-link text-link--inline" href="/signal/site/${esc(t.id)}/">View history and events ↗</a>` : 'The public monitoring cap is reached, so this domain was measured but not registered.'}</p></div><button type="button" class="text-link" data-signal-reset>Measure another ↗</button></div>
           ${t ? targetCard(t, true) : ''}
           ${snapshotBlock(res.snapshot, res.snapshot.measured_at)}
           <div class="actions"><a class="btn" href="/vector/?url=${encodeURIComponent(res.snapshot.final_url)}">Full examination in Vector ↗</a><a class="text-link" href="/start/">Fix it with me ↗</a></div>`;

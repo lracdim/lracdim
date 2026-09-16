@@ -53,10 +53,10 @@ def get_or_create_website(db: Session, url: str) -> Website:
     return site
 
 
-def create_audit(db: Session, raw_url: str) -> Audit:
+def create_audit(db: Session, raw_url: str, listed: bool = True) -> Audit:
     url = validate(raw_url).url  # resolves and applies the SSRF policy before anything is queued
     site = get_or_create_website(db, url)
-    audit = Audit(website_id=site.id, url=url, status="queued", stage="queued", stages=stage_list(None))
+    audit = Audit(website_id=site.id, url=url, status="queued", stage="queued", stages=stage_list(None), listed=1 if listed else 0)
     db.add(audit)
     db.commit()
     db.refresh(audit)

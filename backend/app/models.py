@@ -49,6 +49,7 @@ class Audit(Base):
     stages: Mapped[list] = mapped_column(JSON, default=list)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     health_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    listed: Mapped[int] = mapped_column(Integer, default=1, server_default="1", index=True)  # 1 = may appear on the public "recently examined" list
     scores: Mapped[dict] = mapped_column(JSON, default=dict)
     summary: Mapped[dict] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now, index=True)

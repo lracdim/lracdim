@@ -41,15 +41,27 @@ def create_target(db: Session, name: str, raw_url: str) -> MonitoringTarget:
     return row
 
 
+def _looks_like_bot_challenge(r: httpx.Response) -> bool:
+    """Cloudflare and similar edges answer automated clients with 403/429/503
+    plus a challenge page. That is not an outage."""
+    h = {k.lower(): v.lower() for k, v in r.headers.items()}
+    if "cf-mitigated" in h or "cf-chl-bypass" in h or h.get("server", "").startswith("cloudflare") or "akamai" in h.get("server", "") or "x-sucuri-id" in h:
+        return True
+    body = r.text[:20000].lower()
+    return any(m in body for m in ("challenge-platform", "cf-browser-verification", "just a moment", "attention required", "captcha", "access denied"))
+
+
 def check_target(db: Session, target: MonitoringTarget) -> SignalEvent:
     started = time.perf_counter()
     status_code: int | None = None
     error: str | None = None
+    protected = False
     try:
         validate(target.url)
         with httpx.Client(follow_redirects=True, timeout=httpx.Timeout(settings.fetch_timeout_seconds, connect=6), headers={"User-Agent": USER_AGENT}) as client:
             r = client.get(target.url)
             status_code = r.status_code
+            protected = status_code in (403, 429, 503) and _looks_like_bot_challenge(r)
     except UnsafeURL as e:
         error = str(e)
     except httpx.TimeoutException:
@@ -58,7 +70,9 @@ def check_target(db: Session, target: MonitoringTarget) -> SignalEvent:
         error = e.__class__.__name__
     response_ms = int((time.perf_counter() - started) * 1000)
 
-    if error or status_code is None or status_code >= 500:
+    if protected:
+        new_status = "protected"  # a bot challenge answered, so the site is up but will not let a monitor read it
+    elif error or status_code is None or status_code >= 500:
         new_status = "unavailable"
     elif status_code >= 400 or response_ms > settings.signal_response_warn_ms:
         new_status = "degraded"
@@ -77,8 +91,8 @@ def check_target(db: Session, target: MonitoringTarget) -> SignalEvent:
 
     if new_status != previous and previous != "unknown":
         level = "critical" if new_status == "unavailable" else "warning" if new_status == "degraded" else "info"
-        kind = "incident" if new_status == "unavailable" else "warning" if new_status == "degraded" else "recovered"
-        msg = {"unavailable": "Website unavailable", "degraded": "Website degraded", "operational": "Website recovered"}[new_status]
+        kind = "incident" if new_status == "unavailable" else "warning" if new_status == "degraded" else "recovered" if new_status == "operational" else "status_change"
+        msg = {"unavailable": "Website unavailable", "degraded": "Website degraded", "operational": "Website recovered", "protected": "Website answers with a bot challenge; reachable, not readable by the monitor"}[new_status]
         db.add(SignalEvent(target_id=target.id, kind=kind, level=level, message=msg, status_code=status_code, response_ms=response_ms, data={"from": previous, "to": new_status}))
         if level != "info":
             notify(f"[Signal] {target.name}: {msg}", {"target": target.url, "from": previous, "to": new_status, "status_code": status_code, "response_ms": response_ms, "error": error})

@@ -40,7 +40,7 @@ class PerformanceAnalyzer(Analyzer):
             "images_unsized": len(unsized),
             "content_encoding": encoding,
             "cache_control": cache,
-            "note": "Measured from the HTML document and response timing. Core Web Vitals are not measured.",
+            "note": "Measured from the HTML document and response timing. Core Web Vitals are not measured. Response time is taken from a single fetch, so the performance score can move by several points between runs depending on server caching and network conditions.",
         }
 
         if f.elapsed_ms > 3000:

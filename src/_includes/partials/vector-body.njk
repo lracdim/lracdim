@@ -7,6 +7,7 @@
       <button type="submit" class="btn" data-vector-submit>Examine website ↗</button>
     </div>
     <p id="vector-help" class="fine-print" data-vector-modenote>Public websites only. One examination at a time.</p>
+    <label class="vector-optout"><input type="checkbox" name="listed" value="1" checked data-vector-listed><span>List this domain and its score on the recently examined list below</span></label>
     <p class="intake__error" data-vector-error role="alert"></p>
   </form>
 
@@ -26,6 +27,12 @@
   </div>
 
   <div class="vector-report" data-vector-state="report" data-vector-report hidden></div>
+
+  <div class="vector-recent" data-vector-recent hidden>
+    <p class="overline">Recently examined</p>
+    <ol class="vector-recent__list" data-vector-recent-list></ol>
+    <p class="fine-print">Latest score per website, newest first. Only examinations whose requester left the listing option on appear here.</p>
+  </div>
 </section>
 
 <section class="shell portfolio-section capabilities" id="coverage">

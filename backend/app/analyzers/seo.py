@@ -24,7 +24,7 @@ class SEOAnalyzer(Analyzer):
         og = {m.get("property"): m.get("content") for m in soup.find_all("meta", attrs={"property": True}) if str(m.get("property")).startswith("og:")}
         twitter = soup.find("meta", attrs={"name": "twitter:card"})
         imgs = soup.find_all("img")
-        missing_alt = [i for i in imgs if not (i.get("alt") or "").strip() and i.get("role") != "presentation"]
+        missing_alt = [i for i in imgs if i.get("alt") is None and i.get("role") != "presentation"]  # alt="" is a valid decorative marker
         x_robots = ctx.fetched.headers.get("x-robots-tag", "").lower()
 
         robots_txt, sitemap = None, None
@@ -63,7 +63,7 @@ class SEOAnalyzer(Analyzer):
         if not og.get("og:title") or not og.get("og:description"):
             findings.append(Finding("no_open_graph", "low", "Incomplete Open Graph metadata", f"Present: {', '.join(sorted(og.keys())) or 'none'}", "Shared links on social platforms fall back to generic previews.", "Add og:title, og:description, og:image, and og:url.", "Rich link previews when the page is shared."))
         if missing_alt:
-            findings.append(Finding("images_missing_alt", "medium" if len(missing_alt) > 2 else "low", "Images without alt text", f"{len(missing_alt)} of {len(imgs)} images have no alt attribute.", "Image search and assistive technology get nothing to work with.", "Add descriptive alt text; use alt=\"\" only for decoration.", "Accessible and indexable images."))
+            findings.append(Finding("images_missing_alt", "medium" if len(missing_alt) > 2 else "low", "Images without alt text", f"{len(missing_alt)} of {len(imgs)} images have no alt attribute (an empty alt marks decoration and is not counted).", "Image search and assistive technology get nothing to work with.", "Add descriptive alt text; use alt=\"\" only for decoration.", "Accessible and indexable images."))
         if self.check_robots:
             if robots_txt == "missing":
                 findings.append(Finding("no_robots_txt", "low", "No robots.txt", "GET /robots.txt did not return a robots file.", "Crawlers proceed with defaults; you cannot point them at a sitemap.", "Publish /robots.txt with a Sitemap: line.", "Explicit crawl guidance."))

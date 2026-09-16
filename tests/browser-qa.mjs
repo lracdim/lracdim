@@ -28,7 +28,7 @@ page.on('response', (r) => { if (r.status() >= 400 && r.url().startsWith(SITE) &
 
 const apiBase = await (async () => {
   await page.goto(SITE + '/', { waitUntil: 'networkidle2' });
-  return page.evaluate(() => (window.LRACDIM && window.LRACDIM.apiBase) || '');
+  return page.evaluate(() => { try { return JSON.parse(document.getElementById('lracdim-config').textContent).apiBase || ''; } catch { return ''; } });
 })();
 let apiUp = false;
 if (apiBase) {

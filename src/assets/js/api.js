@@ -4,7 +4,7 @@
  * say so. Errors are normalised to {code, message} so UIs never show raw
  * transport details.
  */
-const CFG = window.LRACDIM || {};
+import { CFG } from './config.js';
 export const API_BASE = (CFG.apiBase || '').replace(/\/$/, '');
 export const hasApi = () => !!API_BASE;
 

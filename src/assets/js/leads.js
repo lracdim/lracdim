@@ -8,7 +8,7 @@
  * will see something that went nowhere.
  */
 
-const CFG = window.LRACDIM || {};
+import { CFG } from './config.js';
 const QUEUE_KEY = 'lracdim:lead-queue';
 
 function readQueue() {

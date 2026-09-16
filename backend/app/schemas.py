@@ -28,6 +28,14 @@ class UTCModel(BaseModel):
 
 class AuditCreate(BaseModel):
     url: str = Field(min_length=3, max_length=2048)
+    listed: bool = True  # false opts the domain out of the public "recently examined" list
+
+
+class RecentAuditItem(UTCModel):
+    id: str
+    host: str
+    health_score: int | None
+    completed_at: datetime | None
 
 
 class StageOut(BaseModel):

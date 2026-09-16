@@ -101,7 +101,7 @@ def snapshot(db: Session, target: MonitoringTarget | None, url: str) -> dict:
         "top_findings": [{"category": cat, "severity": f.severity, "title": f.title, "recommendation": f.recommendation} for cat, r in results.items() for f in r.findings][:12],
         "final_url": fetched.final_url,
         "measured_at": datetime.now(timezone.utc).isoformat(),
-        "note": "SEO, technical, performance, and content scores use Vector's analyzers and scoring. Analytics score reflects detected tracking tools only; it does not read any analytics account.",
+        "note": "SEO, technical, performance, and content scores use Vector's analyzers and scoring on a single fetch. Response time varies between fetches, so the performance score can differ from a Vector examination run at another moment; the other scores should match. Analytics score reflects detected tracking tools only; it does not read any analytics account.",
     }
     if target is not None:
         db.add(SignalEvent(target_id=target.id, kind="snapshot", level="info", message=f"Snapshot: SEO {scores['seo']}, technical {scores['technical']}, {len(analytics)} analytics tool(s)", status_code=fetched.status, response_ms=fetched.elapsed_ms, data=data))

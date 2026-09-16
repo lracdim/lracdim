@@ -98,3 +98,27 @@ def test_scoring_methodology():
     plan = build_prescription(results)
     assert [p["severity"] for p in plan] == ["critical", "high"]  # de-duplicated by code, ranked by severity
     assert severity_counts(results) == {"critical": 1, "high": 1, "medium": 0, "low": 1}
+
+
+def test_links_bot_blockers_are_unverifiable_not_broken():
+    html = '<!DOCTYPE html><html lang="en"><head><title>T</title></head><body><a href="/">home</a><a href="https://www.linkedin.com/in/someone">li</a><a href="https://example.org/gone">dead</a></body></html>'
+
+    def checker(url):
+        if "linkedin" in url:
+            return (999, url, [])
+        if url.endswith("/gone"):
+            return (404, url, [])
+        return (200, url, [])
+
+    r = LinkAnalyzer(checker=checker, max_checked=10, concurrency=2).run(ctx(html=html))
+    assert r.metrics["unverifiable"] == ["https://www.linkedin.com/in/someone"]
+    assert r.metrics["broken"] == ["https://example.org/gone"]
+    codes = {f.code: f.severity for f in r.findings}
+    assert codes["unverifiable_links"] == "low"
+    assert codes["broken_links"] == "medium"  # the dead link is external; the LinkedIn block does not count
+
+
+def test_seo_empty_alt_is_decorative_not_missing():
+    html = '<!DOCTYPE html><html lang="en"><head><title>A fine title for the page</title><meta name="description" content="' + "x" * 80 + '"><link rel="canonical" href="https://example.com/"></head><body><h1>x</h1><img src="a.png" alt=""><img src="b.png" alt="A chart"><img src="c.png"></body></html>'
+    r = SEOAnalyzer(check_robots=False).run(ctx(html=html))
+    assert r.metrics["images_missing_alt"] == 1

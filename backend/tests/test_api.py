@@ -188,3 +188,22 @@ def test_rate_limit_enforced(client):
 def test_body_size_limit(client):
     r = client.post("/api/contact", content=b"x" * 70000, headers={"content-type": "application/json", "content-length": "70000"})
     assert r.status_code == 413
+
+
+def test_recent_list_respects_opt_out(client):
+    def finish(url, listed):
+        r = client.post("/api/vector/audits", json={"url": url, "listed": listed})
+        assert r.status_code == 202
+        audit_id = r.json()["id"]
+        for _ in range(50):
+            if client.get(f"/api/vector/audits/{audit_id}").json()["status"] in ("completed", "failed"):
+                break
+            time.sleep(0.05)
+        return audit_id
+
+    hidden = finish("www.example.com", False)
+    shown = finish("example.com", True)
+    recent = client.get("/api/vector/recent").json()
+    ids = [it["id"] for it in recent]
+    assert shown in ids and hidden not in ids
+    assert all(set(it) == {"id", "host", "health_score", "completed_at"} for it in recent)

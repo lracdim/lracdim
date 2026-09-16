@@ -4,6 +4,8 @@ export default {
   owner: 'John Carl Dimatulac',
   initials: 'J.C.D',
   role: 'Full-Stack Web Developer · WordPress & Automation Engineer',
+  /* Homepage <title>. Kept under 60 characters so search results do not truncate it. */
+  homeTitle: 'LRACDIMENSION — Web Developer & Automation Engineer',
   location: 'Sta. Rosa, Laguna, Philippines',
   url: 'https://lracdimension.vercel.app',
   description:
@@ -12,7 +14,7 @@ export default {
 
   /* Public résumé (PDF). Leave empty until a version without personal data
      and references is exported; the link is hidden while empty. */
-  resumeUrl: '',
+  resumeUrl: '/assets/resume/John-Carl-Dimatulac-Resume.pdf',
   portrait: '/assets/img/brand/portrait-1200.jpg',
 
   /* ------------------------------------------------------------------
