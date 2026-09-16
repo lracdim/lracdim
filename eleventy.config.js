@@ -61,6 +61,7 @@ export default function (eleventyConfig) {
 
   // Serialize a data object into a <script type="application/json"> payload.
   // Used to hand a demo's clinic.json to its client-side app without a fetch.
+  eleventyConfig.addFilter('faq_entities', (faq) => (faq || []).map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })));
   eleventyConfig.addFilter('json', (value) =>
     JSON.stringify(value == null ? null : value).replace(/</g, '\\u003c')
   );

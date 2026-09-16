@@ -12,3 +12,7 @@ function load() {
   }
 }
 export const CFG = load();
+/* Compatibility: modules cached by browsers before the JSON-config refactor
+   read window.LRACDIM at evaluation time. studio.js imports this file first,
+   so the global exists before any of them evaluate. */
+window.LRACDIM = CFG;

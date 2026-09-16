@@ -7,8 +7,8 @@ pagination:
   addAllPagesToCollections: true
 permalink: /forge/{{ tool.slug }}/
 eleventyComputed:
-  title: "{{ tool.name }} — Forge"
-  description: "{{ tool.summary }}"
+  title: "{{ tool.seo.title if tool.seo else tool.name ~ ' — Forge' }}"
+  description: "{{ tool.seo.description if tool.seo else tool.summary }}"
 ---
 <section class="shell portfolio-section page-intro dim-head" data-dimension="forge">
   <p class="overline"><a href="/forge/">04 / Forge</a> / {{ tool.category }} / {{ 'Client-side' if tool.mode == 'client' else 'Server-side' }}</p>
@@ -19,6 +19,8 @@ eleventyComputed:
   <article class="forge-tool forge-tool--page" id="{{ tool.slug }}" data-tool="{{ tool.slug }}" data-mode="{{ tool.mode }}">
     {% if tool.mode == 'server' %}{% include "partials/forge/server-tool.njk" %}{% else %}{% include "partials/forge/" ~ tool.slug ~ ".njk" %}{% endif %}
   </article>
+  {% set seo = tool.seo %}
+  {% if seo %}{% include "partials/tool-guide.njk" %}{% endif %}
   <nav class="forge-index" aria-label="Other tools" style="margin-top:44px">{% for t in forgeTools %}{% if t.slug != tool.slug %}<a href="/forge/{{ t.slug }}/">{{ t.name }}</a>{% endif %}{% endfor %}</nav>
 </section>
 {% include "partials/studio-contact.njk" %}

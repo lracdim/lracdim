@@ -1,8 +1,22 @@
 ---
 layout: layouts/base.njk
-title: Vector — Web Clinic
+title: Free Website Audit Tool — Vector
 permalink: /vector/
-description: "Vector examines a public website with seven analyzers, scores it, lists every issue with evidence, and produces a prioritised prescription. Stored reports and history per website."
+description: "Vector is a free website audit tool. Enter a URL and get a health score out of 100, seven category scores, every issue with evidence, and a prioritised fix list you can share by link."
+softwareName: Vector website audit
+crumbSectionName: Vector
+crumbSectionHref: /vector/
+faq:
+  - q: "Is this website audit free?"
+    a: "Yes. Enter any public website address and the examination runs on the engine at no cost, with no account. Public use is rate-limited per visitor to keep it available."
+  - q: "What does the audit check?"
+    a: "Seven areas: technical structure, SEO tags and files, document-level performance, accessibility markup, security headers, a sample of links, and content. Each finding shows its evidence and a fix."
+  - q: "Is the score the same as Google PageSpeed or Lighthouse?"
+    a: "No. Vector reads the HTML document and response headers; it does not run a browser, so it does not measure Core Web Vitals. It is a structural audit, and the methodology is printed with every report."
+  - q: "Can I share the report?"
+    a: "Every examination gets a permanent link. Send it to a colleague or a client, or save it as a PDF from the report."
+  - q: "Will my website appear on the recently examined list?"
+    a: "Only if you leave the listing option on when you run it. Untick it and the domain and score are kept private to the report link."
 ---
 {% set dim = dimensions[1] %}
 {% set dimLede = "Examine a website. Find the structural problems. Get a prioritised prescription. Run it again and watch the score move." %}

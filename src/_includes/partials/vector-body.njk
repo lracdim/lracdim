@@ -47,6 +47,20 @@
   </div>
 </section>
 
+<section class="shell portfolio-section">
+  {% set seo = { guide: [
+    { h: "How to audit a website with Vector", p: [
+      "Enter the address of any public website and press Examine. The engine fetches the page, runs seven analyzers over the document, its headers, robots.txt, the sitemap, and a sample of links, then scores each category and combines them into one health score. The whole run usually takes ten to twenty seconds and the page shows each stage as it completes.",
+      "The report lists every issue ranked from critical to low with four parts: the evidence the analyzer saw, why it matters, the prescription, and the expected impact. The prescription section orders the fixes so the first items move the score most."
+    ] },
+    { h: "What a good score means", p: [
+      "Scores are deducted from findings only, so a page with no detected problems scores 100. A score in the eighties usually means a handful of medium issues such as missing security headers or images without dimensions. A score below sixty almost always includes a critical or several high findings: no HTTPS, a server error, a noindex left on a live page, or many broken links.",
+      "Because the audit reads the document rather than rendering it, it complements rather than replaces a Core Web Vitals report. Use Vector to find structural and SEO problems, then a field-data tool for loading performance on real devices."
+    ] }
+  ], faq: faq } %}
+  {% include "partials/tool-guide.njk" %}
+</section>
+
 <section class="pipeline-section" id="engine"><div class="shell"><div class="section-title"><p class="overline">Architecture</p><h2>The analysis engine.</h2><p>A request creates an audit record and returns its id immediately. A worker runs the analyzers in sequence, writing the stage to the record as it goes, then the scoring engine derives category scores and the health score and the prescription is stored. The page polls the record and never waits on the crawl.</p></div>
 <ol class="engine-path" aria-label="Pipeline">{% for step in ["Frontend request","FastAPI","Audit job","Analyzers","Scoring engine","PostgreSQL","Diagnostic report"] %}<li><span class="project-type">{{ loop.index0 | pad }}</span><strong>{{ step }}</strong></li>{% endfor %}</ol>
 <p class="fine-print">Every outbound request passes an SSRF policy: http and https only, no private, loopback, link-local, or cloud-metadata addresses, DNS results checked, every redirect re-validated, response size and time capped, at most a fixed number of links checked per examination. Public examinations are rate-limited per client.</p>

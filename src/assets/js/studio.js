@@ -1,3 +1,4 @@
+import './config.js'; // must be first: defines the runtime config before any other module evaluates
 import { initDiagnosticModal } from './modal.js';
 import { initStartForm } from './start.js';
 

@@ -1,0 +1,20 @@
+{# Guide and FAQ below a tool. Expects `seo` = { guide: [{h, p:[...]}], faq: [{q, a}] } #}
+<div class="tool-guide">
+  {% for g in seo.guide %}
+  <section class="tool-guide__section">
+    <h2>{{ g.h }}</h2>
+    {% for para in g.p %}<p>{{ para }}</p>{% endfor %}
+  </section>
+  {% endfor %}
+  {% if seo.faq and seo.faq.length %}
+  <section class="tool-guide__section tool-faq" id="faq">
+    <h2>Questions</h2>
+    {% for f in seo.faq %}
+    <details class="tool-faq__item"{% if loop.first %} open{% endif %}>
+      <summary>{{ f.q }}</summary>
+      <p>{{ f.a }}</p>
+    </details>
+    {% endfor %}
+  </section>
+  {% endif %}
+</div>

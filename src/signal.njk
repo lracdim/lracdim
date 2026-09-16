@@ -1,7 +1,20 @@
 ---
 layout: layouts/base.njk
-title: Signal — Analytics and monitoring
+title: Website Monitor and SEO Checker — Signal
 permalink: /signal/
+softwareName: Signal website monitor
+crumbSectionName: Signal
+crumbSectionHref: /signal/
+faq:
+  - q: "What does Signal measure?"
+    a: "Availability and HTTP status, response time, SSL validity and expiry, SEO and technical scores from a single fetch, and which analytics tools the page loads."
+  - q: "Does it read my Google Analytics account?"
+    a: "No. The analytics score reflects tracking scripts detected in the page markup only. It never connects to any analytics account."
+  - q: "How often is a registered domain checked?"
+    a: "On a schedule set by the operator, currently every five minutes, with every check stored as an event so the history builds over time."
+  - q: "Why does the performance score differ from Vector?"
+    a: "Both use the same analyzers, but response time is measured on each fetch and varies. The other scores should match between the two."
+---
 description: "Signal measures a domain now and keeps measuring it: uptime, response time, SSL, SEO and technical scores, and which analytics tools the site loads. Every number is a stored measurement."
 ---
 {% set dim = dimensions[2] %}
@@ -35,4 +48,8 @@ IF status is 4xx or response &gt; 1500 ms  THEN status = degraded → warning
 IF the certificate expires within 14 days THEN ssl warning
 IF status returns to operational         THEN recovered</pre>
 <p class="fine-print">The analytics score reflects which tracking tools the page loads. Signal does not read any analytics account; traffic figures would need Search Console or GA access and are not shown. Scores use Vector's documented scoring.</p></div></section>
+<section class="shell portfolio-section">
+  {% set seo = { guide: [ { h: "How Signal measures a website", p: ["Enter a domain and Signal fetches the page once, records the HTTP status, response time, and SSL certificate, runs the SEO, technical, performance, and content analyzers from Vector on the document, and detects analytics tools from the markup. If the public monitoring cap has room, the domain is registered for scheduled checks and every later check is stored as an event you can read on its history page.", "The operator board above shows the sites monitored on a schedule with their current status, response time, HTTP code, and SSL expiry, plus a response-time chart once a few checks have accumulated."] } ], faq: faq } %}
+  {% include "partials/tool-guide.njk" %}
+</section>
 {% include "partials/studio-contact.njk" %}

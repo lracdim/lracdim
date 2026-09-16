@@ -3,7 +3,9 @@
  *   client → runs in the browser, nothing leaves the page
  *   server → POST /api/forge/<slug>/run through the validated fetcher
  */
-export default [
+import toolSeo from './toolSeo.js';
+
+const tools = [
   { slug: 'json-formatter', name: 'JSON formatter and validator', category: 'Developer', mode: 'client', summary: 'Format, minify, and validate JSON with the exact line and column of any error.' },
   { slug: 'regex-tester', name: 'Regex tester', category: 'Developer', mode: 'client', summary: 'Test a JavaScript regular expression against sample text with flags, match list, and capture groups.' },
   { slug: 'timestamp-converter', name: 'Timestamp converter', category: 'Developer', mode: 'client', summary: 'Unix seconds or milliseconds to ISO 8601 and local time, and back.' },
@@ -16,3 +18,6 @@ export default [
   { slug: 'slug-generator', name: 'Slug generator', category: 'Content', mode: 'client', summary: 'Turn a title into a URL-safe slug, with optional stop-word removal.' },
   { slug: 'text-analyzer', name: 'Text and readability analyzer', category: 'Content', mode: 'client', summary: 'Words, sentences, paragraphs, reading time, and a Flesch reading-ease score, live as you type.' }
 ];
+
+/* Attach the search-facing copy (title, description, guide, FAQ) from toolSeo.js. */
+export default tools.map((t) => ({ ...t, seo: toolSeo[t.slug] || null }));

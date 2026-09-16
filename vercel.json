@@ -92,6 +92,15 @@
       ]
     },
     {
+      "source": "/assets/(js|css)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=31536000, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/demos/(.*)",
       "headers": [
         {
