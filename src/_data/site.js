@@ -36,6 +36,8 @@ export default {
   // Locally it defaults to the dev API so the dimensions work end to end.
   apiBase: process.env.LRACDIM_API_BASE || (process.env.VERCEL ? '' : 'http://localhost:8000'),
   scanEndpoint: '',
+  /* Google Analytics 4 measurement id (G-XXXXXXXXXX). Set LRACDIM_GA_ID on Vercel; empty means no tag is loaded. */
+  gaId: process.env.LRACDIM_GA_ID || '',
   leadWebhook: '',
 
   /* Public profiles. Only entries with a real URL are rendered. */
