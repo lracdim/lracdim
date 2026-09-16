@@ -23,7 +23,9 @@ from .fetcher import fetch
 from .monitor_service import check_target
 
 ANALYTICS_SIGNATURES = {
-    "Google Analytics 4": (r"googletagmanager\.com/gtag/js\?id=G-", r"gtag\('config',\s*'G-"),
+    # The third pattern catches a quoted measurement id in page config, which is
+    # how sites that inject gtag from a module (or a framework) carry it.
+    "Google Analytics 4": (r"googletagmanager\.com/gtag/js\?id=G-", r"gtag\('config',\s*'G-", r"[\"']G-[A-Z0-9]{8,12}[\"']"),
     "Universal Analytics (retired)": (r"google-analytics\.com/analytics\.js", r"gtag\('config',\s*'UA-"),
     "Google Tag Manager": (r"googletagmanager\.com/gtm\.js", r"GTM-[A-Z0-9]+"),
     "Meta Pixel": (r"connect\.facebook\.net/[a-z_]+/fbevents\.js", r"fbq\('init'"),

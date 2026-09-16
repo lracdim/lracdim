@@ -75,3 +75,9 @@ def test_public_scan_fetch_failure_is_readable(client, monkeypatch):
     monkeypatch.setattr(signal_scan, "fetch", boom)
     r = client.post("/api/signal/scan", json={"url": "example.com"})
     assert r.status_code == 502 and r.json()["error"]["message"] == "The server could not be reached."
+
+
+def test_detect_ga4_measurement_id_in_config():
+    html = '<html><head><script type="application/json" id="cfg">{"apiBase":"","gaId":"G-HRK6B357GM"}</script></head></html>'
+    assert "Google Analytics 4" in signal_scan.detect_analytics(html)
+    assert signal_scan.detect_analytics('<p>Model G-SHOCK</p>') == []
