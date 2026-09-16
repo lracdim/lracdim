@@ -20,7 +20,17 @@ Setup, done once in the Google account that should receive the mail:
    redeploys on its own.
 
 After that, every submission on `/start/` and every Signal incident or SSL
-warning appends a row and sends an email. The API also keeps its own copy in
+warning appends a row and sends an email. Intake submissions also get an
+automatic acknowledgement sent to the address the visitor entered, from the
+deploying Gmail account, with the owner's address as reply-to. Edit
+`REPLY_SUBJECT` and `replyBody_` in the script to change the wording, or set
+`AUTO_REPLY` to `false` to turn it off. Addresses on example.com are skipped
+so test submissions never mail a stranger.
+
+Where things live: the spreadsheet is a normal file in the Google Drive of
+the account that created it, and the script is stored inside that
+spreadsheet (Extensions → Apps Script). Nothing is stored on Railway or in
+this repository except this template. The API also keeps its own copy in
 Postgres; the sheet is the human-facing view.
 
 Limits worth knowing: Apps Script mail is capped at 100 emails a day for a

@@ -34,7 +34,46 @@ function doPost(e) {
   } catch (err) {
     // Mail quota or permission problem: the row is still stored.
   }
+  if (kind === 'intake' && AUTO_REPLY && validEmail_(data.email)) {
+    try {
+      MailApp.sendEmail({ to: data.email, replyTo: NOTIFY_TO, subject: REPLY_SUBJECT, body: replyBody_(data), name: REPLY_FROM_NAME });
+    } catch (err) {
+      // Same: never fail the webhook because a reply could not be sent.
+    }
+  }
   return json_({ ok: true, kind: kind });
+}
+
+/* ---- auto-reply to the person who submitted the form ---------------------- */
+
+var AUTO_REPLY = true;
+var REPLY_FROM_NAME = 'John Carl Dimatulac';
+var REPLY_SUBJECT = 'Got your project inquiry';
+
+function replyBody_(d) {
+  var first = String(d.name || '').trim().split(/\s+/)[0] || 'there';
+  var lines = [
+    'Hi ' + first + ',',
+    '',
+    'Thanks for reaching out. Your inquiry has arrived and I will read it properly and reply within one working day.',
+    '',
+    'What you sent:',
+    '  Project type: ' + (d.project_type || '-'),
+    '  Timeline: ' + (d.timeline || '-'),
+    '  Budget: ' + (d.budget_range || '-'),
+    d.website ? '  Website: ' + d.website : null,
+    '',
+    'If anything changes in the meantime, just reply to this email.',
+    '',
+    'John Carl Dimatulac',
+    'Full-Stack Web Developer · WordPress & Automation Engineer',
+    'https://lracdimension.vercel.app'
+  ];
+  return lines.filter(function (l) { return l !== null; }).join('\n');
+}
+
+function validEmail_(v) {
+  return typeof v === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && !/@example\.(com|org|net)$/i.test(v);
 }
 
 function intakeRow_(d) {
