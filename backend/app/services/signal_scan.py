@@ -76,7 +76,8 @@ def snapshot(db: Session, target: MonitoringTarget | None, url: str) -> dict:
     store the result as a snapshot event when a target exists."""
     fetched = fetch(url)
     ctx = PageContext.from_fetched(fetched)
-    results = {a.category: a.run(ctx) for a in (TechnicalAnalyzer(), SEOAnalyzer(), PerformanceAnalyzer(), ContentAnalyzer())}
+    # No PageSpeed call here: Signal is a quick snapshot, and Vector carries Core Web Vitals.
+    results = {a.category: a.run(ctx) for a in (TechnicalAnalyzer(), SEOAnalyzer(), PerformanceAnalyzer(measure_vitals=None), ContentAnalyzer())}
     scores = {cat: category_score(r.findings) for cat, r in results.items()}
     seo_m = results["seo"].metrics
     tech_m = results["technical"].metrics

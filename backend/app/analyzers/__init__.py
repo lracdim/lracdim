@@ -1,4 +1,5 @@
 from .accessibility import AccessibilityAnalyzer
+from .ai_visibility import AIVisibilityAnalyzer
 from .base import AnalyzerResult, Finding, PageContext
 from .content import ContentAnalyzer
 from .links import LinkAnalyzer
@@ -15,6 +16,7 @@ ANALYZERS = [
     SecurityAnalyzer,
     LinkAnalyzer,
     ContentAnalyzer,
+    AIVisibilityAnalyzer,
 ]
 
 __all__ = ["ANALYZERS", "AnalyzerResult", "Finding", "PageContext"]

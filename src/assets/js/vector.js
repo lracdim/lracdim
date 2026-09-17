@@ -15,7 +15,7 @@ import { postLead } from './leads.js';
 
 const grade = (s) => (s >= 80 ? 'good' : s >= 50 ? 'warn' : 'bad');
 const SEV = ['critical', 'high', 'medium', 'low'];
-const CATEGORY_LABEL = { technical: 'Technical', seo: 'SEO', performance: 'Performance', accessibility: 'Accessibility', security: 'Security', links: 'Links', content: 'Content', uiux: 'Structure', contentWeight: 'Content' };
+const CATEGORY_LABEL = { ai: 'AI visibility', technical: 'Technical', seo: 'SEO', performance: 'Performance', accessibility: 'Accessibility', security: 'Security', links: 'Links', content: 'Content', uiux: 'Structure', contentWeight: 'Content' };
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function plausible(url) {
@@ -49,7 +49,7 @@ export function initVector() {
   let pollTimer = null;
   let consoleTimer = null;
 
-  if (modeNote) modeNote.textContent = hasApi() ? 'Connected to the analysis engine: seven analyzers, stored reports, and history per website.' : 'The analysis engine is not connected on this deployment. Examinations run in your browser as a structural read and are labelled as such.';
+  if (modeNote) modeNote.textContent = hasApi() ? 'Connected to the analysis engine: eight analyzers including AI visibility, Core Web Vitals where available, stored reports, and history per website.' : 'The analysis engine is not connected on this deployment. Examinations run in your browser as a structural read and are labelled as such.';
 
   const show = (name) => Object.entries(states).forEach(([k, el]) => (el.hidden = k !== name));
   const setBusy = (on) => {
@@ -140,10 +140,11 @@ export function initVector() {
     reportEl.innerHTML = `
       <div class="vector-report__head">
         <div><p class="overline">Examination complete · engine</p><h2 class="vector-report__url">${esc(audit.summary.final_url || audit.url)}</h2><p class="fine-print">${esc(new Date(audit.completed_at).toLocaleString())} · HTTP ${esc(audit.summary.status)} · ${esc(audit.summary.response_ms)} ms to first document</p></div>
-        <div class="actions" style="margin:0"><button type="button" class="text-link" data-vector-reset>New examination ↗</button><a class="text-link" href="${esc(shareUrl)}">Report link ↗</a><button type="button" class="text-link" data-vector-print>Save as PDF ↗</button></div>
+        <div class="actions" style="margin:0"><button type="button" class="text-link" data-vector-reset>New examination ↗</button><a class="text-link" href="${esc(shareUrl)}">Report link ↗</a><button type="button" class="text-link" data-vector-print>Save as PDF ↗</button><button type="button" class="text-link" data-vector-csv>Download CSV ↗</button></div>
       </div>
       <div class="vector-health" data-grade="${grade(audit.health_score)}"><p class="overline">Website health</p><p class="vector-health__score"><b>${audit.health_score}</b> / 100</p><p class="fine-print">Weighted mean of the category scores. <button type="button" class="text-link text-link--inline" data-toggle-method aria-expanded="false">How scores are calculated ↗</button></p><pre class="vector-console" data-method hidden>${esc(methodology)}</pre></div>
       <table class="vector-table"><caption class="overline">Categories</caption><tbody>${results.map((r) => `<tr data-grade="${grade(r.score)}"><th scope="row">${esc(CATEGORY_LABEL[r.category] || cap(r.category))}</th><td>${r.score}</td><td><div class="scorecard__meter"><div class="scorecard__fill" style="width:${r.score}%"></div></div></td></tr>`).join('')}</tbody></table>
+      ${renderVitals(results)}
       <div class="vector-counts"><p class="overline">Issues</p>${SEV.map((s) => `<span data-sev="${s}"><b>${String(counts[s] || 0).padStart(2, '0')}</b> ${cap(s)}</span>`).join('')}</div>
       <div class="vector-issues">${issues.length ? issues.map((i) => `
         <article class="vector-issue" data-sev="${esc(cap(i.severity))}">
@@ -154,12 +155,14 @@ export function initVector() {
       <div class="vector-rx-wrap"><p class="overline">Prescription</p>${prescription.length ? `<ol class="vector-rx">${prescription.map((p) => `<li><span class="project-type">${String(p.position).padStart(2, '0')} — ${esc(cap(p.severity))}</span><strong>${esc(p.action)}</strong><span>${esc((issues.find((i) => i.code === p.issue_code) || {}).title || p.issue_code)}</span></li>`).join('')}</ol>` : '<p class="body body--sm">Nothing to prescribe from this examination.</p>'}</div>
       ${renderHistory(history_, audit.id)}
       ${renderMetrics(results)}
-      <p class="fine-print vector-mode">Measured from the live document, its response headers, robots.txt, sitemap, and a sample of its links. Performance figures are document-level indicators, not Core Web Vitals. Security is a header review, not a vulnerability scan.</p>
+      <p class="fine-print vector-mode">Measured from the live document, its response headers, robots.txt, sitemap, llms.txt, and a sample of its links. ${vitalsOf(results) ? 'Core Web Vitals come from Google PageSpeed Insights.' : 'Core Web Vitals were not measured on this run, so performance figures are document-level indicators only.'} AI visibility reports whether AI crawlers can read the site, not whether any AI answer mentions it. Security is a header review, not a vulnerability scan.</p>
       <div class="vector-handoff"><p class="overline">Next step</p><h3>Want this fixed?</h3><p>Start a project and this report comes with you: the intake attaches the score, the URL, and the report link so we begin from the findings, not from a blank brief.</p><div class="actions"><a class="btn" href="/start/">Start a project ↗</a><a class="text-link" href="#coverage">What this measures ↗</a></div></div>
       <footer class="vector-print-footer" aria-hidden="true">Website examination by John Carl Dimatulac · LRACDIMENSION · lracdimension.vercel.app · lracdim@gmail.com · Report: ${esc(shareUrl)}</footer>`;
     reportEl.querySelectorAll('[data-vector-reset]').forEach((b) => b.addEventListener('click', idle));
     const printBtn = reportEl.querySelector('[data-vector-print]');
     if (printBtn) printBtn.addEventListener('click', () => { document.body.classList.add('vector-printing'); window.print(); });
+    const csvBtn = reportEl.querySelector('[data-vector-csv]');
+    if (csvBtn) csvBtn.addEventListener('click', () => downloadCsv(res));
     window.addEventListener('afterprint', () => document.body.classList.remove('vector-printing'), { once: true });
     const toggle = reportEl.querySelector('[data-toggle-method]');
     const method = reportEl.querySelector('[data-method]');
@@ -178,6 +181,56 @@ export function initVector() {
     if (!items || items.length < 2) return `<div class="vector-history"><p class="overline">History</p><p class="fine-print">${items && items.length === 1 ? 'First examination of this website. Run it again after changes to see progression.' : 'No stored history for this website.'}</p></div>`;
     const max = 100;
     return `<div class="vector-history"><p class="overline">History · ${items.length} examinations</p><ol class="vector-history__list">${items.map((it) => `<li${it.id === currentId ? ' aria-current="true"' : ''}><a href="/vector/audit/${esc(it.id)}/"><span class="project-type">${esc(new Date(it.completed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }))}</span><span class="vector-history__bar"><span style="width:${(it.health_score / max) * 100}%"></span></span><b>${it.health_score}</b></a></li>`).join('')}</ol></div>`;
+  }
+
+  function vitalsOf(results) {
+    const perf = results.find((r) => r.category === 'performance');
+    return (perf && perf.metrics && perf.metrics.vitals) || null;
+  }
+
+  function renderVitals(results) {
+    const v = vitalsOf(results);
+    if (!v) return '';
+    const rows = [
+      ['Largest Contentful Paint', v.lcp_ms != null ? `${(v.lcp_ms / 1000).toFixed(1)} s` : '—', v.ratings.lcp_ms, 'good ≤ 2.5 s'],
+      ['Interaction to Next Paint', v.inp_ms != null ? `${v.inp_ms} ms` : 'no field data', v.ratings.inp_ms, 'good ≤ 200 ms'],
+      ['Cumulative Layout Shift', v.cls != null ? String(v.cls) : '—', v.ratings.cls, 'good ≤ 0.1'],
+      ['Total Blocking Time (lab)', v.tbt_ms != null ? `${v.tbt_ms} ms` : '—', v.ratings.tbt_ms, 'good ≤ 200 ms']
+    ];
+    const source = { field: 'Real-user data for this page', 'origin field': 'Real-user data for the whole site', lab: 'Lab run: too little traffic for real-user data' }[v.source] || v.source;
+    return `<div class="vector-vitals"><p class="overline">Core Web Vitals · ${esc(v.strategy)}</p><p class="fine-print">${esc(source)}, from Google PageSpeed Insights${v.lighthouse_score != null ? ` · Lighthouse performance ${v.lighthouse_score}` : ''}.</p><table class="vector-table"><tbody>${rows.map(([name, value, rating, target]) => `<tr data-rating="${esc(rating || 'none')}"><th scope="row">${esc(name)}</th><td>${esc(value)}</td><td><span class="vital-rating">${esc(rating || '—')}</span> <span class="fine-print">${esc(target)}</span></td></tr>`).join('')}</tbody></table></div>`;
+  }
+
+  function downloadCsv(res) {
+    const { audit, results, issues } = res;
+    // Leading = + - @ would be read as formulas by spreadsheet apps; prefix them.
+    const cell = (v) => {
+      let s = v == null ? '' : typeof v === 'object' ? JSON.stringify(v) : String(v);
+      if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+      return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const line = (arr) => arr.map(cell).join(',');
+    const host = new URL(audit.summary.final_url || audit.url).hostname;
+    const date = (audit.completed_at || '').slice(0, 10);
+    const out = [
+      line(['Website', audit.summary.final_url || audit.url]),
+      line(['Examined', audit.completed_at]),
+      line(['Health score', audit.health_score]),
+      line(['Report', `${location.origin}/vector/audit/${audit.id}/`]),
+      '',
+      line(['Category', 'Score']),
+      ...results.map((r) => line([CATEGORY_LABEL[r.category] || r.category, r.score])),
+      '',
+      line(['Rank', 'Severity', 'Category', 'Issue', 'Evidence', 'Why it matters', 'Prescription', 'Expected impact']),
+      ...issues.map((i, n) => line([n + 1, i.severity, CATEGORY_LABEL[i.category] || i.category, i.title, i.evidence, i.explanation, i.recommendation, i.impact]))
+    ];
+    const blob = new Blob(['\ufeff' + out.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `vector-${host}-${date}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   }
 
   function renderMetrics(results) {

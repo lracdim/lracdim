@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import re
 
 from .base import Analyzer, AnalyzerResult, Finding, PageContext
@@ -9,7 +10,9 @@ class ContentAnalyzer(Analyzer):
     category = "content"
 
     def run(self, ctx: PageContext) -> AnalyzerResult:
-        soup = ctx.soup
+        # Work on a copy: the parsed page is shared, and later analyzers (AI
+        # visibility reads JSON-LD scripts) must see the document unmodified.
+        soup = copy.copy(ctx.soup)
         for t in soup(["script", "style", "noscript", "template"]):
             t.decompose()
         body = soup.body or soup

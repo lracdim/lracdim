@@ -41,6 +41,9 @@ class Settings:
     signal_response_warn_ms: int = _int("SIGNAL_RESPONSE_WARN_MS", 1500)
     signal_ssl_warn_days: int = _int("SIGNAL_SSL_WARN_DAYS", 14)
 
+    # Google PageSpeed Insights key for Core Web Vitals. Empty means not measured.
+    pagespeed_api_key: str = os.environ.get("PAGESPEED_API_KEY", "")
+
     fetch_timeout_seconds: int = _int("FETCH_TIMEOUT_SECONDS", 12)
     fetch_max_bytes: int = _int("FETCH_MAX_BYTES", 3_000_000)
     audit_max_links_checked: int = _int("AUDIT_MAX_LINKS_CHECKED", 40)

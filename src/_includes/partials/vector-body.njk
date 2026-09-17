@@ -36,13 +36,14 @@
 </section>
 
 <section class="shell portfolio-section capabilities" id="coverage">
-  <div><p class="overline">What the engine measures</p><h2>Measured,<br>not implied.</h2><p class="studio-intro">Seven analyzers read the live document, its response headers, robots.txt, the sitemap, and a bounded sample of links. Each finding carries its evidence. Scores are deducted from findings only; the methodology is printed with every report.</p></div>
+  <div><p class="overline">What the engine measures</p><h2>Measured,<br>not implied.</h2><p class="studio-intro">Eight analyzers read the live document, its response headers, robots.txt, the sitemap, llms.txt, and a bounded sample of links, and Core Web Vitals come from Google where available. Each finding carries its evidence. Scores are deducted from findings only; the methodology is printed with every report.</p></div>
   <div class="capability-list">
     <article><h3>Technical</h3><p>Status code, redirects, HTTPS, content type, doctype, language, viewport, canonical, heading hierarchy, document size.</p></article>
     <article><h3>SEO</h3><p>Title and description length, canonical, robots meta and X-Robots-Tag, Open Graph, image alt coverage, robots.txt, sitemap.</p></article>
-    <article><h3>Performance</h3><p>Response time, document weight, script and stylesheet counts, render-blocking and third-party scripts, image sizing and lazy loading, compression, caching. Not Core Web Vitals.</p></article>
+    <article><h3>Performance</h3><p>Response time, document weight, script and stylesheet counts, render-blocking and third-party scripts, image sizing and lazy loading, compression, caching. Core Web Vitals (LCP, INP, CLS) from Google PageSpeed Insights, using real-user data when the site has enough traffic and a lab run when it does not.</p></article>
     <article><h3>Accessibility</h3><p>Alt attributes, form labels, button and link names, landmarks, skip link, language, generic link text. Contrast needs a rendered page and is not measured.</p></article>
     <article><h3>Security</h3><p>HTTPS, HSTS, CSP, X-Content-Type-Options, framing protection, Referrer-Policy, version disclosure, mixed content, insecure forms. A header review, not a vulnerability scan.</p></article>
+    <article><h3>AI visibility</h3><p>Whether robots.txt lets AI answer crawlers such as ChatGPT search, Perplexity, and Claude read the site, training crawlers reported separately; llms.txt; JSON-LD structured data; text readable without JavaScript. Access and signals, not whether an AI answer mentions the site.</p></article>
     <article><h3>Links and content</h3><p>Broken links, redirect chains, insecure internal links, internal link presence; word count, text ratio, headings, paragraph length, placeholder text.</p></article>
   </div>
 </section>
@@ -50,7 +51,7 @@
 <section class="shell portfolio-section">
   {% set seo = { guide: [
     { h: "How to audit a website with Vector", p: [
-      "Enter the address of any public website and press Examine. The engine fetches the page, runs seven analyzers over the document, its headers, robots.txt, the sitemap, and a sample of links, then scores each category and combines them into one health score. The whole run usually takes ten to twenty seconds and the page shows each stage as it completes.",
+      "Enter the address of any public website and press Examine. The engine fetches the page, runs eight analyzers over the document, its headers, robots.txt, the sitemap, llms.txt, and a sample of links, measures Core Web Vitals through Google PageSpeed Insights where available, then scores each category and combines them into one health score. The whole run usually takes ten to twenty seconds and the page shows each stage as it completes.",
       "The report lists every issue ranked from critical to low with four parts: the evidence the analyzer saw, why it matters, the prescription, and the expected impact. The prescription section orders the fixes so the first items move the score most."
     ] },
     { h: "What a good score means", p: [

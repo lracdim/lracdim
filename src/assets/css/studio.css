@@ -141,3 +141,6 @@ body{background:#18191b;color:#f1f0eb}html{scroll-behavior:smooth;scroll-padding
 
 /* --- tool guides and FAQ --- */
 .tool-guide{max-width:760px;margin-top:56px}.tool-guide__section{border-top:1px solid #363739;padding-top:28px;margin-top:28px}.tool-guide__section h2{font-size:26px;font-weight:400;letter-spacing:-.02em;margin-bottom:14px}.tool-guide__section p{font-size:16px;line-height:1.75;color:#bfc0b7;margin-bottom:14px}.tool-faq__item{border:1px solid #363739;padding:0 20px;margin-top:10px}.tool-faq__item summary{cursor:pointer;font-size:16px;color:var(--paper);margin:0;padding:16px 0;list-style:none;display:flex;justify-content:space-between;gap:16px}.tool-faq__item summary::-webkit-details-marker{display:none}.tool-faq__item summary::after{content:"+";color:var(--signal);font-family:var(--font-mono)}.tool-faq__item[open] summary::after{content:"−"}.tool-faq__item p{margin:0 0 18px;font-size:15px}
+
+/* --- Core Web Vitals panel --- */
+.vector-vitals{margin-top:28px}.vector-vitals .fine-print{margin-top:6px}.vital-rating{text-transform:capitalize}.vector-vitals tr[data-rating="good"] .vital-rating{color:#8cc08c}.vector-vitals tr[data-rating="needs improvement"] .vital-rating{color:#c6a24a}.vector-vitals tr[data-rating="poor"] .vital-rating{color:#d97b7b}

@@ -23,7 +23,7 @@ Can a scoring rule be simple enough to print with every report and still rank tw
 Three rules, written once in the engine and returned as text with every report.
 
 1. **Category score.** Every category starts at 100. Each finding deducts a fixed amount by severity: critical 30, high 15, medium 8, low 3. The floor is 0. Nothing is added back for good behaviour. A category with no findings scores 100, which means "nothing we check for was wrong", not "perfect".
-2. **Health score.** A weighted mean of the category scores. Technical 0.20, SEO 0.20, performance 0.15, accessibility 0.15, security 0.15, links 0.10, content 0.05. Content is lightest because its checks are the coarsest.
+2. **Health score.** A weighted mean of the category scores. Technical 0.20, SEO 0.20, performance 0.15, accessibility 0.15, security 0.15, links 0.10, content 0.05, AI visibility 0.05. Content and AI visibility are lightest: content's checks are the coarsest, and AI visibility measures access and signals rather than outcomes. The weights are normalised by their sum.
 3. **Ranking.** Findings sort by severity, then by category weight, then by the order the analyzer reported them. The prescription is that list, de-duplicated by finding code, with each entry's recommendation as the action.
 
 ## Why deductions, not points
@@ -44,7 +44,7 @@ On this site's own home page the engine reports health in the 80s: the findings 
 
 - Severity is assigned by the analyzer author, not learned. That is deliberate: the reasoning is readable.
 - A category with many low findings can score worse than one with a single high. The prescription order corrects the priority even where the numbers do not.
-- Performance is a document-level read, not Core Web Vitals. Its weight is set accordingly and its metrics say so.
+- Performance combines a document-level read with Core Web Vitals from Google PageSpeed Insights when a key is configured. Findings based on a single lab run are one severity step lighter than findings based on real-user data, because one simulated load is weaker evidence.
 
 ## Conclusion
 

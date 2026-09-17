@@ -322,7 +322,7 @@ export default [
     category: 'Engineering environment',
     role: 'Design, front end, backend, and operations',
     summary:
-      'This site: an Eleventy content layer over a FastAPI and PostgreSQL engine. Vector examines websites with seven analyzers, Signal monitors targets on a schedule, Forge runs client and server tools, and the intake form posts to the same API.',
+      'This site: an Eleventy content layer over a FastAPI and PostgreSQL engine. Vector examines websites with eight analyzers, Signal monitors targets on a schedule, Forge runs client and server tools, and the intake form posts to the same API.',
     context:
       'A portfolio that only described capability. The rebuild turns it into an engineering environment where the systems can be used: website examination, monitoring, tools, and structured intake.',
     constraints:
@@ -338,7 +338,7 @@ export default [
     lessons:
       'An honest empty state beats a decorative dashboard. Signal shipped as a page that said nothing was measured until the first stored check existed.',
     stack: ['Eleventy', 'Vanilla JS', 'Three.js', 'FastAPI', 'PostgreSQL', 'Redis / RQ', 'Vercel'],
-    facts: ['Five dimensions on one data model', 'Vector: seven analyzers, scoring engine, prescriptions, history', 'Signal: scheduled checks, SSL, events, alerts', 'Forge: six client tools, five server tools', 'Structured intake with rule-based classification'],
+    facts: ['Five dimensions on one data model', 'Vector: eight analyzers, Core Web Vitals, AI visibility, scoring engine, prescriptions, history', 'Signal: scheduled checks, SSL, events, alerts', 'Forge: six client tools, five server tools', 'Structured intake with rule-based classification'],
     img: '/assets/img/projects/lracdimension.svg',
     featured: false
   }

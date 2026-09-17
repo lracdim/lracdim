@@ -11,8 +11,10 @@ Health score
   A weighted mean of the category scores. Weights reflect how directly each
   category affects whether the site works for a visitor and a crawler:
     technical 0.20, seo 0.20, performance 0.15, accessibility 0.15,
-    security 0.15, links 0.10, content 0.05
-  (content is weighted lightest because its checks are the coarsest).
+    security 0.15, links 0.10, content 0.05, ai visibility 0.05
+  (content and AI visibility are weighted lightest: content's checks are the
+  coarsest, and AI visibility measures access and signals, not outcomes).
+  Weights are normalised by their sum, so they need not total exactly 1.
 
 Ranking
   Findings are ranked by severity, then by category weight, then by the
@@ -27,7 +29,7 @@ from ..analyzers.base import AnalyzerResult, Finding
 
 DEDUCTIONS = {"critical": 30, "high": 15, "medium": 8, "low": 3}
 SEVERITY_RANK = {"critical": 0, "high": 1, "medium": 2, "low": 3}
-WEIGHTS = {"technical": 0.20, "seo": 0.20, "performance": 0.15, "accessibility": 0.15, "security": 0.15, "links": 0.10, "content": 0.05}
+WEIGHTS = {"technical": 0.20, "seo": 0.20, "performance": 0.15, "accessibility": 0.15, "security": 0.15, "links": 0.10, "content": 0.05, "ai": 0.05}
 
 
 def category_score(findings: list[Finding]) -> int:

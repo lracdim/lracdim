@@ -84,7 +84,8 @@ if (apiUp) {
     url: location.pathname
   }));
   check('vector engine report renders', report.visible && !report.failed, JSON.stringify(report));
-  check('vector report has seven categories', report.categories === 7, String(report.categories));
+  check('vector report has eight categories', report.categories === 8, String(report.categories));
+  check('vector report offers CSV and PDF export', await page.evaluate(() => !!document.querySelector('[data-vector-csv]') && !!document.querySelector('[data-vector-print]')));
   check('vector report has issues and prescription', report.issues > 0 && report.rx > 0);
   check('vector url is addressable', /^\/vector\/audit\/[a-z0-9]+\/$/.test(report.url), report.url);
   const shareUrl = SITE + (report.url.includes('/audit/') ? `/vector/audit/?id=${report.url.split('/')[3]}` : '/vector/');

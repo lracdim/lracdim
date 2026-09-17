@@ -91,6 +91,7 @@ The static site lives on Vercel; this service runs separately. Railway, Render, 
 - Start: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 - Provide PostgreSQL as `DATABASE_URL` (`postgresql+psycopg://…`) and, if you run more than one instance, Redis as `REDIS_URL` with an `rq worker vector` process.
 - Set `CORS_ORIGINS` to the site origin and `ADMIN_KEY` to a long random string.
+- Optional: set `PAGESPEED_API_KEY` (Google Cloud, PageSpeed Insights API enabled) to add Core Web Vitals to Vector reports. Without it, reports state that Core Web Vitals were not measured. Anonymous PageSpeed calls share a quota that is routinely exhausted, so the key is required rather than best-effort.
 
 Then set `LRACDIM_API_BASE=https://<api host>` in the Vercel project so the frontend build points at it.
 

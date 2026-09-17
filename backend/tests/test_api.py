@@ -65,10 +65,10 @@ def test_audit_lifecycle_and_results(client):
         time.sleep(0.05)
     assert a["status"] == "completed", a
     assert all(s["state"] == "done" for s in a["stages"])
-    assert set(a["scores"]) == {"technical", "seo", "performance", "accessibility", "security", "links", "content"}
+    assert set(a["scores"]) == {"technical", "seo", "performance", "accessibility", "security", "links", "content", "ai"}
     res = client.get(f"/api/vector/audits/{audit_id}/results").json()
     assert res["audit"]["health_score"] == a["health_score"]
-    assert len(res["results"]) == 7
+    assert len(res["results"]) == 8
     assert res["issues"] and all(k in res["issues"][0] for k in ("evidence", "explanation", "recommendation", "impact"))
     assert res["prescription"][0]["position"] == 1
     assert "Category score" in res["methodology"]

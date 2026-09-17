@@ -26,6 +26,7 @@ STAGES = [
     ("security", "Reviewing security headers"),
     ("links", "Checking links"),
     ("content", "Analyzing content"),
+    ("ai", "Checking AI visibility"),
     ("scoring", "Calculating scores"),
     ("report", "Generating prescription"),
 ]

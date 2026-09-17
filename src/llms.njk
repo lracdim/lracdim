@@ -1,0 +1,27 @@
+---
+permalink: /llms.txt
+eleventyExcludeFromCollections: true
+---
+# {{ site.name }}
+
+> {{ site.description | safe }}
+
+{{ site.owner }} is a {{ site.role | safe }} based in {{ site.location }}. The site is organised as five working dimensions, each with something a visitor can use or read. Contact: {{ site.email }}.
+
+## Dimensions
+
+{% for d in dimensions %}- [{{ d.name }}]({{ site.url }}{{ d.href }}): {{ d.summary | safe }}
+{% endfor %}
+## Free tools
+
+- [Vector website audit]({{ site.url }}/vector/): health score, eight categories including AI visibility and Core Web Vitals, every issue with evidence and a fix.
+- [Signal website monitor]({{ site.url }}/signal/): uptime, response time, SSL, SEO scores, and detected analytics tools.
+{% for t in forgeTools %}- [{{ t.name | safe }}]({{ site.url }}/forge/{{ t.slug }}/): {{ t.summary | safe }}
+{% endfor %}
+## Work and research
+
+- [All projects]({{ site.url }}/work/)
+- [Research articles]({{ site.url }}/research/)
+- [About]({{ site.url }}/about/)
+- [Services]({{ site.url }}/services/)
+- [Start a project]({{ site.url }}/start/)
