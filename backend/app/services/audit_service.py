@@ -21,7 +21,7 @@ STAGES = [
     ("fetching", "Fetching the page"),
     ("technical", "Analyzing technical structure"),
     ("seo", "Analyzing SEO"),
-    ("performance", "Analyzing performance indicators"),
+    ("performance", "Measuring performance and Core Web Vitals"),
     ("accessibility", "Analyzing accessibility"),
     ("security", "Reviewing security headers"),
     ("links", "Checking links"),
