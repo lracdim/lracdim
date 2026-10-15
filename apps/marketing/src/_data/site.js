@@ -27,7 +27,7 @@ export default {
        modelled profile and says so in the report.
 
      leadWebhook — an n8n Webhook node URL (or any endpoint accepting JSON
-       POST). Every diagnostic request and every /start/ submission is sent
+       POST). Every diagnostic request and every project-intake submission is sent
        here as { source, ...fields, submittedAt, page }. When empty,
        submissions are kept in localStorage and the UI says a human will
        not see them yet.
@@ -57,7 +57,9 @@ export default {
     { label: 'Research', href: '/research/' }
   ],
 
-  cta: { label: 'Hire me', href: '/start/' },
+  /* Opens the project-intake modal (assets/js/start-modal.js). The href is the fallback for a new tab
+     or a shared link: landing on /?start=1 opens the same modal. */
+  cta: { label: 'Hire me', href: '/?start=1' },
 
   /* Secondary and experimental destinations live in the footer only. */
   footerLinks: [

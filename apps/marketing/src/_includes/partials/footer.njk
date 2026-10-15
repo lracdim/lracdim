@@ -16,7 +16,7 @@
         {% for item in site.footerLinks %}
           <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
         {% endfor %}
-        <a class="footer__link" href="{{ site.cta.href }}">{{ site.cta.label }}</a>
+        <a class="footer__link" href="{{ site.cta.href }}" data-open-start>{{ site.cta.label }}</a>
       </div>
 
       <div>
@@ -32,7 +32,7 @@
         <p class="label label--faint">Operator</p>
         <p class="footer__link" style="color:var(--paper)">{{ site.owner }}</p>
         <p class="footer__link">{{ site.role }}</p>
-        <a class="btn btn--ghost" href="{{ site.cta.href }}" style="margin-top:.75rem">
+        <a class="btn btn--ghost" href="{{ site.cta.href }}" data-open-start style="margin-top:.75rem">
           {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
         </a>
       </div>

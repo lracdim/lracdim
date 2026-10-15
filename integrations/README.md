@@ -19,7 +19,7 @@ Setup, done once in the Google account that should receive the mail:
 5. Set that URL as `NOTIFY_WEBHOOK` on the Railway `api` service. Railway
    redeploys on its own.
 
-After that, every submission on `/start/` and every Signal incident or SSL
+After that, every submission of the project-intake popup (the "Hire me" modal) and every Signal incident or SSL
 warning appends a row and sends an email. Intake submissions also get an
 automatic acknowledgement sent to the address the visitor entered, from the
 deploying Gmail account, with the owner's address as reply-to. Edit

@@ -64,8 +64,18 @@ The site reads `/content` through a mirror step that runs before every build,
 so editing a file in `content/blog` or `content/pages` reloads the browser.
 
 With the API running on port 8000, Vector, Signal, Forge's server tools, and
-the intake form work end to end; without it, each one degrades to its stated
+the intake popup work end to end; without it, each one degrades to its stated
 offline behaviour.
+
+**The intake popup.** Every "Hire me" and "Start a project" control opens a
+three-step modal (`src/_includes/partials/start-modal.njk`, behaviour in
+`src/assets/js/start-modal.js`) instead of navigating anywhere. To open it
+without clicking, visit `http://localhost:8099/?start=1`; the parameter is
+removed from the address bar once the modal is open. What a visitor has typed
+is kept as a draft in `sessionStorage` until the intake is sent or the tab
+closes. There is no `/start/` page: that address, and `/contact/`, redirect to
+`/?start=1` (see `vercel.json` and `src/_redirects`). To add a new trigger, give
+any link or button the `data-open-start` attribute.
 
 Checks:
 

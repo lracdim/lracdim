@@ -117,7 +117,7 @@ export async function initSignal() {
           <div class="vector-report__head"><div><p class="overline">Measured · ${esc(t ? t.host : url)}</p><h2 class="vector-report__url">${esc(res.snapshot.final_url)}</h2><p class="fine-print">${t && res.persisted ? `Registered for scheduled checks. <a class="text-link text-link--inline" href="/signal/site/${esc(t.id)}/">View history and events ↗</a>` : 'The public monitoring cap is reached, so this domain was measured but not registered.'}</p></div><button type="button" class="text-link" data-signal-reset>Measure another ↗</button></div>
           ${t ? targetCard(t, true) : ''}
           ${snapshotBlock(res.snapshot, res.snapshot.measured_at)}
-          <div class="actions"><a class="btn" href="/vector/?url=${encodeURIComponent(res.snapshot.final_url)}">Full examination in Vector ↗</a><a class="text-link" href="/start/">Fix it with me ↗</a></div>`;
+          <div class="actions"><a class="btn" href="/vector/?url=${encodeURIComponent(res.snapshot.final_url)}">Full examination in Vector ↗</a><a class="text-link" href="/?start=1" data-open-start>Fix it with me ↗</a></div>`;
         resultEl.querySelectorAll('[data-signal-reset]').forEach((b) => b.addEventListener('click', idle));
         show('result');
         submit.disabled = false;

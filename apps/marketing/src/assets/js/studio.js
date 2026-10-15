@@ -1,6 +1,6 @@
 import './config.js'; // must be first: defines the runtime config before any other module evaluates
 import { initDiagnosticModal } from './modal.js';
-import { initStartForm } from './start.js';
+import { initStartModal } from './start-modal.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const toggle = document.querySelector('[data-nav-toggle]');
@@ -96,7 +96,7 @@ document.addEventListener('visibilitychange', () => {if(document.hidden) {stop()
 reduced.addEventListener('change', () => {stop(); stopCycle(); startCycle();});
 document.querySelectorAll('[data-print]').forEach(button => {button.hidden=false;button.addEventListener('click',()=>window.print());});
 initDiagnosticModal();
-initStartForm();
+initStartModal();
 window.addEventListener('pagehide',()=>{stop();stopCycle();entering.disconnect();},{once:true});
 
 // Dimension modules load only on their pages.

@@ -1,0 +1,192 @@
+{#- Project intake — a three-step modal. It replaces the old /start/ page.
+    Opened by any [data-open-start] element, by a link to /?start=1 (so old and shared
+    links still work), or by dispatching `open-start` on window. Controller: assets/js/start-modal.js -#}
+<div class="modal modal--start" id="start-modal" role="dialog" aria-modal="true"
+     aria-labelledby="start-title" hidden>
+
+  <button type="button" class="modal__backdrop" data-close-start aria-label="Close"></button>
+
+  <div class="modal__panel">
+    <div class="modal__head">
+      <div class="modal__protocol">
+        <span class="modal__led" aria-hidden="true"></span>
+        <span id="start-title">Intake / Start a project</span>
+      </div>
+      <button type="button" class="modal__close" data-close-start aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal__body">
+
+      <form class="intake start" data-start-form novalidate autocomplete="on">
+
+        <div class="start__progress">
+          <ol class="start__track" aria-hidden="true">
+            <li data-start-dot></li><li data-start-dot></li><li data-start-dot></li>
+          </ol>
+          <p class="start__count" data-start-count aria-live="polite"></p>
+        </div>
+
+        {#- ---- Step 1 --------------------------------------------------- -#}
+        <section class="start__step" data-start-step="1" aria-labelledby="start-h1">
+          <div>
+            <h2 class="h3" id="start-h1" tabindex="-1">Who am I replying to?</h2>
+            <p class="body body--sm" style="margin-top:.5rem">
+              A written reply within one business day, with a straight answer on whether it is a fit.
+              No sales call required.
+            </p>
+          </div>
+
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="sm-name">Your name</label>
+              <input id="sm-name" name="name" type="text" autocomplete="name" required>
+              <span class="intake__error" data-error id="sm-name-error"></span>
+            </div>
+            <div class="intake__field">
+              <label for="sm-email">Email</label>
+              <input id="sm-email" name="email" type="email" autocomplete="email" required>
+              <span class="intake__error" data-error id="sm-email-error"></span>
+            </div>
+          </div>
+
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="sm-company">Company <span class="start__opt">(optional)</span></label>
+              <input id="sm-company" name="company" type="text" autocomplete="organization">
+            </div>
+            <div class="intake__field">
+              <label for="sm-site">Current website <span class="start__opt">(optional)</span></label>
+              <input id="sm-site" name="website" type="text" inputmode="url" placeholder="company.com">
+            </div>
+          </div>
+        </section>
+
+        {#- ---- Step 2 --------------------------------------------------- -#}
+        <section class="start__step" data-start-step="2" aria-labelledby="start-h2" hidden>
+          <div>
+            <h2 class="h3" id="start-h2" tabindex="-1">What are we building?</h2>
+            <p class="body body--sm" style="margin-top:.5rem">
+              Rough is fine. This only decides who reads it first and what the first build could look like.
+            </p>
+          </div>
+
+          <div class="intake__field">
+            <label for="sm-need">Project type</label>
+            <select id="sm-need" name="need" required>
+              <option value="">Choose one</option>
+              <option>Website</option>
+              <option>Web Application</option>
+              <option>Business System</option>
+              <option>Automation</option>
+              <option>Data / Analytics</option>
+              <option>AI System</option>
+              <option>Other</option>
+            </select>
+            <span class="intake__error" data-error id="sm-need-error"></span>
+          </div>
+
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="sm-budget">Budget range <span class="start__opt">(optional)</span></label>
+              <select id="sm-budget" name="budget">
+                <option value="">Not decided yet</option>
+                <option>Under $2,000</option>
+                <option>$2,000 – $5,000</option>
+                <option>$5,000 – $15,000</option>
+                <option>$15,000+</option>
+                <option>Ongoing retainer</option>
+              </select>
+            </div>
+            <div class="intake__field">
+              <label for="sm-timeline">Timeline <span class="start__opt">(optional)</span></label>
+              <select id="sm-timeline" name="timeline">
+                <option value="">Not decided yet</option>
+                <option>As soon as possible</option>
+                <option>Within 1 month</option>
+                <option>1 to 3 months</option>
+                <option>3 to 6 months</option>
+                <option>Exploring for now</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        {#- ---- Step 3 --------------------------------------------------- -#}
+        <section class="start__step" data-start-step="3" aria-labelledby="start-h3" hidden>
+          <div>
+            <h2 class="h3" id="start-h3" tabindex="-1">Where does it leak?</h2>
+            <p class="body body--sm" style="margin-top:.5rem">
+              Describe the operation and what goes wrong. If you ran the diagnostic first, that report is attached to your name.
+            </p>
+          </div>
+
+          <div class="intake__field">
+            <label for="sm-msg">The problem</label>
+            <span class="intake__hint" id="sm-msg-hint">Who has to remember what, where things wait, what breaks when volume doubles.</span>
+            <textarea id="sm-msg" name="message" required aria-describedby="sm-msg-hint sm-msg-error"></textarea>
+            <span class="intake__error" data-error id="sm-msg-error"></span>
+          </div>
+
+          <div class="intake__row">
+            <div class="intake__field">
+              <label for="sm-current">Current system <span class="start__opt">(optional)</span></label>
+              <span class="intake__hint" id="sm-current-hint">WordPress, spreadsheets, a CRM, nothing yet.</span>
+              <input id="sm-current" name="current" type="text" aria-describedby="sm-current-hint">
+            </div>
+            <div class="intake__field">
+              <label for="sm-outcome">Desired outcome <span class="start__opt">(optional)</span></label>
+              <span class="intake__hint" id="sm-outcome-hint">What should be true when this is done.</span>
+              <input id="sm-outcome" name="outcome" type="text" aria-describedby="sm-outcome-hint">
+            </div>
+          </div>
+
+          <div class="intake__field">
+            <label for="sm-additional">Anything else <span class="start__opt">(optional)</span></label>
+            <span class="intake__hint" id="sm-additional-hint">Links, deadlines, anything that helps.</span>
+            <textarea id="sm-additional" name="additional" rows="2" aria-describedby="sm-additional-hint"></textarea>
+          </div>
+        </section>
+
+        {#- Honeypot: invisible to people and screen readers, tempting to bots. -#}
+        <div class="intake__field" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="sm-website2">Leave this empty</label><input id="sm-website2" name="website2" type="text" tabindex="-1" autocomplete="off"></div>
+
+        <p class="start__status body body--sm" data-start-status role="status" aria-live="polite"></p>
+
+        <div class="start__actions">
+          <button type="button" class="btn btn--ghost" data-start-back hidden>
+            <span class="btn__glyph" aria-hidden="true">&#8592;</span> Back
+          </button>
+          <button type="submit" class="btn start__next" data-start-next>
+            <span data-start-next-label>Next</span> <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+        </div>
+
+        <p class="start__alt body body--sm">
+          Prefer email? <a class="link" href="mailto:{{ site.email }}">{{ site.email }}</a>
+          <span class="start__where">{{ site.location }}</span>
+        </p>
+      </form>
+
+      {#- ---- Received ------------------------------------------------------ -#}
+      <div class="start__done" data-start-done hidden>
+        <p class="label label--signal">Intake</p>
+        <h2 class="h2" id="start-done-title" tabindex="-1" style="margin-top:.75rem">Received.</h2>
+        <p class="body" style="margin-top:1rem" data-start-done-copy></p>
+        <div class="start__done-actions">
+          <button type="button" class="btn btn--ghost" data-start-diagnostic>
+            Run the diagnostic while you wait <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </button>
+          <a class="btn btn--ghost" href="/services/#sectors">
+            Read the industry blueprints <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

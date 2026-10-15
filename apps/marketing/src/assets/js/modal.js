@@ -208,7 +208,7 @@ export function initDiagnosticModal() {
 
       <div class="report__foot">
         <p class="label label--plain label--faint" style="margin-bottom:1rem">Ready to remove the friction?</p>
-        <a class="btn btn--block" href="/start/">
+        <a class="btn btn--block" href="/?start=1" data-open-start>
           Start a project <span class="btn__glyph">&#8599;</span>
         </a>
       </div>`;
@@ -244,7 +244,7 @@ export function initDiagnosticModal() {
         renderReport(report);
         showStep('report');
 
-        /* Keep the report for /start/ to attach, and deliver the lead. */
+        /* Keep the report for the project intake modal to attach, and deliver the lead. */
         try {
           sessionStorage.setItem(
             'lracdim:last-report',

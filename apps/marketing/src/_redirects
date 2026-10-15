@@ -7,3 +7,5 @@
 /capabilities/  /services/  301
 /operations/  /about/  301
 /industries/  /services/#sectors  301
+/start/  /?start=1  301
+/start  /?start=1  301

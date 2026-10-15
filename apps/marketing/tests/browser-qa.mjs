@@ -13,6 +13,10 @@ import puppeteer from 'puppeteer-core';
 
 const SITE = process.env.SITE || 'http://localhost:8099';
 const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+// Keep browser-only QA isolated from whatever may already be running locally.
+// Set QA_SKIP_API=1 when the suite must not call the configured API or submit
+// a diagnostic lead.
+const skipApi = process.env.QA_SKIP_API === '1';
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = { pass: [], fail: [] };
 const check = (name, ok, detail = '') => (ok ? results.pass : results.fail).push(name + (detail ? ` — ${detail}` : ''));
@@ -31,15 +35,15 @@ const apiBase = await (async () => {
   return page.evaluate(() => { try { return JSON.parse(document.getElementById('lracdim-config').textContent).apiBase || ''; } catch { return ''; } });
 })();
 let apiUp = false;
-if (apiBase) {
+if (apiBase && !skipApi) {
   try {
     apiUp = (await (await fetch(apiBase + '/api/health')).json()).ok === true;
   } catch {}
 }
-console.log(`site ${SITE} · api ${apiBase || '(none)'} ${apiUp ? 'up' : 'down'}`);
+console.log(`site ${SITE} · api ${skipApi ? 'skipped' : (apiBase || '(none)')} ${apiUp ? 'up' : 'down'}`);
 
 // 1. Overflow + load at five widths
-const pages = ['/', '/work/', '/work/spade-website/', '/vector/', '/signal/', '/forge/', '/forge/json-formatter/', '/forge/robots-validator/', '/research/', '/research/designing-a-website-health-scoring-engine/', '/about/', '/start/'];
+const pages = ['/', '/work/', '/work/spade-website/', '/vector/', '/signal/', '/forge/', '/forge/json-formatter/', '/forge/robots-validator/', '/research/', '/research/designing-a-website-health-scoring-engine/', '/about/'];
 for (const w of [320, 375, 768, 1024, 1440]) {
   await page.setViewport({ width: w, height: 900 });
   for (const p of pages) {
@@ -150,17 +154,47 @@ if (apiUp) {
   check('signal public scan renders scores', scan.result && scan.scores === 5, JSON.stringify(scan));
 }
 
-// 6. Intake form
-await page.goto(SITE + '/start/', { waitUntil: 'networkidle2' });
-await page.click('button[type="submit"]');
+// 6. Project intake — a three-step modal opened by "Hire me" (there is no /start/ page any more)
+await page.goto(SITE + '/', { waitUntil: 'networkidle2' });
+await page.click('.header__cta');
+await wait(600);
+check('Hire me opens the intake modal without leaving the page', await page.evaluate(() => !document.getElementById('start-modal').hidden && location.pathname === '/'));
+check('intake modal starts on step 1 with the name field focused', await page.evaluate(() => document.activeElement && document.activeElement.id === 'sm-name'));
+await page.click('[data-start-next]');
 await wait(200);
-check('intake blocks empty submission', (await page.$$('.intake__field.is-invalid')).length > 0);
+check('intake blocks an empty first step', await page.evaluate(() => document.querySelectorAll('#start-modal .intake__field.is-invalid').length >= 2 && document.querySelector('[data-start-step="1"]').hidden === false));
+await page.type('#sm-name', 'QA Runner');
+await page.type('#sm-email', 'qa@example.com');
+await page.click('[data-start-next]');
+await wait(250);
+check('intake advances to step 2', await page.evaluate(() => document.querySelector('[data-start-step="2"]').hidden === false));
+await page.click('[data-start-next]');
+await wait(200);
+check('intake blocks step 2 until a project type is chosen', await page.evaluate(() => document.querySelector('[data-start-step="2"]').hidden === false && document.getElementById('sm-need').getAttribute('aria-invalid') === 'true'));
+await page.select('#sm-need', 'Automation');
+await page.click('[data-start-back]');
+await wait(200);
+check('back keeps what was typed', await page.evaluate(() => document.getElementById('sm-name').value === 'QA Runner'));
+await page.click('[data-start-next]');
+await wait(250);
+await page.click('[data-start-next]');
+await wait(250);
+check('intake reaches the final step', await page.evaluate(() => document.querySelector('[data-start-step="3"]').hidden === false && document.querySelector('[data-start-next-label]').textContent === 'Send it'));
+await page.keyboard.press('Escape');
+await wait(600);
+check('Escape closes the modal', await page.evaluate(() => document.getElementById('start-modal').hidden));
+check('closing keeps a draft', await page.evaluate(() => !!sessionStorage.getItem('lracdim:start-draft')));
+await page.goto(SITE + '/?start=1', { waitUntil: 'networkidle2' });
+await wait(500);
+check('/?start=1 opens the modal and tidies the URL', await page.evaluate(() => !document.getElementById('start-modal').hidden && location.search === ''));
+check('the draft is restored', await page.evaluate(() => document.getElementById('sm-name').value === 'QA Runner'));
 if (apiUp) {
-  await page.type('#st-name', 'QA Runner');
-  await page.type('#st-email', 'qa@example.com');
-  await page.select('#st-need', 'Automation');
-  await page.type('#st-msg', 'Automated QA submission: the intake form should store this through the API.');
-  await page.click('button[type="submit"]');
+  await page.evaluate(() => document.querySelector('[data-start-next]').click());
+  await wait(200);
+  await page.evaluate(() => document.querySelector('[data-start-next]').click());
+  await wait(200);
+  await page.type('#sm-msg', 'Automated QA submission: the intake form should store this through the API.');
+  await page.click('[data-start-next]');
   let done = false;
   for (let i = 0; i < 10 && !done; i++) {
     await wait(500);
@@ -168,6 +202,7 @@ if (apiUp) {
   }
   check('intake submits to the API', done, await page.evaluate(() => document.querySelector('[data-start-done-copy]')?.textContent || document.querySelector('[data-start-status]')?.textContent));
 }
+await page.evaluate(() => sessionStorage.removeItem('lracdim:start-draft'));
 
 // 7. Project and research pages
 await page.goto(SITE + '/work/lracdimension/', { waitUntil: 'networkidle2' });

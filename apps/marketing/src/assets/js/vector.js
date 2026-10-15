@@ -156,7 +156,7 @@ export function initVector() {
       ${renderHistory(history_, audit.id)}
       ${renderMetrics(results)}
       <p class="fine-print vector-mode">Measured from the live document, its response headers, robots.txt, sitemap, llms.txt, and a sample of its links. ${vitalsOf(results) ? 'Core Web Vitals come from Google PageSpeed Insights.' : 'Core Web Vitals were not measured on this run, so performance figures are document-level indicators only.'} AI visibility reports whether AI crawlers can read the site, not whether any AI answer mentions it. Security is a header review, not a vulnerability scan.</p>
-      <div class="vector-handoff"><p class="overline">Next step</p><h3>Want this fixed?</h3><p>Start a project and this report comes with you: the intake attaches the score, the URL, and the report link so we begin from the findings, not from a blank brief.</p><div class="actions"><a class="btn" href="/start/">Start a project ↗</a><a class="text-link" href="#coverage">What this measures ↗</a></div></div>
+      <div class="vector-handoff"><p class="overline">Next step</p><h3>Want this fixed?</h3><p>Start a project and this report comes with you: the intake attaches the score, the URL, and the report link so we begin from the findings, not from a blank brief.</p><div class="actions"><a class="btn" href="/?start=1" data-open-start>Start a project ↗</a><a class="text-link" href="#coverage">What this measures ↗</a></div></div>
       <footer class="vector-print-footer" aria-hidden="true">Website examination by John Carl Dimatulac · LRACDIMENSION · lracdimension.vercel.app · lracdim@gmail.com · Report: ${esc(shareUrl)}</footer>`;
     reportEl.querySelectorAll('[data-vector-reset]').forEach((b) => b.addEventListener('click', idle));
     const printBtn = reportEl.querySelector('[data-vector-print]');
@@ -258,7 +258,7 @@ export function initVector() {
         <table class="vector-table"><tbody>${cats.map(([l, s]) => `<tr data-grade="${grade(s)}"><th scope="row">${esc(l)}</th><td>${s}</td><td><div class="scorecard__meter"><div class="scorecard__fill" style="width:${s}%"></div></div></td></tr>`).join('')}</tbody></table>
         <div class="vector-issues">${r.bottlenecks.map((b) => `<article class="vector-issue" data-sev="${esc(b.severity)}"><p class="vector-issue__sev"><span class="sev" data-sev="${esc(b.severity)}">${esc(b.severity)}</span></p><h3>${esc(b.title)}</h3><dl><dt>Evidence</dt><dd>${esc(b.explanation)}</dd>${b.why ? `<dt>Why it matters</dt><dd>${esc(b.why)}</dd>` : ''}<dt>Prescription</dt><dd>${esc(b.fix)}</dd>${b.impact ? `<dt>Expected impact</dt><dd>${esc(b.impact)}</dd>` : ''}</dl></article>`).join('') || '<p class="body body--sm">No structural issue crossed the threshold.</p>'}</div>
         <p class="fine-print vector-mode">${esc(r.mode === 'live' ? 'Live read through the scanner worker.' : 'Modelled profile: the analysis engine is not connected on this deployment and a browser cannot read another site directly, so figures are derived from the URL. This is not a measurement.')}</p>
-        <div class="actions"><a class="btn" href="/start/">Fix it with me ↗</a></div>`;
+        <div class="actions"><a class="btn" href="/?start=1" data-open-start>Fix it with me ↗</a></div>`;
       reportEl.querySelectorAll('[data-vector-reset]').forEach((b) => b.addEventListener('click', idle));
       show('report');
       setBusy(false);

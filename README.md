@@ -20,8 +20,9 @@ installed on its own. Nothing at the repository root installs or builds.
 ## What each part does
 
 **Marketing** renders the public site: the five dimensions (Work, Vector,
-Signal, Forge, Research), the free tools, and the intake form. Pages,
-projects, services, and articles come from `/content`.
+Signal, Forge, Research), the free tools, and the project-intake popup behind
+every "Hire me" button (a three-step modal; there is no separate intake page).
+Pages, projects, services, and articles come from `/content`.
 
 **API** runs the engine behind the public site (website audits, monitoring,
 server-side tools, intake) and the studio workflow behind the dashboard
@@ -76,6 +77,9 @@ cd apps\marketing;   npm run lint                           # markup and JS chec
 cd apps\marketing;   npm test                               # browser QA (needs the site served)
 cd apps\dashboard;   npm run build                          # typecheck + build
 ```
+
+In PowerShell, run `$env:QA_SKIP_API = '1'; npm test` when browser QA must not
+call the configured API or create an intake submission.
 
 ## Deployment
 

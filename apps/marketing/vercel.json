@@ -6,8 +6,13 @@
   "trailingSlash": true,
   "redirects": [
     {
+      "source": "/start{/}?",
+      "destination": "/?start=1",
+      "permanent": true
+    },
+    {
       "source": "/contact{/}?",
-      "destination": "/start/",
+      "destination": "/?start=1",
       "permanent": true
     },
     {

@@ -44,7 +44,7 @@
 
   <link rel="stylesheet" href="/assets/css/main.css?v={{ build.version }}">
   <link rel="stylesheet" href="/assets/css/studio.css?v={{ build.version }}">
-  <noscript><style>.header__nav{display:flex!important;flex-wrap:wrap}.header__cta,.nav-toggle,.layer-controls,.pipeline-detail button,[data-open-diagnostic]{display:none!important}.header,.header__inner{height:auto!important;min-height:80px}.header__inner{flex-wrap:wrap;padding-block:14px;gap:20px}[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+  <noscript><style>.header__nav{display:flex!important;flex-wrap:wrap}.header__cta,.nav-toggle,.layer-controls,.pipeline-detail button,[data-open-diagnostic],[data-open-start]{display:none!important}.header,.header__inner{height:auto!important;min-height:80px}.header__inner{flex-wrap:wrap;padding-block:14px;gap:20px}[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
   <script type="application/ld+json">
   {{ {
     "@context": "https://schema.org",
@@ -153,6 +153,7 @@
 
   {% include "partials/footer.njk" %}
   {% include "partials/diagnostic.njk" %}
+  {% include "partials/start-modal.njk" %}
 
   <script type="module" src="/assets/js/studio.js?v={{ build.version }}"></script>
   {% if site.gaId %}<script type="module" src="/assets/js/analytics.js?v={{ build.version }}"></script>{% endif %}

@@ -1587,7 +1587,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ==========================================================================
-   Intake (/start/)
+   Intake fields — shared by the project modal (#start-modal) and the Vector form
    ========================================================================== */
 
 .intake { display: grid; gap: 1.1rem; }
@@ -1616,13 +1616,68 @@ a { color: inherit; text-decoration: none; }
 .intake__field.is-invalid select,
 .intake__field.is-invalid textarea { border-color: var(--crit); }
 .intake__error { font-size: 0.8125rem; color: var(--crit); }
-.intake__done { border: 1px solid var(--ink-14); padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--paper); }
 
-.intake-steps { counter-reset: s; display: grid; gap: 1rem; }
-.intake-steps li { counter-increment: s; display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid var(--ink-14); }
-.intake-steps li::before { content: counter(s, decimal-leading-zero); font-family: var(--font-mono); font-size: 0.6875rem; color: var(--signal); padding-top: 0.3rem; }
-.intake-steps strong { display: block; font-weight: 500; }
-.intake-steps span { display: block; font-size: 0.9375rem; color: var(--dim, var(--ink-55)); margin-top: 0.2rem; }
+
+/* ==========================================================================
+   Project intake modal (#start-modal) — three steps, replaces the old /start/ page.
+   Reuses the diagnostic modal's shell (.modal, .modal__panel, .modal__head ...).
+   ========================================================================== */
+
+.modal--start .modal__panel { max-width: 42rem; }
+.modal--start .modal__body { padding-top: clamp(1.4rem, 3vw, 2.1rem); }
+
+.start { display: grid; gap: 1.6rem; }
+
+/* Progress: three segments + "Step n of 3 / Title" */
+.start__progress { display: grid; gap: 0.7rem; }
+.start__track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.start__track li { height: 3px; background: var(--paper-14); transition: background 0.4s var(--ease); }
+.start__track li.is-done { background: var(--signal-30); }
+.start__track li.is-current { background: var(--signal); }
+.start__count {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim, var(--paper-70));
+}
+.start__count b { font-weight: 500; color: var(--signal); }
+
+.start__step { display: grid; gap: 1.1rem; animation: start-step-in 0.4s var(--ease); }
+.start__step[hidden] { display: none; }
+@keyframes start-step-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.start__opt { color: var(--faint, var(--paper-35)); text-transform: none; letter-spacing: 0; }
+.modal--start .intake__field textarea { min-height: 7.5rem; }
+.modal--start .intake__field select { appearance: auto; }
+
+.start__status { min-height: 1.4em; color: var(--dim, var(--paper-70)); }
+.start__status:empty { min-height: 0; }
+
+.start__actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.start__next { margin-left: auto; }
+.start__alt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.9rem; padding-top: 1.1rem; border-top: 1px solid var(--line, var(--paper-14)); color: var(--dim, var(--paper-70)); }
+.start__where { margin-left: auto; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint, var(--paper-35)); }
+
+.start__done { display: grid; align-content: start; padding-block: 0.5rem; }
+.start__done:focus-within { outline: 0; }
+.start__done-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+.start__done h2:focus { outline: 0; }
+
+@media (max-width: 520px) {
+  .start__actions { flex-direction: column-reverse; align-items: stretch; }
+  .start__actions .btn { width: 100%; justify-content: center; }
+  .start__next { margin-left: 0; }
+  .start__where { margin-left: 0; width: 100%; }
+  .start__done-actions .btn { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .start__step { animation: none; }
+}
 
 /* ==========================================================================
    Brand assets
@@ -1767,10 +1822,6 @@ a { color: inherit; text-decoration: none; }
 
 /* Intake steps: description sits under the title in column 2, never in the
    number column. */
-.intake-steps li { grid-template-rows: auto auto; }
-.intake-steps li::before { grid-row: 1 / span 2; }
-.intake-steps strong { grid-column: 2; }
-.intake-steps span { grid-column: 2; }
 
 /* ==========================================================================
    Scroll choreography support
