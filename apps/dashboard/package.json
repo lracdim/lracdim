@@ -1,0 +1,24 @@
+{
+  "name": "@lracdimension/dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "description": "LRACDIMENSION studio dashboard - admin pipeline and client portal",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/solid-query": "^5.90.2",
+    "@tanstack/solid-router": "^1.133.32",
+    "solid-js": "^1.9.9"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.7",
+    "vite-plugin-solid": "^2.11.9"
+  }
+}

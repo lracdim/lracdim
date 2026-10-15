@@ -1,22 +1,37 @@
+# --- JavaScript apps (each app installs its own dependencies) ---------------
 node_modules/
+dist/
 _site/
 .cache/
-.DS_Store
 *.log
-.env
-.env.local
-_archive/vite-react/node_modules/
-workers/scan/node_modules/
-workers/scan/.wrangler/
-.dev.vars
-.vercel
-.env*
 
-# backend
-backend/.venv/
-backend/.env
-backend/*.db
-backend/test.db
-backend/__pycache__/
-backend/**/__pycache__/
-backend/.pytest_cache/
+# --- Python API --------------------------------------------------------------
+api/.venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+api/*.db
+api/alembic/__pycache__/
+
+# --- Secrets: never commit a real value --------------------------------------
+# .env.example files are tracked on purpose; everything else is ignored.
+.env
+.env.*
+!.env.example
+!**/.env.example
+.dev.vars
+*.local
+
+# --- Hosting -----------------------------------------------------------------
+.vercel
+.wrangler/
+
+# --- Generated mirrors of /content (the CMS is the source of truth) ----------
+apps/marketing/src/research/*.md
+apps/marketing/src/pages/*.md
+
+# --- OS ----------------------------------------------------------------------
+.DS_Store
+Thumbs.db

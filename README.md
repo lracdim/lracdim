@@ -1,81 +1,100 @@
 # LRACDIMENSION
 
-The engineering environment of **John Carl Dimatulac**: web systems, automation, and the tools behind them, organised as five working dimensions.
+The studio platform of John Carl Dimatulac: a public marketing site, a studio
+dashboard, and the API behind both. One repository, three independently
+deployable applications, plain npm and a Python virtual environment. No
+workspace tool, no monorepo orchestrator.
 
-```text
-01 WORK      projects and systems            /work/
-02 VECTOR    web clinic (examination)        /vector/
-03 SIGNAL    analytics and monitoring        /signal/
-04 FORGE     web and developer tools         /forge/
-05 RESEARCH  engineering notes and studies   /research/
+```
+apps/marketing     Eleventy public site (lracdimension.online)
+apps/dashboard     SolidJS studio dashboard (admin + client portal)
+api                Litestar API: website engine, studio workflow, CMS
+content            Git-backed CMS: Markdown with front matter
+public/images      CMS-managed images, committed to this repository
+docs               Local development and deployment guides
 ```
 
-Two parts:
+Each JavaScript app owns its `package.json` and `package-lock.json` and is
+installed on its own. Nothing at the repository root installs or builds.
 
-- **Site** — Eleventy 3, Nunjucks, vanilla JavaScript. Static, deployed on Vercel. Everything public is generated from `src/_data/` and markdown.
-- **API** — Python, FastAPI, SQLAlchemy, PostgreSQL, RQ/Redis (optional), APScheduler. Runs Vector audits, Signal monitoring, Forge server tools, and intake. See [`backend/README.md`](backend/README.md).
+## What each part does
 
-The site works without the API (each dimension states what is unavailable). With `LRACDIM_API_BASE` set at build time, the dimensions run against the engine.
+**Marketing** renders the public site: the five dimensions (Work, Vector,
+Signal, Forge, Research), the free tools, and the intake form. Pages,
+projects, services, and articles come from `/content`.
 
-## Commands
+**API** runs the engine behind the public site (website audits, monitoring,
+server-side tools, intake) and the studio workflow behind the dashboard
+(leads, clients, projects, milestones, deliverables, messages), plus the CMS
+read and write endpoints.
 
-```bash
-npm install                  # site dependencies (+ puppeteer-core for QA)
-npm run dev                  # http://localhost:8099 with live reload
-npm run build                # static output to _site/
-npm run lint                 # parse every script, catch merge markers and tabs
-npm run format               # lint plus trailing-whitespace check
-npm test                     # browser QA against a running site (and API if reachable)
+**Dashboard** is the private workspace: an admin area for the pipeline and a
+client area where a client sees only their own project.
 
-npm run backend:install      # venv + requirements
-npm run backend:migrate      # alembic upgrade head
-npm run backend:dev          # API on :8000 (scheduler and in-process worker included)
-npm run backend:test         # pytest
+## Quick start (Windows PowerShell)
+
+Three terminals, one per app.
+
+```powershell
+# 1. API
+cd api
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+Copy-Item .env.example .env          # then edit .env
+$env:DATABASE_URL = "sqlite:///./studio-dev.db"
+.venv\Scripts\python -m alembic upgrade head
+.venv\Scripts\python scripts/seed_studio.py
+.venv\Scripts\python -m uvicorn app.main:app --reload --port 8000
 ```
 
-Local development: run `backend:dev` and `dev` together. `site.js` points the site at `http://localhost:8000` unless `LRACDIM_API_BASE` is set or the build runs on Vercel.
-
-## Structure
-
-```text
-eleventy.config.js              build config, passthrough, filters
-vercel.json                     redirects, rewrites (/vector/audit/:id, /signal/site/:id), headers
-src/
-  _data/
-    dimensions.js               the five dimensions: index, name, identity, verbs, status
-    site.js                     identity, nav, contact, apiBase
-    projects.js                 project facts (source: résumé); portfolio.js adapts them for pages
-    forgeTools.js               tool registry (client vs server)
-    career.js services.js process.js industries.js method.js
-  _includes/layouts/            base, post, demo
-  _includes/partials/           header, footer, dimension-head, vector-body, forge/*, …
-  assets/js/
-    api.js                      API client, error envelope
-    vector.js                   examination flow (engine mode + browser fallback)
-    signal.js                   monitoring dashboard and target page
-    forge.js                    client tools and server-tool runner
-    start.js                    intake → /api/contact (fallback: lead webhook)
-    studio.js                   nav, motion, dimension module loading
-    system-scene.js             Three.js layer scene (home)
-  index.njk work.njk project.njk vector.njk vector-audit.njk signal.njk signal-site.njk
-  forge.njk forge-tool.njk research.njk research/*.md about.njk services.njk process.njk
-  start.njk contact.njk resume.njk
-backend/                        FastAPI service (see its README)
-tests/                          browser-qa.mjs, lint.mjs
+```powershell
+# 2. Marketing site
+cd apps\marketing
+npm install
+npx @11ty/eleventy --serve --port=8099
 ```
 
-## Deploy
+```powershell
+# 3. Dashboard
+cd apps\dashboard
+npm install
+npm run dev
+```
 
-**Site (Vercel).** Import the repo. `vercel.json` sets the build command, output directory, trailing slashes, redirects for retired URLs, rewrites for addressable reports and targets, security headers, and `noindex` for `/demos/`. Set `LRACDIM_API_BASE` to the API origin.
+Then: site at <http://localhost:8099>, dashboard at <http://localhost:5173>,
+API at <http://localhost:8000/api/health>.
 
-**API.** Deployed from `backend/` to Railway at `https://api-production-6e09c.up.railway.app` (see `backend/README.md`). Any host works: Railway, Render, Fly. Provide `DATABASE_URL` (PostgreSQL), `ADMIN_KEY`, `CORS_ORIGINS`, optional `REDIS_URL`, SMTP or `NOTIFY_WEBHOOK` for notifications. The `Procfile` defines release (migrations), web, and worker processes.
+Full instructions, including the test and lint commands, are in
+[docs/local-development.md](docs/local-development.md).
 
-## Content rules
+## Checks
 
-- Every project fact traces to the résumé; labels keep client work, internal tools, demos, and concepts distinct.
-- No metric appears anywhere unless it was measured: Vector prints its methodology with every report, Signal shows only stored checks, and empty states say so.
-- Research entries carry `title`, `description`, `topic`, `category`, `technologies`, `date`, and `order`; reading time, Open Graph, and Article structured data are generated.
+```powershell
+cd api;              .venv\Scripts\python -m pytest -q      # 89 tests
+cd api;              .venv\Scripts\python -m ruff check app tests
+cd apps\marketing;   npm run lint                           # markup and JS checks
+cd apps\marketing;   npm test                               # browser QA (needs the site served)
+cd apps\dashboard;   npm run build                          # typecheck + build
+```
 
-## SEO
+## Deployment
 
-Canonical, Open Graph, Twitter cards, JSON-LD (Person + WebSite; Article on posts; BreadcrumbList on posts and projects), sitemap of every public page, robots.txt. Report and target pages are `noindex`.
+Three Vercel projects from this one repository, each with its own root
+directory. See [docs/vercel-deployment.md](docs/vercel-deployment.md) for the
+settings and environment variables, including why the API is better suited to
+a long-running host than to serverless functions.
+
+## Content
+
+Editing the site is editing Markdown in `/content` and committing it. The
+dashboard's Content area does the same thing through the API: the local
+adapter writes the working tree, and the GitHub adapter opens a pull request.
+Merging is what publishes. See [docs/cms.md](docs/cms.md).
+
+## Conventions
+
+- Secrets live in environment variables. `.env.example` files list the names
+  with no values; `.env` is never committed.
+- Database changes are Alembic migrations, generated and reviewed by hand.
+- Temporary choices are marked `TODO:` in code with what should replace them.
+  Authentication is the main one; see the dashboard and studio route modules.

@@ -2,10 +2,18 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "lracdimension",
+      "name": "marketing",
+      "cwd": "apps/marketing",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["@11ty/eleventy", "--serve", "--port=8099"],
       "port": 8099
+    },
+    {
+      "name": "dashboard",
+      "cwd": "apps/dashboard",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5173"],
+      "port": 5173
     }
   ]
 }

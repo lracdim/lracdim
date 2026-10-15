@@ -1,0 +1,73 @@
+/* ==========================================================================
+   LRACDIMENSION dashboard — design tokens
+   One dark theme, matching the studio site: near-black ground, flat surfaces,
+   hairline rules, a single gold accent used sparingly. No gradients, no
+   shadows, no rounded pills.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* Ground and surfaces */
+  --ground: #18191b;
+  --surface: #1f2022;
+  --surface-raised: #242527;
+  --surface-sunken: #141517;
+
+  /* Rules */
+  --line: #363739;
+  --line-strong: #4a4b4d;
+
+  /* Text */
+  --paper: #f1f0eb;
+  --muted: #bfc0b7;
+  --faint: #8f9089;
+
+  /* Accent — used for emphasis, focus and the current nav item only */
+  --signal: #e2d8a3;
+  --signal-deep: #d0c48b;
+  --signal-wash: rgba(226, 216, 163, 0.09);
+  --on-signal: #18191b;
+
+  /* Status */
+  --ok: #8cc08c;
+  --ok-wash: rgba(140, 192, 140, 0.1);
+  --warn: #d6b25c;
+  --warn-wash: rgba(214, 178, 92, 0.1);
+  --crit: #d8705f;
+  --crit-wash: rgba(216, 112, 95, 0.1);
+  --info: #8aa6bf;
+  --info-wash: rgba(138, 166, 191, 0.1);
+  --neutral-wash: rgba(241, 240, 235, 0.06);
+
+  /* Type */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', 'JetBrains Mono',
+    Consolas, 'Liberation Mono', monospace;
+
+  /* Overline / label treatment: monospace, uppercase, letter-spaced, 11px */
+  --label-size: 11px;
+  --label-tracking: 0.1em;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Layout */
+  --sidebar-width: 244px;
+  --sidebar-width-collapsed: 64px;
+  --topbar-height: 68px;
+  --content-max: 1280px;
+
+  --focus-ring: 2px solid var(--signal);
+  --focus-offset: 2px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
