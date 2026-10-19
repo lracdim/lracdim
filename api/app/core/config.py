@@ -26,7 +26,9 @@ def _list(name: str, default: str) -> list[str]:
 class Settings:
     database_url: str = os.environ.get("DATABASE_URL", "sqlite:///./lracdim.db")
     redis_url: str = os.environ.get("REDIS_URL", "")
-    cors_origins: list[str] = field(default_factory=lambda: _list("CORS_ORIGINS", "http://localhost:8099,https://lracdimension.vercel.app"))
+    # Every origin a visitor can end up on. lracdimension.vercel.app and the bare
+    # domain both redirect to www, so the www origin is the one that matters.
+    cors_origins: list[str] = field(default_factory=lambda: _list("CORS_ORIGINS", "https://www.lracdimension.online,https://lracdimension.online,https://lracdimension.vercel.app,http://localhost:8099"))
     admin_key: str = os.environ.get("ADMIN_KEY", "")
 
     smtp_host: str = os.environ.get("SMTP_HOST", "")

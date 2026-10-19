@@ -43,6 +43,19 @@ def test_health(client):
     assert r.status_code == 200 and r.json()["ok"] is True
 
 
+@pytest.mark.parametrize("origin", ["https://www.lracdimension.online", "https://lracdimension.online", "https://lracdimension.vercel.app"])
+def test_cors_preflight_allows_the_live_site(client, origin):
+    # The live site is served from www (the other two redirect there). Without it in
+    # CORS_ORIGINS every form POST dies in the preflight before reaching the API.
+    r = client.options("/api/contact", headers={"Origin": origin, "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type"})
+    assert r.status_code in (200, 204) and r.headers.get("access-control-allow-origin") == origin
+
+
+def test_cors_preflight_rejects_other_origins(client):
+    r = client.options("/api/contact", headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "POST"})
+    assert r.status_code == 400
+
+
 def test_audit_rejects_private_url(client):
     r = client.post("/api/vector/audits", json={"url": "http://127.0.0.1/"})
     assert r.status_code == 422

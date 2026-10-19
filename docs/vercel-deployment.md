@@ -69,7 +69,7 @@ Environment variables the API expects in production:
 | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection string |
 | `ADMIN_KEY` | long random string guarding the admin routes |
-| `CORS_ORIGINS` | comma-separated list: the marketing and dashboard origins |
+| `CORS_ORIGINS` | comma-separated list: the marketing and dashboard origins. Include `https://www.lracdimension.online`: the bare domain and `lracdimension.vercel.app` redirect there, and a missing origin makes every form POST fail the CORS preflight |
 | `PAGESPEED_API_KEY` | Core Web Vitals in Vector reports, optional |
 | `NOTIFY_WEBHOOK` / `SMTP_*` | where intake and monitoring alerts go, optional |
 | `RESEND_API_KEY`, `NOTIFY_EMAIL` | intake and monitoring alerts by email through Resend, optional |

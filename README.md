@@ -71,7 +71,7 @@ Full instructions, including the test and lint commands, are in
 ## Checks
 
 ```powershell
-cd api;              .venv\Scripts\python -m pytest -q      # 100 tests
+cd api;              .venv\Scripts\python -m pytest -q      # 104 tests
 cd api;              .venv\Scripts\python -m ruff check app tests
 cd apps\marketing;   npm run lint                           # markup and JS checks
 cd apps\marketing;   npm test                               # browser QA (needs the site served)
