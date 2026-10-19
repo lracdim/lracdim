@@ -11,7 +11,7 @@ import httpx
 from ..core.config import settings
 from ..core.ssrf import UnsafeURL, validate
 
-USER_AGENT = "LRACDIMENSION-Vector/1.0 (+https://lracdimension.vercel.app/vector/)"
+USER_AGENT = "LRACDIMENSION-Vector/1.0 (+https://www.lracdimension.online/vector/)"
 
 
 class FetchError(Exception):

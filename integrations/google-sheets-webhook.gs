@@ -67,7 +67,7 @@ function replyBody_(d) {
     '',
     'John Carl Dimatulac',
     'Full-Stack Web Developer · WordPress & Automation Engineer',
-    'https://lracdimension.vercel.app'
+    'https://www.lracdimension.online'
   ];
   return lines.filter(function (l) { return l !== null; }).join('\n');
 }

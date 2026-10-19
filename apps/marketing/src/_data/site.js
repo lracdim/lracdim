@@ -7,7 +7,10 @@ export default {
   /* Homepage <title>. Kept under 60 characters so search results do not truncate it. */
   homeTitle: 'LRACDIMENSION — Web Developer & Automation Engineer',
   location: 'Sta. Rosa, Laguna, Philippines',
-  url: 'https://lracdimension.vercel.app',
+  /* The address visitors land on. lracdimension.vercel.app and the bare
+     domain redirect here, so canonical tags, the sitemap and structured data
+     must name this one. */
+  url: 'https://www.lracdimension.online',
   description:
     'LRACDIMENSION is the engineering environment of John Carl Dimatulac: web systems, automation, and the tools behind them. Work, Vector, Signal, Forge, and Research are working dimensions, not pages.',
   email: 'lracdim@gmail.com',
