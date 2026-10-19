@@ -5,7 +5,7 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from ..models import ContactSubmission
-from .notify import notify
+from .notify import acknowledge, notify
 
 PROJECT_TYPES = ("Website", "Web Application", "Business System", "Automation", "Data / Analytics", "AI System", "Other")
 
@@ -53,4 +53,5 @@ def create_submission(db: Session, data: dict) -> ContactSubmission:
     delivered = notify(f"[LRACDIMENSION] New project inquiry: {row.project_type} — {row.name}", {"id": row.id, "name": row.name, "email": row.email, "company": row.company, "project_type": row.project_type, "problem": row.problem, "current_system": row.current_system, "desired_outcome": row.desired_outcome, "timeline": row.timeline, "budget_range": row.budget_range, "website": row.website, "classification": row.classification})
     row.notified = 1 if any(delivered.values()) else 0
     db.commit()
+    acknowledge(row.email, row.name, row.project_type, row.id)
     return row

@@ -72,6 +72,8 @@ Environment variables the API expects in production:
 | `CORS_ORIGINS` | comma-separated list: the marketing and dashboard origins |
 | `PAGESPEED_API_KEY` | Core Web Vitals in Vector reports, optional |
 | `NOTIFY_WEBHOOK` / `SMTP_*` | where intake and monitoring alerts go, optional |
+| `RESEND_API_KEY`, `NOTIFY_EMAIL` | intake and monitoring alerts by email through Resend, optional |
+| `RESEND_FROM`, `RESEND_AUTOREPLY` | sender address (needs a verified Resend domain) and visitor confirmation emails, optional |
 | `CMS_ADAPTER` | `local` or `github` |
 | `GITHUB_REPO`, `GITHUB_BRANCH`, `GITHUB_TOKEN` | the GitHub CMS adapter |
 | `ZOHO_*` | Zoho integration, off unless `ZOHO_ENABLED=true` |

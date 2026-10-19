@@ -24,7 +24,7 @@ warning appends a row and sends an email. Intake submissions also get an
 automatic acknowledgement sent to the address the visitor entered, from the
 deploying Gmail account, with the owner's address as reply-to. Edit
 `REPLY_SUBJECT` and `replyBody_` in the script to change the wording, or set
-`AUTO_REPLY` to `false` to turn it off. Addresses on example.com are skipped
+`AUTO_REPLY` to `false` to turn it off (do that if the API's Resend confirmation, `RESEND_AUTOREPLY`, is on, or visitors get two emails). Addresses on example.com are skipped
 so test submissions never mail a stranger.
 
 Where things live: the spreadsheet is a normal file in the Google Drive of

@@ -37,6 +37,18 @@ class Settings:
     notify_email: str = os.environ.get("NOTIFY_EMAIL", "")
     notify_webhook: str = os.environ.get("NOTIFY_WEBHOOK", "")
 
+    # Resend (https://resend.com) transactional email. With RESEND_API_KEY set,
+    # every notification is also emailed to NOTIFY_EMAIL through Resend. Until a
+    # sending domain is verified in Resend, keep the default sender and set
+    # NOTIFY_EMAIL to the address the Resend account was created with: that is
+    # the only recipient Resend accepts from onboarding@resend.dev.
+    resend_api_key: str = os.environ.get("RESEND_API_KEY", "")
+    resend_from: str = os.environ.get("RESEND_FROM", "") or "LRACDIMENSION <onboarding@resend.dev>"
+    # Also email the person who submitted the intake form. Needs a verified
+    # domain in RESEND_FROM; leave off if the Google Sheets script already
+    # sends the acknowledgement, or visitors get two.
+    resend_autoreply: bool = os.environ.get("RESEND_AUTOREPLY", "").lower() in ("1", "true", "yes")
+
     signal_interval_seconds: int = _int("SIGNAL_INTERVAL_SECONDS", 300)
     signal_response_warn_ms: int = _int("SIGNAL_RESPONSE_WARN_MS", 1500)
     signal_ssl_warn_days: int = _int("SIGNAL_SSL_WARN_DAYS", 14)
