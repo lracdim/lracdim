@@ -48,22 +48,18 @@ password protection (Project, Settings, Deployment Protection) in front of it.
 
 ## 3. API
 
-The API runs on Vercel through `api/index.py`, which exposes the Litestar app
-to the Python runtime. Two parts of the service do not fit serverless:
+The public site's API is the Cloudflare Worker in `worker/` (free plan, D1
+database, a 5-minute Cron Trigger for Signal), deployed with `npm run deploy`
+from that folder; see [worker/README.md](../worker/README.md). It is not a
+Vercel project.
 
-- **Scheduled monitoring.** APScheduler runs inside a long-lived process. On
-  Vercel, replace it with a Vercel Cron that calls
-  `POST /api/signal/targets/{id}/check`, or deploy the API somewhere with a
-  persistent process.
-- **Website audits.** One audit takes ten to twenty seconds and runs on the
-  API's own thread pool, which exceeds the free plan's function limit.
+The Python API in `api/` is the reference implementation and the dashboard's
+local backend. It does not fit Vercel's serverless functions (APScheduler needs
+a long-lived process and an audit outlasts the free function limit), so if it
+ever serves production again it belongs on a long-running host, with the
+`Procfile` there: migrations first, then uvicorn.
 
-For that reason the recommended home for the API is a long-running host
-(Railway, Fly, Render) with the marketing site and dashboard on Vercel. The
-`Procfile` and `railway.json` in `api/` describe that deployment: migrations
-run first, then uvicorn.
-
-Environment variables the API expects in production:
+Environment variables the Python API expects when it runs as a server:
 
 | Name | Purpose |
 | --- | --- |

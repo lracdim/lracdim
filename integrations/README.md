@@ -16,8 +16,9 @@ Setup, done once in the Google account that should receive the mail:
    appears with a test row, and a test email arrives.
 4. Deploy → New deployment → type "Web app". Execute as: Me. Who has access:
    Anyone. Deploy, then copy the web app URL (it ends in `/exec`).
-5. Set that URL as `NOTIFY_WEBHOOK` on the Railway `api` service. Railway
-   redeploys on its own.
+5. Store that URL as the API Worker's `NOTIFY_WEBHOOK` secret: in `worker/`, run
+   `npx wrangler secret put NOTIFY_WEBHOOK` and paste it. The Worker uses it on
+   the next request; no deploy is needed.
 
 After that, every submission of the project-intake popup (the "Hire me" modal) and every Signal incident or SSL
 warning appends a row and sends an email. Intake submissions also get an
@@ -29,9 +30,9 @@ so test submissions never mail a stranger.
 
 Where things live: the spreadsheet is a normal file in the Google Drive of
 the account that created it, and the script is stored inside that
-spreadsheet (Extensions → Apps Script). Nothing is stored on Railway or in
+spreadsheet (Extensions → Apps Script). Nothing is stored on Cloudflare or in
 this repository except this template. The API also keeps its own copy in
-Postgres; the sheet is the human-facing view.
+D1; the sheet is the human-facing view.
 
 Limits worth knowing: Apps Script mail is capped at 100 emails a day for a
 personal Gmail account, which is far above what this site produces. The web

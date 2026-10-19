@@ -50,6 +50,53 @@ export function withCors(response, origin) {
   return out;
 }
 
+export const newId = () => crypto.randomUUID().replace(/-/g, '');
+export const nowIso = () => new Date().toISOString();
+export const clientIp = (request) => request.headers.get('CF-Connecting-IP') || 'unknown';
+
+export const fieldError = (field, message) => error(422, 'validation', `${field}: ${message}`, [{ field, message }]);
+
+/** Parse a JSON object body. Returns [body, null] or [null, errorResponse]. */
+export async function readJson(request, maxBytes = 64 * 1024) {
+  const raw = await request.text();
+  if (raw.length > maxBytes) return [null, error(413, 'too_large', 'The request is too large.')];
+  let body = null;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    body = null;
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return [null, error(422, 'validation', 'The request body must be a JSON object.')];
+  }
+  return [body, null];
+}
+
+/** A required string field with length bounds. Returns [value, null] or [null, errorResponse]. */
+export function stringField(body, field, min, max) {
+  const v = body[field];
+  if (typeof v !== 'string' || !v.trim()) return [null, fieldError(field, 'This field is required.')];
+  if (v.length < min) return [null, fieldError(field, `Must be at least ${min} characters.`)];
+  if (v.length > max) return [null, fieldError(field, `Must be at most ${max} characters.`)];
+  return [v, null];
+}
+
+/** Integer query parameter within bounds. Returns [value, null] or [null, errorResponse]. */
+export function intParam(url, name, fallback, min, max) {
+  const raw = url.searchParams.get(name);
+  if (raw === null || raw === '') return [fallback, null];
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < min || n > max) return [null, fieldError(name, `Must be a whole number from ${min} to ${max}.`)];
+  return [n, null];
+}
+
+/** The admin key guard. Returns null when allowed, otherwise the 401 response. */
+export async function requireAdmin(request, env) {
+  const key = request.headers.get('X-Admin-Key') || '';
+  if (!env.ADMIN_KEY || !(await safeEqual(key, env.ADMIN_KEY))) return error(401, 'unauthorized', 'An admin key is required.');
+  return null;
+}
+
 /** Constant-time comparison of two secrets (compares their digests). */
 export async function safeEqual(a, b) {
   const enc = new TextEncoder();

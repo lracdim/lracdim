@@ -1,88 +1,29 @@
 /**
- * Worker tests on Node's test runner. D1 is a thin adapter over node:sqlite
- * loaded with the real migration, and fetch is replaced by a recorder, so no
- * test touches the network or Cloudflare.
+ * Intake, CORS and routing tests. The harness in helpers.js runs the Worker
+ * against node:sqlite with the real migrations and a recorded fetch.
  */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { DatabaseSync } from 'node:sqlite';
-
-import worker from '../src/index.js';
+import { setup, SITE } from './helpers.js';
 import { classify } from '../src/contact.js';
 import { acknowledge, readable } from '../src/notify.js';
 
-const MIGRATION = readFileSync(new URL('../migrations/0001_contact.sql', import.meta.url), 'utf8');
-
-class Statement {
-  constructor(db, sql, args = []) {
-    Object.assign(this, { db, sql, args });
-  }
-  bind(...args) {
-    return new Statement(this.db, this.sql, args);
-  }
-  async first() {
-    return this.db.prepare(this.sql).get(...this.args) ?? null;
-  }
-  async all() {
-    return { results: this.db.prepare(this.sql).all(...this.args), success: true };
-  }
-  async run() {
-    const info = this.db.prepare(this.sql).run(...this.args);
-    return { success: true, meta: { changes: Number(info.changes) } };
-  }
-}
-
-function d1() {
-  const db = new DatabaseSync(':memory:');
-  db.exec(MIGRATION);
-  return { raw: db, prepare: (sql) => new Statement(db, sql) };
-}
-
-const SITE = 'https://www.lracdimension.online';
-const BASE_ENV = {
-  CORS_ORIGINS: `${SITE},https://lracdimension.online,https://lracdimension.vercel.app`,
-  RATE_LIMIT_CONTACT: '5/hour',
-  RATE_LIMIT_SALT: 'salt',
-  ADMIN_KEY: 'admin-secret'
-};
-
+let h;
 let env;
 let calls;
-let pending;
-let respond;
-const realFetch = globalThis.fetch;
+let call;
+let rows;
+const respondWith = (fn) => {
+  h.respond = fn;
+};
 
 beforeEach(() => {
-  env = { ...BASE_ENV, DB: d1() };
-  calls = [];
-  pending = [];
-  respond = () => new Response(JSON.stringify({ id: 'email_123' }), { status: 200 });
-  globalThis.fetch = async (url, init = {}) => {
-    const headers = Object.fromEntries(new Headers(init.headers || {}).entries());
-    let body = init.body;
-    if (body instanceof ArrayBuffer) body = new TextDecoder().decode(body);
-    calls.push({ url: String(url), method: init.method || 'GET', headers, body: typeof body === 'string' && body.startsWith('{') ? JSON.parse(body) : body });
-    return respond(String(url), init);
-  };
+  h = setup();
+  ({ env, calls, call } = h);
+  rows = () => h.rows('contact_submissions');
 });
 
-afterEach(() => {
-  globalThis.fetch = realFetch;
-});
-
-const ctx = () => ({ waitUntil: (p) => pending.push(p) });
-
-async function call(path, { method = 'GET', body, headers = {}, ip = '203.0.113.7' } = {}) {
-  const init = { method, headers: { Origin: SITE, 'CF-Connecting-IP': ip, ...headers } };
-  if (body !== undefined) {
-    init.body = typeof body === 'string' ? body : JSON.stringify(body);
-    init.headers['Content-Type'] = 'application/json';
-  }
-  const res = await worker.fetch(new Request(`https://lracdim-api.example.workers.dev${path}`, init), env, ctx());
-  await Promise.all(pending);
-  return res;
-}
+afterEach(() => h.restore());
 
 const INTAKE = {
   name: 'Jane Doe',
@@ -95,15 +36,13 @@ const INTAKE = {
   honeypot: null
 };
 
-const rows = () => env.DB.raw.prepare('SELECT * FROM contact_submissions').all();
-
-test('health reports the database and the forwarding mode', async () => {
+test('health reports the database', async () => {
   const res = await call('/api/health');
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.ok, true);
   assert.equal(body.database, 'd1');
-  assert.equal(body.legacy, false);
+  assert.equal(body.legacy, undefined); // nothing is forwarded to the Python API any more
   assert.equal(res.headers.get('access-control-allow-origin'), SITE);
   assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
 });
@@ -165,7 +104,7 @@ test('the owner alert goes through Resend with the visitor as reply-to', async (
 
 test('the Sheets webhook gets the subject and payload, without following its redirect', async () => {
   env.NOTIFY_WEBHOOK = 'https://script.google.com/macros/s/abc/exec';
-  respond = () => new Response(null, { status: 302, headers: { Location: 'https://script.googleusercontent.com/x' } });
+  respondWith(() => new Response(null, { status: 302, headers: { Location: 'https://script.googleusercontent.com/x' } }));
   const out = await (await call('/api/contact', { method: 'POST', body: INTAKE })).json();
   assert.equal(out.notified, true);
   const [hook] = calls;
@@ -178,7 +117,7 @@ test('the Sheets webhook gets the subject and payload, without following its red
 test('a failing channel never fails the submission', async () => {
   env.RESEND_API_KEY = 're_test';
   env.NOTIFY_EMAIL = 'owner@example.com';
-  respond = () => new Response(JSON.stringify({ message: 'domain not verified' }), { status: 403 });
+  respondWith(() => new Response(JSON.stringify({ message: 'domain not verified' }), { status: 403 }));
   const res = await call('/api/contact', { method: 'POST', body: INTAKE });
   assert.equal(res.status, 201);
   assert.equal((await res.json()).notified, false);
@@ -240,33 +179,13 @@ test('project types match the form', async () => {
   assert.ok((await res.json()).includes('Data / Analytics'));
 });
 
-test('unported routes are forwarded to the Python API with the visitor IP and no Origin', async () => {
-  env.LEGACY_API_ORIGIN = 'https://legacy.example';
-  respond = () => new Response(JSON.stringify({ id: 'a1', status: 'queued' }), { status: 202, headers: { 'Content-Type': 'application/json' } });
-  const res = await call('/api/vector/audits?x=1', { method: 'POST', body: { url: 'https://example.com' } });
-  assert.equal(res.status, 202);
-  assert.deepEqual(await res.json(), { id: 'a1', status: 'queued' });
+test('unknown API routes are a 404 that still carries CORS, and nothing is forwarded', async () => {
+  env.LEGACY_API_ORIGIN = 'https://legacy.example'; // ignored: the Worker serves every route itself
+  const res = await call('/api/studio/leads');
+  assert.equal(res.status, 404);
+  assert.equal((await res.json()).error.code, 'not_found');
   assert.equal(res.headers.get('access-control-allow-origin'), SITE);
-  const [fwd] = calls;
-  assert.equal(fwd.url, 'https://legacy.example/api/vector/audits?x=1');
-  assert.equal(fwd.method, 'POST');
-  assert.equal(fwd.headers['x-forwarded-for'], '203.0.113.7');
-  assert.equal(fwd.headers.origin, undefined);
-  assert.deepEqual(fwd.body, { url: 'https://example.com' });
-});
-
-test('an unreachable Python API is a clear 502; with forwarding off it is a 503', async () => {
-  env.LEGACY_API_ORIGIN = 'https://legacy.example';
-  respond = () => {
-    throw new TypeError('fetch failed');
-  };
-  const down = await call('/api/signal/events?limit=40');
-  assert.equal(down.status, 502);
-  assert.equal((await down.json()).error.code, 'upstream_unreachable');
-  delete env.LEGACY_API_ORIGIN;
-  const off = await call('/api/signal/events?limit=40');
-  assert.equal(off.status, 503);
-  assert.equal(off.headers.get('access-control-allow-origin'), SITE);
+  assert.equal(calls.length, 0);
 });
 
 test('classification matches the Python rules', () => {

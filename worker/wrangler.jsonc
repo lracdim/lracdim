@@ -15,17 +15,22 @@
       "migrations_dir": "migrations"
     }
   ],
+  // Signal's scheduled checks (the Python API ran them on a background thread).
+  "triggers": { "crons": ["*/5 * * * *"] },
   "vars": {
     // Origins allowed to call the API. lracdimension.vercel.app and the bare
     // domain redirect to www, so www is the one visitors actually use.
     "CORS_ORIGINS": "https://www.lracdimension.online,https://lracdimension.online,https://lracdimension.vercel.app,http://localhost:8099",
-    // Routes not ported yet (Vector, Signal, Forge, studio) are forwarded here.
-    // Remove it once nothing depends on the Python API any more.
-    "LEGACY_API_ORIGIN": "https://api-production-6e09c.up.railway.app",
     // Until a domain is verified in Resend, only this sender works, and only to
     // the Resend account's own address (set NOTIFY_EMAIL to it).
     "RESEND_FROM": "LRACDIMENSION <onboarding@resend.dev>",
     "RESEND_AUTOREPLY": "false",
-    "RATE_LIMIT_CONTACT": "5/hour"
+    // Per-visitor limits, same as the Python API.
+    "RATE_LIMIT_CONTACT": "5/hour",
+    "RATE_LIMIT_AUDITS": "6/hour",
+    "RATE_LIMIT_TOOLS": "60/hour",
+    "RATE_LIMIT_SIGNAL": "10/hour",
+    // A check slower than this marks the site degraded.
+    "SIGNAL_RESPONSE_WARN_MS": "1500"
   }
 }

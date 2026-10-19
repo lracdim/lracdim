@@ -102,7 +102,7 @@ Errors always look like `{"error": {"code": "...", "message": "..."}}`; validati
 
 ## Deploy
 
-The static site lives on Vercel; this service runs separately. Railway, Render, or Fly all work:
+The static site lives on Vercel. To run this service in production instead of the Worker, any long-running host (Render, Fly, a VM) works:
 
 - Build: `pip install -r requirements.txt`
 - Release: `alembic upgrade head`
@@ -115,12 +115,13 @@ Then set `LRACDIM_API_BASE=https://<api host>` in the Vercel project so the fron
 
 ### Current production
 
-The API runs on Railway (project `lracdimension-api`, service `api`) at
-`https://api-production-6e09c.up.railway.app`. `railway.json` sets the start
-command (migrations, then uvicorn), the `/api/health` check, and the restart
-policy; `.python-version` pins 3.11; `.railwayignore` keeps the venv, local
-databases, and tests out of the upload. Deploy from this folder with
-`railway up --service api`.
+Nothing. On 2026-10-19 the public site's API moved to the Cloudflare Worker in
+[`worker/`](../worker/README.md), which serves the same endpoints and response
+shapes from a D1 database on the Workers free plan. The Railway service and its
+Postgres held no data at the time of the move (every table was empty). This
+Python service stays the reference implementation, runs the studio dashboard
+locally, and can be deployed again with the steps above if a long-running host
+is ever needed.
 
 `DATABASE_URL` accepts the plain `postgresql://` form hosted databases hand
 out; `app.db.normalize_url` adds the psycopg driver. Until a Postgres service
