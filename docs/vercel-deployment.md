@@ -20,7 +20,7 @@ import flow mostly needs the root directory and the environment variables.
 
    | Name | Value |
    | --- | --- |
-   | `LRACDIM_API_BASE` | the API's public origin, for example `https://api.lracdimension.online` |
+   | `LRACDIM_API_BASE` | the API's public origin: the Cloudflare Worker, `https://lracdim-api.lracdim.workers.dev` (see `worker/README.md`). It must also appear in `connect-src` in `apps/marketing/vercel.json` |
    | `LRACDIM_GA_ID` | Google Analytics measurement id, optional |
 
 3. Deploy. The build mirrors `/content` into the Eleventy input, so content

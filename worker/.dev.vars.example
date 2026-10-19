@@ -1,0 +1,7 @@
+# Local secrets for `npm run dev`. Copy to .dev.vars (git-ignored) and fill in.
+# In production these are Worker secrets: npx wrangler secret put <NAME>
+RESEND_API_KEY=
+NOTIFY_EMAIL=
+NOTIFY_WEBHOOK=
+ADMIN_KEY=local-admin-key
+RATE_LIMIT_SALT=local-salt

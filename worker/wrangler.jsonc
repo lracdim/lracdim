@@ -1,0 +1,31 @@
+{
+  // LRACDIMENSION API on Cloudflare Workers. Runs on the free plan.
+  // Secrets are set with `npx wrangler secret put <NAME>`, never written here:
+  //   RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_WEBHOOK, ADMIN_KEY, RATE_LIMIT_SALT
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lracdim-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lracdim-api",
+      "database_id": "48b73f14-c8ae-45a8-abc7-d8954d1db478",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    // Origins allowed to call the API. lracdimension.vercel.app and the bare
+    // domain redirect to www, so www is the one visitors actually use.
+    "CORS_ORIGINS": "https://www.lracdimension.online,https://lracdimension.online,https://lracdimension.vercel.app,http://localhost:8099",
+    // Routes not ported yet (Vector, Signal, Forge, studio) are forwarded here.
+    // Remove it once nothing depends on the Python API any more.
+    "LEGACY_API_ORIGIN": "https://api-production-6e09c.up.railway.app",
+    // Until a domain is verified in Resend, only this sender works, and only to
+    // the Resend account's own address (set NOTIFY_EMAIL to it).
+    "RESEND_FROM": "LRACDIMENSION <onboarding@resend.dev>",
+    "RESEND_AUTOREPLY": "false",
+    "RATE_LIMIT_CONTACT": "5/hour"
+  }
+}

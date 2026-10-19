@@ -9,6 +9,7 @@ workspace tool, no monorepo orchestrator.
 apps/marketing     Eleventy public site (lracdimension.online)
 apps/dashboard     SolidJS studio dashboard (admin + client portal)
 api                Litestar API: website engine, studio workflow, CMS
+worker             Cloudflare Worker: public API front door (intake in D1)
 content            Git-backed CMS: Markdown with front matter
 public/images      CMS-managed images, committed to this repository
 docs               Local development and deployment guides
@@ -73,6 +74,7 @@ Full instructions, including the test and lint commands, are in
 ```powershell
 cd api;              .venv\Scripts\python -m pytest -q      # 104 tests
 cd api;              .venv\Scripts\python -m ruff check app tests
+cd worker;           npm test                               # 20 Worker tests
 cd apps\marketing;   npm run lint                           # markup and JS checks
 cd apps\marketing;   npm test                               # browser QA (needs the site served)
 cd apps\dashboard;   npm run build                          # typecheck + build
@@ -87,6 +89,10 @@ Three Vercel projects from this one repository, each with its own root
 directory. See [docs/vercel-deployment.md](docs/vercel-deployment.md) for the
 settings and environment variables, including why the API is better suited to
 a long-running host than to serverless functions.
+
+The public site talks to the API through a Cloudflare Worker on the free plan
+(`worker/`, see [worker/README.md](worker/README.md)). It serves the intake
+form from D1 and forwards everything else to the Python API until it is ported.
 
 ## Content
 
