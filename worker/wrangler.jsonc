@@ -21,9 +21,11 @@
     // Origins allowed to call the API. lracdimension.vercel.app and the bare
     // domain redirect to www, so www is the one visitors actually use.
     "CORS_ORIGINS": "https://www.lracdimension.online,https://lracdimension.online,https://lracdimension.vercel.app,http://localhost:8099",
-    // Until a domain is verified in Resend, only this sender works, and only to
-    // the Resend account's own address (set NOTIFY_EMAIL to it).
-    "RESEND_FROM": "LRACDIMENSION <onboarding@resend.dev>",
+    // Sender for every email. lracdimension.online is verified in Resend
+    // (region ap-northeast-1); its DKIM, send/rsend CNAMEs and DMARC records live
+    // in Z.com DNS. Deploy this only after Resend shows the domain as Verified,
+    // or Resend rejects every send.
+    "RESEND_FROM": "LRACDIMENSION <hello@lracdimension.online>",
     "RESEND_AUTOREPLY": "false",
     // Per-visitor limits, same as the Python API.
     "RATE_LIMIT_CONTACT": "5/hour",

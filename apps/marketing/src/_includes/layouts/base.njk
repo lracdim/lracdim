@@ -35,7 +35,7 @@
   <meta name="twitter:title" content="{{ pageTitle }}">
   <meta name="twitter:description" content="{{ pageDesc }}">
   <meta name="twitter:image" content="{{ ogImage }}">
-  <meta name="theme-color" content="#18191b">
+  <meta name="theme-color" content="#121315">
 
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/assets/img/brand/favicon-48.png" type="image/png" sizes="48x48">
@@ -45,6 +45,9 @@
 
   <link rel="stylesheet" href="/assets/css/main.css?v={{ build.version }}">
   <link rel="stylesheet" href="/assets/css/studio.css?v={{ build.version }}">
+  <link rel="preload" href="/assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/redesign.css?v={{ build.version }}">
+  {%- if reel %}<link rel="stylesheet" href="/assets/css/reel.css?v={{ build.version }}">{% endif %}
   <noscript><style>.header__nav{display:flex!important;flex-wrap:wrap}.header__cta,.nav-toggle,.layer-controls,.pipeline-detail button,[data-open-diagnostic],[data-open-start]{display:none!important}.header,.header__inner{height:auto!important;min-height:80px}.header__inner{flex-wrap:wrap;padding-block:14px;gap:20px}[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
   <script type="application/ld+json">
   {{ {
@@ -157,6 +160,7 @@
   {% include "partials/start-modal.njk" %}
 
   <script type="module" src="/assets/js/studio.js?v={{ build.version }}"></script>
+  <script type="module" src="/assets/js/redesign.js?v={{ build.version }}"></script>
   {% if site.gaId %}<script type="module" src="/assets/js/analytics.js?v={{ build.version }}"></script>{% endif %}
   {% if scene %}<script type="module" src="/assets/js/system-scene.js?v={{ build.version }}"></script>{% endif %}
 </body>

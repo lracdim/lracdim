@@ -2,11 +2,7 @@
 title: Colophon
 description: "How this site is built: the stack, the content pipeline, and where each part is deployed."
 ---
-<section class="shell portfolio-section page-intro">
-  <p class="overline">Colophon</p>
-  <h1>How this site<br>is built.</h1>
-  <p>This page is authored as Markdown in the repository's content directory and rendered by Eleventy at build time, like every other page under the content pipeline.</p>
-</section>
+{% from "partials/rd-pagehead.njk" import pagehead %}{{ pagehead({ badge: 'Colophon', title: 'How this site is', accent: 'built', sub: "This page is authored as Markdown in the repository's content directory and rendered by Eleventy at build time, like every other page under the content pipeline." }) }}
 <section class="shell portfolio-section prose">
 
 ## The stack

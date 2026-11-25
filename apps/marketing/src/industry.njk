@@ -11,27 +11,14 @@ eleventyComputed:
   description: "{{ industry.summary | safe }}"
 ---
 
-<section class="pagehead">
-  <div class="hero__grid-bg" aria-hidden="true"></div>
-  <div class="shell" style="position:relative;z-index:1">
-    <p style="margin-bottom:1.75rem">
-      <a class="link" href="/services/#sectors">
-        <span aria-hidden="true">&#8592;</span> All services
-      </a>
-    </p>
-
-    <span class="label label--signal">{{ industry.sector }}</span>
-    <h1 class="h1" style="margin-top:1rem">{{ industry.name }}</h1>
-    <p class="pagehead__tagline">{{ industry.tagline }}</p>
-    <p class="lede" style="margin-top:1.5rem">{{ industry.summary }}</p>
-
-    <div class="pagehead__meta">
-      {% for signal in industry.signals %}
-        <span class="label label--faint">{{ signal }}</span>
-      {% endfor %}
-    </div>
-  </div>
-</section>
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{% call pagehead({
+  back: { label: 'All services', href: '/services/#sectors' },
+  badge: industry.sector,
+  title: industry.name,
+  sub: industry.tagline,
+  chips: industry.signals
+}) %}<p class="rd-phead__sub rd-phead__sub--quiet">{{ industry.summary }}</p>{% endcall %}
 
 {# ==================================================== WHERE IT LEAKS === #}
 <section class="band section">

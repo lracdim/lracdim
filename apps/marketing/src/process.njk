@@ -5,20 +5,15 @@ permalink: /process/
 description: "Diagnose where work breaks, design the operational system, build and integrate it, then launch, observe and improve it."
 ---
 
-<section class="pagehead">
-  <div class="hero__grid-bg" aria-hidden="true"></div>
-  <div class="shell" style="position:relative;z-index:1">
-    <span class="label label--signal">Process</span>
-    <h1 class="h1" style="margin-top:1rem">How the work runs</h1>
-    <p class="lede" style="margin-top:1.5rem">
-      Four steps, in that order, every time. The first one is the one most
-      projects skip, and it is the reason the other three go wrong.
-    </p>
-    <div class="pagehead__meta">
-      {% for step in process %}<span class="label label--faint">{{ step.title }}</span>{% endfor %}
-    </div>
-  </div>
-</section>
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- set chips = [] -%}{%- for step in process %}{% set chips = (chips.push(step.title), chips) %}{% endfor -%}
+{{ pagehead({
+  badge: 'Process',
+  title: 'How the work',
+  accent: 'runs',
+  sub: 'Four steps, in that order, every time. The first one is the one most projects skip, and it is the reason the other three go wrong.',
+  chips: chips
+}) }}
 
 <section class="band section">
   <div class="shell">

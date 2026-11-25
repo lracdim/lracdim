@@ -1,0 +1,35 @@
+{#-
+  The page head every page uses, built to match the landing hero: badge,
+  large centred title (last part in signal), subtitle, chips and actions on
+  the grid-and-glow background. Usage:
+
+    {% from "partials/rd-pagehead.njk" import pagehead %}
+    {% call pagehead({ badge: 'Process', title: 'How the work', accent: 'runs', sub: '…',
+                       chips: [{ label: 'Diagnose', href: '#a' }], back: { label: 'All work', href: '/work/' } }) %}
+      optional extra markup (buttons) rendered under the subtitle
+    {% endcall %}
+
+  `title` + `accent` render as "title <span class=signal>accent</span>." — pass
+  `titleHtml` instead for a fully custom heading, or `plain: true` to skip the accent.
+-#}
+{%- from "partials/rd-icons.njk" import icon -%}
+{%- macro pagehead(o) -%}
+<section class="rd-phead{% if o.compact %} rd-phead--compact{% endif %}">
+  <div class="rd-wrap rd-phead__in">
+    {%- if o.back %}<a class="rd-back" href="{{ o.back.href }}"><span aria-hidden="true">←</span> {{ o.back.label }}</a>{% endif %}
+    {%- if o.badge %}<p class="rd-badge" data-enter>{{ icon('sparkles') }} {{ o.badge | safe }}</p>{% endif %}
+    <h1 class="rd-phead__title">
+      {%- if o.titleHtml %}{{ o.titleHtml | safe }}
+      {%- elif o.accent %}{{ o.title | safe }} <span class="signal">{{ o.accent | safe }}</span>{{ o.end if o.end is defined else '.' }}
+      {%- else %}{{ o.title | safe }}{% endif -%}
+    </h1>
+    {%- if o.sub %}<p class="rd-phead__sub" data-enter>{{ o.sub | safe }}</p>{% endif %}
+    {%- if o.chips and o.chips.length %}
+    <ul class="rd-chips" data-enter>
+      {%- for c in o.chips %}<li>{% if c.href %}<a class="rd-chip" href="{{ c.href }}">{{ c.label | safe }}</a>{% else %}<span class="rd-chip">{{ c.label | safe if c.label else c | safe }}</span>{% endif %}</li>{% endfor %}
+    </ul>
+    {%- endif %}
+    {%- if caller %}<div class="rd-phead__extra" data-enter>{{ caller() }}</div>{% endif %}
+  </div>
+</section>
+{%- endmacro -%}

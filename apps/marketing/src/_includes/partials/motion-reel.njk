@@ -1,0 +1,207 @@
+{#-
+  Motion reel: six animated scenes of what LRACDIMENSION builds.
+  Scene 1 is rendered in place so the reel reads without JavaScript; every
+  scene also sits in a <template> that assets/js/redesign.js clones to replay
+  its animations. Styles: assets/css/reel.css (all scoped under .reel).
+-#}
+{%- from "partials/rd-icons.njk" import icon -%}
+
+{%- macro d(s) %}--d:{{ s }}s{% endmacro -%}
+
+{%- macro sceneWeb() -%}
+{%- set code = [
+  [['k','export function '],['f','Hero'],['p','() {']],
+  [['p','  '],['k','return '],['p','(']],
+  [['p','    <'],['t','section '],['a','className'],['p','='],['s','"hero"'],['p','>']],
+  [['p','      <'],['t','Nav '],['a','links'],['p','={dimensions} />']],
+  [['p','      <'],['t','h1'],['p','>Beyond Engineering.</'],['t','h1'],['p','>']],
+  [['p','      <'],['t','Examine '],['a','action'],['p','="/vector/" />']],
+  [['p','      <'],['t','Reel '],['a','scenes'],['p','={systems} />']],
+  [['p','    </'],['t','section'],['p','>']],
+  [['p','  )']],
+  [['p','}']]
+] -%}
+<div class="sc sc-web">
+  <div class="pane ed">
+    <div class="pane__bar"><span class="dots"><i></i><i></i><i></i></span><span class="tab is-on">hero.njk</span><span class="tab x-sm">dimensions.js</span></div>
+    <pre class="ed__code" aria-hidden="true">{% for line in code %}<div class="ed__line type" style="{{ d(0.25 + loop.index0 * 0.32) }}"><span class="ed__n">{{ loop.index }}</span>{% for part in line %}<span class="c-{{ part[0] }}">{{ part[1] }}</span>{% endfor %}</div>{% endfor %}</pre>
+  </div>
+  <div class="pane bw">
+    <div class="pane__bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">localhost:8080</span></div>
+    <div class="bw__body">
+      <div class="bw__nav rise" style="{{ d(1.3) }}"><b></b><span></span><span></span><span></span><em></em></div>
+      <div class="bw__h rise" style="{{ d(1.65) }}"></div>
+      <div class="bw__h bw__h--2 rise" style="{{ d(1.8) }}"></div>
+      <div class="bw__p rise" style="{{ d(1.95) }}"></div>
+      <div class="bw__form rise" style="{{ d(2.25) }}"><span></span><em></em></div>
+      <div class="bw__cards"><i class="rise" style="{{ d(2.6) }}"></i><i class="rise" style="{{ d(2.75) }}"></i><i class="rise" style="{{ d(2.9) }}"></i></div>
+    </div>
+    <div class="toast rise" style="{{ d(3.6) }}">{{ icon('check') }} Build passed <small>412 ms</small></div>
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- macro sceneAuto() -%}
+{%- set flow = [['webhook','Form submitted','Trigger'],['funnel','Validate &amp; dedupe','Rule'],['sparkles','Enrich &amp; score','Step'],['workflow','Route by intent','Branch']] -%}
+{%- set outs = [['users','CRM record'],['mail','Reply sent'],['bell','Team alerted'],['receipt','Invoice drafted']] -%}
+{%- set log = ['lead.created','email.verified','score = 86 → sales','crm.upsert #2041','reply.sent (template: intro)','n8n.notify #leads'] -%}
+<div class="sc sc-auto">
+  <div class="flow">
+    <div class="flow__row">
+      {%- for f in flow %}
+      <div class="flow__cell">
+        <div class="node rise lit" style="{{ d(0.2 + loop.index0 * 0.45) }};--l:{{ 0.8 + loop.index0 * 0.9 }}s">
+          <span class="node__ic">{{ icon(f[0]) }}</span><span class="node__t">{{ f[1] | safe }}<small>{{ f[2] }}</small></span>
+        </div>
+        {%- if not loop.last %}<span class="wire" style="--w:{{ loop.index0 * 0.9 }}s"><i></i></span>{% endif %}
+      </div>
+      {%- endfor %}
+    </div>
+    <div class="fan" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="flow__outs">
+      {%- for o in outs %}
+      <div class="out rise" style="{{ d(2.5 + loop.index0 * 0.22) }}">{{ icon(o[0]) }}<span>{{ o[1] }}</span>{{ icon('check', 'rd-icon out__ok') | replace('<svg ', '<svg style="' ~ d(3.3 + loop.index0 * 0.3) ~ '" ') | safe }}</div>
+      {%- endfor %}
+    </div>
+  </div>
+  <div class="pane log x-sm">
+    <div class="pane__bar"><span class="live"><i></i> Run #4,812</span><span class="url">0 manual steps</span></div>
+    <ul>
+      {%- for msg in log %}
+      <li class="rise" style="{{ d(1 + loop.index0 * 0.55) }}"><time>09:41:0{{ 2 + (loop.index0 / 2) | round(0, 'floor') }}</time><span>{{ msg }}</span>{{ icon('check') }}</li>
+      {%- endfor %}
+    </ul>
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- macro sceneDiag() -%}
+{%- set scores = [['Performance',62,'warn'],['Accessibility',78,'warn'],['Best practices',91,'ok'],['Search &amp; AI',54,'bad']] -%}
+{%- set finds = [['bad','Hero image is 1.8 MB — delays first paint'],['warn','14 images have no alt text'],['bad','No structured data for answer engines'],['ok','HTTPS and security headers in place']] -%}
+{%- set C = 163.363 -%}
+<div class="sc sc-diag">
+  <div class="pane bw scan">
+    <div class="pane__bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">https://example.com</span></div>
+    <div class="bw__body">
+      <div class="bw__nav"><b></b><span></span><span></span><span></span><em></em></div>
+      <div class="bw__img"></div><div class="bw__h"></div><div class="bw__p"></div>
+      <div class="bw__cards"><i></i><i></i><i></i></div>
+      <span class="beam"></span>
+      <span class="pin is-bad rise" style="{{ d(1.4) }};left:58%;top:30%">LCP 4.1 s</span>
+      <span class="pin is-warn rise" style="{{ d(2.3) }};left:12%;top:74%">Missing alt</span>
+      <span class="pin is-bad rise x-sm" style="{{ d(3.1) }};left:54%;top:86%">No schema</span>
+    </div>
+  </div>
+  <div class="report">
+    <div class="report__head"><span>{{ icon('gauge') }} Vector report</span><small>Sample</small></div>
+    <div class="rings">
+      {%- for s in scores %}
+      <div class="ring is-{{ s[2] }} rise" style="{{ d(0.5 + loop.index0 * 0.18) }}">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" class="ring__bg"/><circle cx="32" cy="32" r="26" class="ring__fg" style="--c:{{ C }};--o:{{ C * (1 - s[1] / 100) }};{{ d(0.7 + loop.index0 * 0.18) }}"/></svg>
+        <b data-count="{{ s[1] }}" data-delay="{{ 700 + loop.index0 * 180 }}">{{ s[1] }}</b><span>{{ s[0] | safe }}</span>
+      </div>
+      {%- endfor %}
+    </div>
+    <ul class="finds">
+      {%- for f in finds %}<li class="rise is-{{ f[0] }}" style="{{ d(1.9 + loop.index0 * 0.45) }}"><i></i>{{ f[1] }}</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- macro sceneSearch() -%}
+<div class="sc sc-search">
+  <div class="pane eng">
+    <div class="eng__head"><b>SEO</b><span>Search engines</span></div>
+    <div class="eng__q">{{ icon('search') }}<span class="type" style="{{ d(0.3) }}">web developer philippines</span></div>
+    <ol class="serp">
+      <li class="serp__you" style="{{ d(1.5) }}"><small>lracdimension.online</small><b>Your page — the best answer</b><span class="rank">#1</span></li>
+      <li><small></small><b></b></li><li><small></small><b></b></li><li class="x-sm"><small></small><b></b></li>
+    </ol>
+  </div>
+  <div class="pane eng">
+    <div class="eng__head"><b>AEO</b><span>Answer engines</span></div>
+    <div class="eng__q">{{ icon('map-pin') }}<span class="type" style="{{ d(1.1) }}">Who builds booking systems?</span></div>
+    <div class="answer rise" style="{{ d(2.2) }}">
+      <span class="t-upper">Featured answer</span>
+      <i class="ln type" style="{{ d(2.5) }}"></i><i class="ln type" style="{{ d(2.8) }}"></i><i class="ln ln--s type" style="{{ d(3.1) }}"></i>
+      <span class="cite rise" style="{{ d(3.6) }}">{{ icon('check') }} yoursite.com</span>
+    </div>
+  </div>
+  <div class="pane eng">
+    <div class="eng__head"><b>GEO</b><span>Generative engines</span></div>
+    <div class="chat">
+      <p class="chat__u rise" style="{{ d(1.9) }}">Recommend a developer for a client portal.</p>
+      <div class="chat__a rise" style="{{ d(2.9) }}">{{ icon('bot') }}<div><i class="ln type" style="{{ d(3.3) }}"></i><i class="ln type" style="{{ d(3.6) }}"></i><i class="ln ln--s type x-sm" style="{{ d(3.9) }}"></i><span class="cite rise" style="{{ d(4.3) }}"><b>1</b> yoursite.com</span></div></div>
+    </div>
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- macro sceneAdmin() -%}
+{%- set bars = [38,52,44,61,57,72,66,80,74,88,83,96] -%}
+{%- set rows = [['Northwind Clinic','Booking system','Development','signal'],['Harbor Supply Co.','Inventory + orders','QA &amp; approval','warn'],['Atlas Advisory','Client portal','Launched','ok']] -%}
+<div class="sc sc-admin">
+  <aside class="side x-sm"><span class="side__logo"></span>
+    {%- for n in ['layout-dashboard','users','boxes','file-text','chart-column','settings-2'] %}<span class="side__i rise{% if loop.first %} is-on{% endif %}" style="{{ d(0.1 + loop.index0 * 0.08) }}">{{ icon(n) }}</span>{% endfor %}
+  </aside>
+  <div class="dash">
+    <div class="kpis">
+      <div class="kpi rise" style="{{ d(0.3) }}"><span>Qualified leads</span><b data-count="128" data-delay="400">128</b><em class="is-ok">+18% this month</em></div>
+      <div class="kpi rise" style="{{ d(0.45) }}"><span>Active projects</span><b data-count="14" data-delay="550">14</b><em>3 in QA</em></div>
+      <div class="kpi rise" style="{{ d(0.6) }}"><span>Uptime</span><b><span data-count="99.98" data-decimals="2" data-delay="700">99.98</span>%</b><em class="is-ok">All systems normal</em></div>
+    </div>
+    <div class="chart rise" style="{{ d(0.8) }}">
+      <div class="chart__head"><span>{{ icon('activity') }} Revenue pipeline</span><small>Last 12 weeks</small></div>
+      <div class="bars">{% for h in bars %}<i class="grow" style="--h:{{ h }}%;{{ d(1.1 + loop.index0 * 0.07) }}"></i>{% endfor %}</div>
+    </div>
+    <ul class="rows x-sm">
+      {%- for r in rows %}<li class="rise" style="{{ d(2 + loop.index0 * 0.25) }}"><span class="av">{{ icon('user-round') }}</span><b>{{ r[0] }}</b><span>{{ r[1] }}</span><em class="st is-{{ r[3] }}">{{ r[2] | safe }}</em></li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- macro sceneSys() -%}
+{%- set sys = [['users','CRM'],['user-round','Client portal'],['calendar-clock','Booking'],['boxes','Inventory'],false,['receipt','Billing'],['file-text','CMS'],['chart-column','Reporting'],['wrench','Internal tools']] -%}
+<div class="sc sc-sys">
+  <svg class="sys-wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    {%- for x in [16.67, 50, 83.33] %}{% for y in [16.67, 50, 83.33] %}{% if not (x == 50 and y == 50) %}<line x1="50" y1="50" x2="{{ x }}" y2="{{ y }}"/>{% endif %}{% endfor %}{% endfor %}
+  </svg>
+  <div class="sys-grid">
+    {%- for item in sys %}
+      {%- if item %}<div class="tile rise" style="{{ d(0.5 + loop.index0 * 0.1) }};--p:{{ loop.index0 * 0.55 }}s">{{ icon(item[0]) }}<span>{{ item[1] }}</span></div>
+      {%- else %}<div class="core rise" style="{{ d(0.15) }}">{{ icon('database') }}<b>One source of truth</b><small>Auth · API · Data</small></div>{% endif %}
+    {%- endfor %}
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- set scenes = [
+  { id: 'web', label: 'Web development', icon: 'code-xml', caption: 'Hand-written, component-driven front ends that ship fast and stay fast.' },
+  { id: 'auto', label: 'Automation', icon: 'workflow', caption: 'Repetitive work turned into workflows that run without anyone watching.' },
+  { id: 'diag', label: 'Web diagnostics', icon: 'gauge', caption: 'Every page examined for speed, accessibility, security and visibility — that is what Vector does.' },
+  { id: 'search', label: 'SEO · AEO · GEO', icon: 'search', caption: 'Found by search engines, quoted by answer engines, cited by AI.' },
+  { id: 'admin', label: 'Admin', icon: 'layout-dashboard', caption: 'Dashboards that put leads, projects and operations on one screen.' },
+  { id: 'sys', label: 'Systems', icon: 'boxes', caption: 'CRM, portals, booking, inventory and billing on one shared core.' }
+] -%}
+
+<div class="reel" data-reel>
+  <div class="reel__top">
+    <div class="reel__tabs" role="tablist" aria-label="What LRACDIMENSION builds">
+      {%- for s in scenes %}
+      <button type="button" role="tab" class="reel__tab" id="reel-tab-{{ s.id }}" data-scene="{{ s.id }}" data-caption="{{ s.caption }}"
+        aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="reel-panel" tabindex="{{ 0 if loop.first else -1 }}">{{ icon(s.icon) }}<span>{{ s.label }}</span></button>
+      {%- endfor %}
+    </div>
+    <button type="button" class="reel__pp" data-reel-toggle aria-label="Pause animation" hidden>{{ icon('pause', 'rd-icon reel__pause') }}{{ icon('play', 'rd-icon reel__play') }}</button>
+  </div>
+  <div class="reel__stage" role="tabpanel" id="reel-panel" aria-labelledby="reel-tab-web" data-reel-panel>{{ sceneWeb() }}</div>
+  <p class="reel__cap" data-reel-caption>{{ scenes[0].caption }}</p>
+  <template data-scene-tpl="web">{{ sceneWeb() }}</template>
+  <template data-scene-tpl="auto">{{ sceneAuto() }}</template>
+  <template data-scene-tpl="diag">{{ sceneDiag() }}</template>
+  <template data-scene-tpl="search">{{ sceneSearch() }}</template>
+  <template data-scene-tpl="admin">{{ sceneAdmin() }}</template>
+  <template data-scene-tpl="sys">{{ sceneSys() }}</template>
+</div>

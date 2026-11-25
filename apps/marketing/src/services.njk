@@ -5,21 +5,15 @@ permalink: /services/
 description: "Operations systems, workflow automation, scheduling and tracking, dashboards and reporting, integrations and internal tools — organised around what your team needs."
 ---
 
-<section class="pagehead">
-  <div class="hero__grid-bg" aria-hidden="true"></div>
-  <div class="shell" style="position:relative;z-index:1">
-    <span class="label label--signal">Services</span>
-    <h1 class="h1" style="margin-top:1rem">What I build for you</h1>
-    <p class="lede" style="margin-top:1.5rem">
-      Five kinds of system, organised around the problem you have rather
-      than the technology I use. Most engagements are one of these, with a
-      second added once the first is running.
-    </p>
-    <div class="pagehead__meta">
-      {% for s in services %}<a class="label label--faint" href="#{{ s.id }}">{{ s.title }}</a>{% endfor %}
-    </div>
-  </div>
-</section>
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- set chips = [] -%}{%- for s in services %}{% set chips = (chips.push({ label: s.title, href: '#' ~ s.id }), chips) %}{% endfor -%}
+{{ pagehead({
+  badge: 'Services',
+  title: 'What I build for',
+  accent: 'you',
+  sub: 'Five kinds of system, organised around the problem you have rather than the technology I use. Most engagements are one of these, with a second added once the first is running.',
+  chips: chips
+}) }}
 
 {% for s in services %}
 <section class="band section{% if not loop.first %} section--rule{% endif %}" id="{{ s.id }}">

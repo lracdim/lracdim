@@ -1,46 +1,49 @@
-<header class="header" data-header>
-  <div class="shell header__inner">
-    <a class="brand" href="/" aria-label="{{ site.name }} home">
-      <img class="brand__logo" src="/assets/img/brand/mark.png" width="72" height="72" alt="">
+{%- from "partials/rd-icons.njk" import icon -%}
+{#- Pill navigation (redesign). Kept to the five pages that matter; Signal,
+    Forge, Process, industries and the demo stay reachable from the footer.
+    Behaviour: assets/js/redesign.js compacts it on scroll; assets/js/studio.js
+    drives the mobile drawer via data-nav-toggle. -#}
+{%- set primary = [
+  { label: 'Work', href: '/work/' },
+  { label: 'Services', href: '/services/' },
+  { label: 'Vector', href: '/vector/' },
+  { label: 'Research', href: '/research/' },
+  { label: 'About', href: '/about/' }
+] -%}
+<header class="rd-hdr" data-header data-rd-header>
+  <div class="rd-hdr__in">
+    <a class="rd-brand" href="/" aria-label="{{ site.name }} home">
+      <img class="rd-brand__mark" src="/assets/img/brand/mark.png" width="72" height="72" alt="">
+      <span class="rd-brand__name">{% include "partials/logotype.njk" %}</span>
     </a>
 
-    <nav class="nav header__nav" aria-label="Dimensions">
-      {% for d in dimensions %}
-        <a class="nav__link nav__link--dim" href="{{ d.href }}" data-index="{{ d.index }}"
-           {% if page.url == d.href or (page.url.startsWith(d.href) and d.href != '/') %}aria-current="page"{% endif %}>{{ d.name }}</a>
-      {% endfor %}
-      <a class="nav__link nav__link--dim nav__link--about" href="/about/" {% if page.url == '/about/' %}aria-current="page"{% endif %}>About</a>
+    <nav class="rd-nav" aria-label="Primary">
+      <ul class="rd-nav__list">
+        {%- for item in primary %}
+        <li><a class="rd-nav__link" href="{{ item.href }}" {% if page.url.startsWith(item.href) %}aria-current="page"{% endif %}>{{ item.label }}</a></li>
+        {%- endfor %}
+      </ul>
     </nav>
 
-    <div class="header__secondary">
-      <a class="btn header__cta" href="{{ site.cta.href }}" data-open-start>
-        {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+    <div class="rd-hdr__end">
+      <a class="rd-btn rd-btn--white rd-hdr__cta" href="{{ site.cta.href }}" data-open-start>
+        {{ site.cta.label }}<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span>
       </a>
+      <button type="button" class="rd-menu" data-nav-toggle aria-expanded="false" aria-controls="drawer">
+        <span class="rd-sr" data-nav-toggle-label>Menu</span>
+        <span class="rd-menu__bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
     </div>
-
-    <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="drawer">
-      <span data-nav-toggle-label>Menu</span>
-      <span class="nav-toggle__bars" aria-hidden="true"><i></i><i></i></span>
-    </button>
   </div>
 </header>
 
-<div class="drawer" id="drawer" data-drawer>
-  <div>
-    <a class="btn btn--block drawer__cta" href="{{ site.cta.href }}" data-open-start>
-      {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
-    </a>
-    <nav aria-label="Dimensions">
-      {% for d in dimensions %}
-        <a class="drawer__link" href="{{ d.href }}">
-          <span class="drawer__index">{{ d.index }}</span>{{ d.name }}<span class="drawer__desc">{{ d.descriptor }}</span>
-        </a>
-      {% endfor %}
-      <a class="drawer__link drawer__link--muted" href="/about/"><span class="drawer__index">—</span>About</a>
-    </nav>
-  </div>
-  <div>
-    <a class="link" href="/vector/">Examine a website <span class="btn__glyph" aria-hidden="true">&#8599;</span></a>
-    <p class="label label--faint" style="margin-top:1.25rem">{{ site.location }}</p>
+<div class="drawer rd-drawer" id="drawer" data-drawer>
+  <nav aria-label="Primary">
+    {%- for item in primary %}
+    <a class="rd-drawer__link" href="{{ item.href }}">{{ item.label }} {{ icon('arrow-up-right') }}</a>
+    {%- endfor %}
+  </nav>
+  <div class="rd-drawer__foot">
+    <a class="rd-btn rd-btn--white" href="{{ site.cta.href }}" data-open-start>{{ site.cta.label }}<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a>
   </div>
 </div>

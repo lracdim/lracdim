@@ -6,4 +6,5 @@ noindex: true
 description: "Start a project with LRACDIMENSION."
 ---
 <meta http-equiv="refresh" content="0; url=/?start=1">
-<section class="shell portfolio-section page-intro"><p class="overline">Contact</p><h1>Start a project.</h1><p>The project intake opens on the home page. You are being sent there — or <a class="text-link" href="/?start=1" data-open-start>open it here</a>.</p></section>
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{{ pagehead({ badge: 'Contact', title: 'Start a', accent: 'project', sub: 'The project intake opens on the home page. You are being sent there — or <a class="text-link" href="/?start=1" data-open-start>open it here</a>.' }) }}

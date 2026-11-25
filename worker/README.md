@@ -72,7 +72,7 @@ Set once per secret; the prompt reads the value without echoing it.
 
 ```bash
 npx wrangler secret put RESEND_API_KEY    # Resend key
-npx wrangler secret put NOTIFY_EMAIL      # where alerts go (the Resend account address until a domain is verified)
+npx wrangler secret put NOTIFY_EMAIL      # where alerts go (any inbox: lracdimension.online is a verified Resend domain)
 npx wrangler secret put NOTIFY_WEBHOOK    # Google Sheets web app URL, optional
 npx wrangler secret put ADMIN_KEY         # guards the admin endpoints
 npx wrangler secret put RATE_LIMIT_SALT   # any long random string

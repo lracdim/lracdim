@@ -10,11 +10,15 @@ eleventyComputed:
   title: "{{ tool.seo.title if tool.seo else tool.name ~ ' — Forge' }}"
   description: "{{ tool.seo.description if tool.seo else tool.summary }}"
 ---
-<section class="shell portfolio-section page-intro dim-head" data-dimension="forge">
-  <p class="overline"><a href="/forge/">04 / Forge</a> / {{ tool.category }} / {{ 'Client-side' if tool.mode == 'client' else 'Server-side' }}</p>
-  <h1>{{ tool.name }}</h1>
-  <p>{{ tool.summary }} {% if tool.mode == 'client' %}Runs entirely in your browser; nothing you enter leaves the page.{% else %}Fetches the target through the engine's validated fetcher: public http and https addresses only, size and time limits, rate-limited.{% endif %}</p>
-</section>
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+<div data-dimension="forge">
+{{ pagehead({
+  back: { label: 'All Forge tools', href: '/forge/' },
+  badge: '04 · Forge · ' ~ tool.category ~ ' · ' ~ ('Runs in your browser' if tool.mode == 'client' else 'Runs on the engine'),
+  title: tool.name,
+  sub: tool.summary ~ (' Runs entirely in your browser; nothing you enter leaves the page.' if tool.mode == 'client' else " Fetches the target through the engine's validated fetcher: public http and https addresses only, size and time limits, rate-limited.")
+}) }}
+</div>
 <section class="shell portfolio-section" data-forge>
   <article class="forge-tool forge-tool--page" id="{{ tool.slug }}" data-tool="{{ tool.slug }}" data-mode="{{ tool.mode }}">
     {% if tool.mode == 'server' %}{% include "partials/forge/server-tool.njk" %}{% else %}{% include "partials/forge/" ~ tool.slug ~ ".njk" %}{% endif %}

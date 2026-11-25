@@ -12,6 +12,9 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource/archivo/files/archivo-latin-400-normal.woff2': 'assets/fonts/archivo-400.woff2' });
   eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource/archivo/files/archivo-latin-600-normal.woff2': 'assets/fonts/archivo-600.woff2' });
   eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2': 'assets/fonts/mono-400.woff2' });
+  // DM Sans (variable) — the redesign's typeface.
+  eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2': 'assets/fonts/dm-sans-latin.woff2' });
+  eleventyConfig.addPassthroughCopy({ 'node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-ext-wght-normal.woff2': 'assets/fonts/dm-sans-latin-ext.woff2' });
   // Pass static assets straight through.
   eleventyConfig.addPassthroughCopy({ 'src/assets': 'assets' });
   eleventyConfig.addWatchTarget('src/assets');

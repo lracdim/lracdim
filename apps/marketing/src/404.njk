@@ -5,13 +5,15 @@ permalink: /404.html
 eleventyExcludeFromCollections: true
 description: "That address does not exist on LRACDIMENSION."
 ---
-<section class="shell portfolio-section page-intro not-found">
-  <p class="overline">404 / Not found</p>
-  <h1>Nothing at<br>this address.</h1>
-  <p>The page may have moved when the site was reorganised into dimensions, or the link was mistyped. Everything that exists is one step away.</p>
-  <div class="actions"><a class="btn" href="/">Home ↗</a><a class="text-link" href="/vector/">Examine a website ↗</a></div>
-</section>
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- from "partials/rd-icons.njk" import icon -%}
+{% call pagehead({
+  badge: '404 · Not found',
+  title: 'Nothing at this',
+  accent: 'address',
+  sub: 'The page may have moved when the site was reorganised into dimensions, or the link was mistyped. Everything that exists is one step away.'
+}) %}<div class="rd-actions"><a class="rd-btn rd-btn--white" href="/">Home<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a><a class="rd-btn rd-btn--dark" href="/vector/">Examine a website {{ icon('arrow-up-right') }}</a></div>{% endcall %}
 <section class="shell portfolio-section">
-  <p class="overline">Dimensions</p>
-  <ol class="dim-grid" aria-label="Dimensions">{% for d in dimensions %}<li class="dim-card" data-status="{{ d.status }}"><a href="{{ d.href }}" class="dim-card__link"><span class="dim-card__index">{{ d.index }}</span><span class="dim-card__name">{{ d.name | upper }}</span><span class="dim-card__descriptor">{{ d.descriptor }}</span></a></li>{% endfor %}</ol>
+  <div class="section-title"><p class="overline">Dimensions</p><h2>Where to <span class="signal">go next</span>.</h2></div>
+  <ol class="dim-grid" aria-label="Dimensions">{% for d in dimensions %}<li class="dim-card" data-status="{{ d.status }}"><a href="{{ d.href }}" class="dim-card__link"><span class="dim-card__index">{{ d.index }}</span><span class="dim-card__name">{{ d.name }}</span><span class="dim-card__descriptor">{{ d.descriptor }}</span></a></li>{% endfor %}</ol>
 </section>

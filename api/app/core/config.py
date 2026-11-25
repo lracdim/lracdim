@@ -11,6 +11,28 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 
+def _use_system_trust_store() -> None:
+    """Verify outbound TLS against the operating system's certificate store
+    instead of certifi's bundle when TLS_TRUST_STORE=system.
+
+    Needed on machines whose network re-signs HTTPS with its own root CA
+    (antivirus web shields, corporate proxies): the OS trusts that root, certifi
+    does not, and every fetch would fail as "The server could not be reached."
+    Verification stays on; only the list of trusted roots changes. This must
+    run before any SSL context is created, so it lives at config import time.
+    """
+    if os.environ.get("TLS_TRUST_STORE", "").strip().lower() != "system":
+        return
+    try:
+        import truststore
+    except ImportError:  # pragma: no cover - dependency is in requirements.txt
+        return
+    truststore.inject_into_ssl()
+
+
+_use_system_trust_store()
+
+
 def _int(name: str, default: int) -> int:
     try:
         return int(os.environ.get(name, default))
