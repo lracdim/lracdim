@@ -177,8 +177,62 @@
 </div>
 {%- endmacro -%}
 
+{#- WordPress mark: a simple "W" roundel drawn here, not the trademark artwork. -#}
+{%- macro wpMark(cls='rd-icon') -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M5.5 8.5 9 17l3-7.5L15 17l3.5-8.5"/></svg>
+{%- endmacro -%}
+
+{%- macro sceneWP() -%}
+{%- set menu = [['layout-dashboard','Dashboard'],['file-text','Posts'],['file-text','Pages'],['boxes','Plugins'],['settings-2','Settings']] -%}
+{%- set plugins = [
+  ['lracdim-core', 'Custom plugin · REST API + webhooks'],
+  ['Schema & SEO', 'JSON-LD and meta on every page'],
+  ['Page cache', 'Full-page cache + CDN purge'],
+  ['WooCommerce', 'Orders sync to the CRM']
+] -%}
+<div class="sc sc-wp">
+  <div class="pane wpa">
+    <aside class="wpa__side x-sm">
+      <span class="wpa__logo">{{ wpMark() }}</span>
+      {%- for m in menu %}<span class="wpa__nav rise{% if m[1] == 'Pages' %} is-on{% endif %}" style="{{ d(0.1 + loop.index0 * 0.07) }}">{{ icon(m[0]) }}<i>{{ m[1] }}</i></span>{% endfor %}
+    </aside>
+    <div class="wpa__main">
+      <div class="wpa__bar">
+        <span class="wpa__crumb">{{ wpMark() }} Pages › Home</span>
+        <span class="wpa__update" style="{{ d(3.1) }}">Update</span>
+      </div>
+      <div class="wpa__canvas">
+        <div class="wpa__title type" style="{{ d(0.35) }}">Beyond Engineering.</div>
+        <div class="blk blk--cover rise" style="{{ d(1) }}"><span class="blk__tag">Cover</span><i class="ln"></i><i class="ln ln--s"></i></div>
+        <div class="blk blk--cols rise" style="{{ d(1.5) }}"><span class="blk__tag">Columns</span><i></i><i></i><i></i></div>
+        <div class="blk blk--btn rise x-sm" style="{{ d(2) }}"><span class="blk__tag">Buttons</span><em>Hire me</em></div>
+        <span class="blk__add" style="{{ d(2.4) }}">+</span>
+      </div>
+      <div class="toast rise" style="{{ d(3.6) }}">{{ icon('check') }} Page updated <small>cache purged</small></div>
+    </div>
+  </div>
+  <div class="wpr">
+    <div class="wpr__head">{{ icon('boxes') }} Plugins <small>4 active</small></div>
+    <ul class="wpr__list">
+      {%- for p in plugins %}
+      <li class="rise" style="{{ d(0.6 + loop.index0 * 0.35) }}">
+        <span><b>{{ p[0] }}</b><small>{{ p[1] }}</small></span>
+        <span class="tg" style="{{ d(1.2 + loop.index0 * 0.45) }}"><i></i></span>
+      </li>
+      {%- endfor %}
+    </ul>
+    <div class="wpr__health rise" style="{{ d(2.6) }}">
+      <div class="wpr__hrow"><span>{{ icon('activity') }} Site health</span><b><span data-count="94" data-delay="2800">94</span>/100</b></div>
+      <div class="wpr__bar"><i class="grow-x" style="--w:94%;{{ d(2.8) }}"></i></div>
+      <small>Core updates, security headers and backups — all passing.</small>
+    </div>
+  </div>
+</div>
+{%- endmacro -%}
+
 {%- set scenes = [
   { id: 'web', label: 'Web development', icon: 'code-xml', caption: 'Hand-written, component-driven front ends that ship fast and stay fast.' },
+  { id: 'wp', label: 'WordPress', icon: 'wp', caption: 'Custom WordPress themes and plugins: blocks your team can edit, wired into the rest of the business.' },
   { id: 'auto', label: 'Automation', icon: 'workflow', caption: 'Repetitive work turned into workflows that run without anyone watching.' },
   { id: 'diag', label: 'Web diagnostics', icon: 'gauge', caption: 'Every page examined for speed, accessibility, security and visibility — that is what Vector does.' },
   { id: 'search', label: 'SEO · AEO · GEO', icon: 'search', caption: 'Found by search engines, quoted by answer engines, cited by AI.' },
@@ -191,7 +245,7 @@
     <div class="reel__tabs" role="tablist" aria-label="What LRACDIMENSION builds">
       {%- for s in scenes %}
       <button type="button" role="tab" class="reel__tab" id="reel-tab-{{ s.id }}" data-scene="{{ s.id }}" data-caption="{{ s.caption }}"
-        aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="reel-panel" tabindex="{{ 0 if loop.first else -1 }}">{{ icon(s.icon) }}<span>{{ s.label }}</span></button>
+        aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="reel-panel" tabindex="{{ 0 if loop.first else -1 }}">{{ wpMark() if s.icon == 'wp' else icon(s.icon) }}<span>{{ s.label }}</span></button>
       {%- endfor %}
     </div>
     <button type="button" class="reel__pp" data-reel-toggle aria-label="Pause animation" hidden>{{ icon('pause', 'rd-icon reel__pause') }}{{ icon('play', 'rd-icon reel__play') }}</button>
@@ -199,6 +253,7 @@
   <div class="reel__stage" role="tabpanel" id="reel-panel" aria-labelledby="reel-tab-web" data-reel-panel>{{ sceneWeb() }}</div>
   <p class="reel__cap" data-reel-caption>{{ scenes[0].caption }}</p>
   <template data-scene-tpl="web">{{ sceneWeb() }}</template>
+  <template data-scene-tpl="wp">{{ sceneWP() }}</template>
   <template data-scene-tpl="auto">{{ sceneAuto() }}</template>
   <template data-scene-tpl="diag">{{ sceneDiag() }}</template>
   <template data-scene-tpl="search">{{ sceneSearch() }}</template>
