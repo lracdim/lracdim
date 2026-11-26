@@ -12,6 +12,61 @@ description: "John Carl Dimatulac, full-stack developer and WordPress and automa
   sub: "I'm a full-stack web developer and WordPress &amp; automation engineer based in Sta. Rosa, Laguna, Philippines."
 }) %}<div class="rd-actions"><a class="rd-btn rd-btn--white" href="/resume/">View my resume<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a>{% if site.resumeUrl %}<a class="rd-btn rd-btn--dark" href="{{ site.resumeUrl }}" download>Download PDF {{ icon('arrow-up-right') }}</a>{% endif %}<a class="rd-btn rd-btn--dark" href="https://www.linkedin.com/in/carl-dimatulac">LinkedIn {{ icon('arrow-up-right') }}</a></div>{% endcall %}
 <div class="rd-wrap rd-stage"><figure class="portrait rd-portrait" data-enter><img src="{{ site.portrait }}" alt="{{ site.owner }}" width="1200" height="1200" decoding="async"><figcaption class="label label--plain label--faint">{{ site.owner }} — {{ site.location }}</figcaption></figure></div>
-<section class="shell portfolio-section about-story"><h2>Connecting the work<br>behind the website.</h2><div><p>I build applications, custom WordPress tools, and automation pipelines. My projects span security services, logistics demos, education, and content publishing.</p><p>Experience supporting construction IT and office networks gives me a practical view of how people use technology day to day. I carry that perspective into the interfaces and systems I develop.</p></div></section>
-<section class="shell portfolio-section"><h2>Experience</h2><div class="career-list">{% for job in career %}<article><p class="project-type">{{ job.date }}</p><div><h3>{{ job.title }}</h3><p class="career-company">{{ job.company }}</p><ul>{% for point in job.points %}<li>{{ point }}</li>{% endfor %}</ul></div></article>{% endfor %}</div></section>
-<section class="shell portfolio-section capabilities"><h2>Tools I work with.</h2><div class="capability-list"><article><h3>Frontend</h3><p>React, Next.js, Vue, TypeScript, Tailwind CSS, GSAP</p></article><article><h3>Backend & data</h3><p>Node.js, Express, PHP, PostgreSQL, MySQL, MongoDB, Firebase, Drizzle ORM</p></article><article><h3>WordPress & automation</h3><p>Custom themes and plugins, REST APIs, n8n, OpenRouter, NVIDIA AI APIs</p></article><article><h3>Deployment</h3><p>Vercel, Railway, Cloudflare, GCP Cloud Run, GitHub Actions</p></article></div></section>{% include "partials/studio-contact.njk" %}
+
+<section class="rd-sec">
+  <div class="rd-wrap rd-split">
+    <div class="rd-split__txt">
+      <span class="rd-badge rd-badge--pill" data-enter><span class="rd-badge__tag">Story</span> Why the work looks like this</span>
+      <h2 class="rd-t-h2" data-enter>Connecting the work <span class="signal">behind the website.</span></h2>
+    </div>
+    <div class="rd-prose-card rd-card" data-enter>
+      <p class="rd-t-sub">I build applications, custom WordPress tools, and automation pipelines. My projects span security services, logistics demos, education, and content publishing.</p>
+      <p class="rd-t-sub">Experience supporting construction IT and office networks gives me a practical view of how people use technology day to day. I carry that perspective into the interfaces and systems I develop.</p>
+    </div>
+  </div>
+</section>
+
+<section class="rd-sec rd-sec--tight">
+  <div class="rd-wrap">
+    <header class="rd-sec__head">
+      <h2 class="rd-t-h2" data-enter><span class="signal">Experience</span>.</h2>
+    </header>
+    <ol class="rd-steps rd-steps--career">
+      {%- for job in career %}
+      <li class="rd-card rd-card--hover rd-step" data-enter>
+        <span class="rd-step__n">{{ loop.index0 | pad }}</span>
+        <span class="rd-t-upper">{{ job.date }}</span>
+        <h3 class="rd-t-h4">{{ job.title }}</h3>
+        <p class="rd-t-cap">{{ job.company }}</p>
+        <ul class="rd-checks rd-checks--sm">{% for point in job.points %}<li>{{ icon('check') }} {{ point }}</li>{% endfor %}</ul>
+      </li>
+      {%- endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="rd-sec rd-sec--tight">
+  <div class="rd-wrap">
+    <header class="rd-sec__head">
+      <h2 class="rd-t-h2" data-enter>Tools I <span class="signal">work with</span>.</h2>
+    </header>
+    <div class="rd-svc-grid rd-svc-grid--4">
+      {%- set tools = [
+        ['code-xml', 'Frontend', 'React, Next.js, Vue, TypeScript, Tailwind CSS, GSAP'],
+        ['database', 'Backend & data', 'Node.js, Express, PHP, PostgreSQL, MySQL, MongoDB, Firebase, Drizzle ORM'],
+        ['workflow', 'WordPress & automation', 'Custom themes and plugins, REST APIs, n8n, OpenRouter, NVIDIA AI APIs'],
+        ['globe', 'Deployment', 'Vercel, Railway, Cloudflare, GCP Cloud Run, GitHub Actions']
+      ] -%}
+      {%- for t in tools %}
+      <article class="rd-card rd-card--hover rd-svc rd-svc--compact" data-enter>
+        <span class="rd-icon-chip">{{ icon(t[0]) }}</span>
+        <span class="rd-svc__txt">
+          <h3 class="rd-t-h4">{{ t[1] | safe }}</h3>
+          <span class="rd-svc__list">{% for x in t[2].split(', ') %}<span class="rd-tag">{{ x }}</span>{% endfor %}</span>
+        </span>
+      </article>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+{% include "partials/studio-contact.njk" %}

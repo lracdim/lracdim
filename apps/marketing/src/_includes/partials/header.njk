@@ -1,15 +1,11 @@
 {%- from "partials/rd-icons.njk" import icon -%}
-{#- Pill navigation (redesign). Kept to the five pages that matter; Signal,
-    Forge, Process, industries and the demo stay reachable from the footer.
-    Behaviour: assets/js/redesign.js compacts it on scroll; assets/js/studio.js
-    drives the mobile drawer via data-nav-toggle. -#}
-{%- set primary = [
-  { label: 'Work', href: '/work/' },
-  { label: 'Services', href: '/services/' },
-  { label: 'Vector', href: '/vector/' },
-  { label: 'Research', href: '/research/' },
-  { label: 'About', href: '/about/' }
-] -%}
+{#- Pill navigation (redesign). The menu words are the live site's: the five
+    dimensions plus About. Services, Process, industries and the demo stay in
+    the footer. Behaviour: assets/js/redesign.js compacts it on scroll;
+    assets/js/studio.js drives the mobile drawer via data-nav-toggle. -#}
+{%- set primary = [] -%}
+{%- for d in dimensions %}{% set primary = (primary.push({ label: d.name, href: d.href }), primary) %}{% endfor -%}
+{%- set primary = (primary.push({ label: 'About', href: '/about/' }), primary) -%}
 <header class="rd-hdr" data-header data-rd-header>
   <div class="rd-hdr__in">
     <a class="rd-brand" href="/" aria-label="{{ site.name }} home">

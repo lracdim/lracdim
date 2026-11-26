@@ -4,4 +4,49 @@ title: Work
 permalink: /work/
 description: "Client work, applications, portfolio demos, and redesign concepts by John Carl Dimatulac."
 ---
-{% set dim = dimensions[0] %}{% set dimLede = "Client work, internal tools, working demos, and independent concepts. Each case study states the problem, what was built, why it was designed that way, and what shipped. Labels keep the distinctions honest." %}{% include "partials/dimension-head.njk" %}<section class="shell portfolio-section work-collection"><div class="project-showcase">{% for project in portfolio %}{% if project.featured %}<article class="project-feature" data-enter><a class="project-image" href="/work/{{ project.slug }}/" aria-label="Explore {{ project.title }}"><img src="/assets/img/projects/{{ project.image }}.webp" width="{{ project.imageWidth }}" height="{{ project.imageHeight }}" alt="{{ project.title }} homepage" loading="lazy"></a><div class="project-caption"><div><p class="project-type">{{ project.kind }}</p><h2><a href="/work/{{ project.slug }}/">{{ project.title }} ↗</a></h2></div><p>{{ project.summary }}</p></div></article>{% endif %}{% endfor %}</div>{% for group in ['Websites','Applications','Business Systems','Automation','Experiments'] %}{% set any = false %}{% for project in portfolio %}{% if project.group == group and not project.featured %}{% set any = true %}{% endif %}{% endfor %}{% if any %}<h2 class="collection-heading">{{ group }}</h2><div class="project-index">{% for project in portfolio %}{% if project.group == group and not project.featured %}<a href="/work/{{ project.slug }}/"><span class="project-type">{{ project.kind }}</span><h3>{{ project.title }}</h3><p>{{ project.summary }}</p><span aria-hidden="true">↗</span></a>{% endif %}{% endfor %}</div>{% endif %}{% endfor %}</section>{% include "partials/studio-contact.njk" %}
+{%- from "partials/rd-icons.njk" import icon -%}
+{% set dim = dimensions[0] %}{% set dimLede = "Client work, internal tools, working demos, and independent concepts. Each case study states the problem, what was built, why it was designed that way, and what shipped. Labels keep the distinctions honest." %}{% include "partials/dimension-head.njk" %}
+
+<section class="rd-sec rd-sec--tight">
+  <div class="rd-wrap">
+    <div class="rd-work">
+      {%- for project in portfolio %}{% if project.featured %}
+      <a class="rd-card rd-card--hover rd-work__card" href="/work/{{ project.slug }}/" data-enter>
+        {%- if project.image %}<span class="rd-shot"><img src="/assets/img/projects/{{ project.image }}.webp" width="{{ project.imageWidth }}" height="{{ project.imageHeight }}" alt="{{ project.title }} homepage" loading="lazy" decoding="async"></span>{% endif %}
+        <span class="rd-work__txt">
+          <span class="rd-t-upper">{{ project.kind }}</span>
+          <span class="rd-t-h4">{{ project.title }} {{ icon('arrow-up-right') }}</span>
+          <span class="rd-t-body">{{ project.summary }}</span>
+        </span>
+      </a>
+      {%- endif %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+{%- for group in ['Websites','Applications','Business Systems','Automation','Experiments'] %}
+{%- set any = false %}{% for project in portfolio %}{% if project.group == group and not project.featured %}{% set any = true %}{% endif %}{% endfor %}
+{%- if any %}
+<section class="rd-sec rd-sec--tight">
+  <div class="rd-wrap">
+    <header class="rd-sec__head">
+      <h2 class="rd-t-h2" data-enter>{{ group }}<span class="signal">.</span></h2>
+    </header>
+    <div class="rd-svc-grid">
+      {%- for project in portfolio %}{% if project.group == group and not project.featured %}
+      <a class="rd-card rd-card--hover rd-svc rd-svc--compact" href="/work/{{ project.slug }}/" data-enter>
+        <span class="rd-svc__n">{{ icon('arrow-up-right') }}</span>
+        <span class="rd-svc__txt">
+          <span class="rd-t-upper">{{ project.kind }}</span>
+          <span class="rd-t-h4">{{ project.title }}</span>
+          <span class="rd-t-body">{{ project.summary }}</span>
+          {%- if project.tech and project.tech.length %}<span class="rd-svc__list">{% for t in project.tech | slice_first(4) %}<span class="rd-tag">{{ t }}</span>{% endfor %}</span>{% endif %}
+        </span>
+      </a>
+      {%- endif %}{% endfor %}
+    </div>
+  </div>
+</section>
+{%- endif %}
+{%- endfor %}
+{% include "partials/studio-contact.njk" %}

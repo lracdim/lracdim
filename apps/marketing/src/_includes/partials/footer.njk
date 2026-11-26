@@ -1,44 +1,39 @@
-<footer class="footer">
-  <div class="shell">
-    <div class="footer__grid">
-      <div>
-        <p class="label label--faint">Dimensions</p>
-        {% for d in dimensions %}
-          <a class="footer__link" href="{{ d.href }}"><span class="footer__index">{{ d.index }}</span> {{ d.name }} <span class="footer__dim">— {{ d.descriptor }}</span></a>
-        {% endfor %}
-      </div>
-
-      <div>
-        <p class="label label--faint">More</p>
-        <a class="footer__link" href="/about/">About</a>
-        {% for item in site.footerLinks %}
-          <a class="footer__link" href="{{ item.href }}">{{ item.label }}</a>
-        {% endfor %}
-        <a class="footer__link" href="{{ site.cta.href }}" data-open-start>{{ site.cta.label }}</a>
-      </div>
-
-      <div>
-        <p class="label label--faint">Contact</p>
-        <a class="footer__link" href="mailto:{{ site.email }}">{{ site.email }}</a>
-        <p class="footer__link">{{ site.location }}</p>
-        {% for item in site.social %}{% if item.href and not (item.href.startsWith and item.href.startsWith('mailto:')) and item.label != 'Email' %}
-          <a class="footer__link" href="{{ item.href }}" rel="noopener">{{ item.label }}</a>
-        {% endif %}{% endfor %}
-      </div>
-
-      <div>
-        <p class="label label--faint">Operator</p>
-        <p class="footer__link" style="color:var(--paper)">{{ site.owner }}</p>
-        <p class="footer__link">{{ site.role }}</p>
-        <a class="btn btn--ghost" href="{{ site.cta.href }}" data-open-start style="margin-top:.75rem">
-          {{ site.cta.label }} <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+{#- Footer in the redesign's layout: brand + about, three link columns, a
+    legal bar and the large wordmark at the very bottom. -#}
+<footer class="rd-ftr footer">
+  <div class="rd-wrap">
+    <div class="rd-ftr__in">
+      <div class="rd-ftr__about">
+        <a class="rd-brand" href="/" aria-label="{{ site.name }} home">
+          <img class="rd-brand__mark" src="/assets/img/brand/mark.png" width="72" height="72" alt="" loading="lazy">
+          <span class="rd-brand__name">{% include "partials/logotype.njk" %}</span>
         </a>
+        <p class="rd-t-body">{{ site.owner }} — {{ site.role }}. Web systems, automation, and the tools behind them.</p>
       </div>
+      <nav aria-label="Dimensions">
+        <h3>Dimensions</h3>
+        <ul>{% for d in dimensions %}<li><a href="{{ d.href }}">{{ d.name }}</a></li>{% endfor %}</ul>
+      </nav>
+      <nav aria-label="More">
+        <h3>More</h3>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          {%- for item in site.footerLinks %}<li><a href="{{ item.href }}">{{ item.label }}</a></li>{% endfor %}
+          <li><a href="{{ site.cta.href }}" data-open-start>{{ site.cta.label }}</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Contact">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+          {%- for item in site.social %}{% if item.href and not (item.href.startsWith and item.href.startsWith('mailto:')) and item.label != 'Email' %}<li><a href="{{ item.href }}" rel="noopener">{{ item.label }}</a></li>{% endif %}{% endfor %}
+          <li><span>{{ site.location }}</span></li>
+        </ul>
+      </nav>
     </div>
-
-    <div class="footer__legal">
-      <span class="label label--faint">&copy; {{ "" | year }} {{ site.owner }}</span>
-      <span class="label label--faint">Built with Eleventy</span>
+    <div class="rd-ftr__bar rd-t-cap">
+      <span>&copy; {{ "" | year }} {{ site.owner }}. All rights reserved.</span>
+      <span>Beyond Engineering.</span>
     </div>
   </div>
   <div class="rd-wordmark" aria-hidden="true"><span>lracdim</span>ension</div>

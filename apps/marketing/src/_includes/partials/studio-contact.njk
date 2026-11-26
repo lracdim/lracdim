@@ -1,1 +1,29 @@
-<section class="studio-contact shell"><p>Have a project in mind?</p><h2>Let's build<br><a href="mailto:{{ site.email }}">what comes next. ↗</a></h2><div><a class="text-link" href="mailto:{{ site.email }}">{{ site.email }}</a><a class="text-link" href="https://www.linkedin.com/in/carl-dimatulac">LinkedIn ↗</a></div></section>
+{#- Closing call to action on most pages, in the redesign's end-CTA layout.
+    "Start a project" opens the intake modal (assets/js/start-modal.js), which
+    posts to the API's /api/contact. -#}
+{%- from "partials/rd-icons.njk" import icon -%}
+<section class="rd-sec rd-endcta" id="hire">
+  <div class="rd-glow" aria-hidden="true"></div>
+  <div class="rd-wrap rd-endcta__in">
+    <div class="rd-endcta__txt">
+      <span class="rd-badge rd-badge--pill" data-enter><span class="rd-badge__tag">Hire me</span> Have a project in mind?</span>
+      <h2 class="rd-t-h2" data-enter>Let's build <span class="signal">what comes next</span>.</h2>
+      <p class="rd-t-sub" data-enter>Tell me where the work breaks. You get a written reply within one business day with a straight answer on whether it is a fit.</p>
+      <ul class="rd-checks" data-enter>
+        <li>{{ icon('check') }} Diagnose first, then build</li>
+        <li>{{ icon('check') }} A written scope with a fixed number on it</li>
+        <li>{{ icon('check') }} Working software early, not a reveal at the end</li>
+      </ul>
+    </div>
+    <div class="rd-card rd-req rd-contact" data-enter>
+      <p class="rd-t-upper">Start here</p>
+      <a class="rd-btn rd-btn--white" href="{{ site.cta.href }}" data-open-start>Start a project<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a>
+      <a class="rd-btn rd-btn--dark" href="/vector/">Examine your website {{ icon('arrow-up-right') }}</a>
+      <ul class="rd-contact__list">
+        <li><a href="mailto:{{ site.email }}">{{ icon('mail') }}<span>{{ site.email }}</span></a></li>
+        <li><a href="https://www.linkedin.com/in/carl-dimatulac" rel="noopener">{{ icon('user-round') }}<span>LinkedIn</span></a></li>
+        <li><span>{{ icon('map-pin') }}<span>{{ site.location }}</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
