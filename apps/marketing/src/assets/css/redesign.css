@@ -1205,3 +1205,25 @@ button.text-link { background: var(--rd-pill); border-color: rgb(var(--rd-ink) /
   text-transform: none;
   color: var(--rd-fg-2);
 }
+
+/* About: two-column hero, copy left, portrait right */
+.rd-phead--split .rd-phead__in {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  justify-items: stretch;
+  gap: clamp(2rem, 5vw, 5rem);
+  text-align: left;
+}
+.rd-phead__copy { display: grid; justify-items: start; gap: 1.25rem; }
+.rd-phead--split .rd-phead__title { max-width: 13ch; }
+.rd-phead--split .rd-actions { justify-content: flex-start; margin-top: 0.5rem; }
+.rd-phead--split .rd-portrait { width: 100%; max-width: 500px; margin: 0 0 0 auto; }
+@media (max-width: 900px) {
+  .rd-phead--split .rd-phead__in { grid-template-columns: minmax(0, 1fr); }
+  .rd-phead--split .rd-portrait { max-width: 420px; margin: 0 auto; }
+}
+
+/* Two-by-two card grid (About: tools) */
+@media (min-width: 901px) {
+  .rd-svc-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

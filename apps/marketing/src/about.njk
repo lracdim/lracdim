@@ -4,24 +4,36 @@ title: About
 permalink: /about/
 description: "John Carl Dimatulac, full-stack developer and WordPress and automation engineer based in Laguna, Philippines."
 ---
-{%- from "partials/rd-pagehead.njk" import pagehead -%}
 {%- from "partials/rd-icons.njk" import icon -%}
-{% call pagehead({
-  badge: 'About John Carl',
-  titleHtml: 'Technical depth. <span class="signal">Operational perspective.</span>',
-  sub: "I'm a full-stack web developer and WordPress &amp; automation engineer based in Sta. Rosa, Laguna, Philippines."
-}) %}<div class="rd-actions"><a class="rd-btn rd-btn--white" href="/resume/">View my resume<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a>{% if site.resumeUrl %}<a class="rd-btn rd-btn--dark" href="{{ site.resumeUrl }}" download>Download PDF {{ icon('arrow-up-right') }}</a>{% endif %}<a class="rd-btn rd-btn--dark" href="https://www.linkedin.com/in/carl-dimatulac">LinkedIn {{ icon('arrow-up-right') }}</a></div>{% endcall %}
-<div class="rd-wrap rd-stage"><figure class="portrait rd-portrait" data-enter><img src="{{ site.portrait }}" alt="{{ site.owner }}" width="1200" height="1200" decoding="async"><figcaption class="label label--plain label--faint">{{ site.owner }} — {{ site.location }}</figcaption></figure></div>
+{#- Two-column hero: copy on the left, portrait on the right. -#}
+<section class="rd-phead rd-phead--split">
+  <div class="rd-wrap rd-phead__in">
+    <div class="rd-phead__copy">
+      <p class="rd-badge" data-enter>{{ icon('sparkles') }} About John Carl</p>
+      <h1 class="rd-phead__title">Technical depth. <span class="signal">Operational perspective.</span></h1>
+      <p class="rd-phead__sub" data-enter>I'm a full-stack web developer and WordPress &amp; automation engineer based in Sta. Rosa, Laguna, Philippines.</p>
+      <div class="rd-actions" data-enter>
+        <a class="rd-btn rd-btn--white" href="/resume/">View my resume<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a>
+        {%- if site.resumeUrl %}<a class="rd-btn rd-btn--dark" href="{{ site.resumeUrl }}" download>Download PDF {{ icon('arrow-up-right') }}</a>{% endif %}
+      </div>
+    </div>
+    <figure class="portrait rd-portrait" data-enter>
+      <img src="{{ site.portrait }}" alt="{{ site.owner }}" width="1200" height="1200" decoding="async" fetchpriority="high">
+      <figcaption class="label label--plain label--faint">{{ site.owner }} — {{ site.location }}</figcaption>
+    </figure>
+  </div>
+</section>
 
 <section class="rd-sec">
   <div class="rd-wrap rd-split">
     <div class="rd-split__txt">
-      <span class="rd-badge rd-badge--pill" data-enter><span class="rd-badge__tag">Story</span> Why the work looks like this</span>
-      <h2 class="rd-t-h2" data-enter>Connecting the work <span class="signal">behind the website.</span></h2>
+      <span class="rd-badge rd-badge--pill" data-enter><span class="rd-badge__tag">The story</span> What “Beyond Engineering” means</span>
+      <h2 class="rd-t-h2" data-enter>A decade of work, <span class="signal">from strategy to deployment.</span></h2>
     </div>
     <div class="rd-prose-card rd-card" data-enter>
-      <p class="rd-t-sub">I build applications, custom WordPress tools, and automation pipelines. My projects span security services, logistics demos, education, and content publishing.</p>
-      <p class="rd-t-sub">Experience supporting construction IT and office networks gives me a practical view of how people use technology day to day. I carry that perspective into the interfaces and systems I develop.</p>
+      <p class="rd-t-sub">For a decade I have worked on the whole life of a system, not only the code in the middle of it. Strategy comes first: what the business actually needs, where the work breaks, and what is worth building at all. Then architecture, design and development. Then deployment, monitoring, and the patient work of making it the way a team really operates.</p>
+      <p class="rd-t-sub">That is what <span class="signal">Beyond Engineering</span> means. Engineering is the part you can see — the interface, the API, the automation. The value is in everything around it: a scope that solves the right problem, a launch that does not disrupt the business, and a system someone can still run a year later. I stay accountable for it from the first conversation to long after go-live.</p>
+      <p class="rd-t-sub">Years of supporting construction IT and office networks taught me how people really use technology — under pressure, with no patience for tools that get in the way. That perspective is built into every website, WordPress platform, automation and business system I ship.</p>
     </div>
   </div>
 </section>
@@ -50,19 +62,19 @@ description: "John Carl Dimatulac, full-stack developer and WordPress and automa
     <header class="rd-sec__head">
       <h2 class="rd-t-h2" data-enter>Tools I <span class="signal">work with</span>.</h2>
     </header>
-    <div class="rd-svc-grid rd-svc-grid--4">
+    <div class="rd-svc-grid rd-svc-grid--2">
       {%- set tools = [
-        ['code-xml', 'Frontend', 'React, Next.js, Vue, TypeScript, Tailwind CSS, GSAP'],
-        ['database', 'Backend & data', 'Node.js, Express, PHP, PostgreSQL, MySQL, MongoDB, Firebase, Drizzle ORM'],
-        ['workflow', 'WordPress & automation', 'Custom themes and plugins, REST APIs, n8n, OpenRouter, NVIDIA AI APIs'],
-        ['globe', 'Deployment', 'Vercel, Railway, Cloudflare, GCP Cloud Run, GitHub Actions']
+        ['code-xml', 'Frontend &amp; backend', ['React', 'Next.js', 'Vue', 'TypeScript', 'Tailwind CSS', 'GSAP', 'Node.js', 'Express', 'PHP', 'PostgreSQL', 'MySQL', 'MongoDB', 'Firebase', 'Drizzle ORM', 'Vercel', 'Cloudflare', 'GCP Cloud Run']],
+        ['workflow', 'Automation', ['n8n', 'REST APIs', 'Webhooks', 'OpenRouter', 'NVIDIA AI APIs', 'Cloudflare Workers', 'GitHub Actions', 'Railway']],
+        ['search', 'SEO · AEO · GEO', ['Technical SEO', 'Local SEO', 'Schema.org / JSON-LD', 'Core Web Vitals', 'Google Search Console', 'llms.txt', 'AI crawler access', 'Vector audits']],
+        ['wp', 'WordPress', ['Custom themes', 'Custom plugins', 'Elementor', 'WP REST API', 'PHP', 'WCAG 2.1 AA', 'Equalize Digital Accessibility Checker']]
       ] -%}
       {%- for t in tools %}
       <article class="rd-card rd-card--hover rd-svc rd-svc--compact" data-enter>
         <span class="rd-icon-chip">{{ icon(t[0]) }}</span>
         <span class="rd-svc__txt">
           <h3 class="rd-t-h4">{{ t[1] | safe }}</h3>
-          <span class="rd-svc__list">{% for x in t[2].split(', ') %}<span class="rd-tag">{{ x }}</span>{% endfor %}</span>
+          <span class="rd-svc__list">{% for x in t[2] %}<span class="rd-tag">{{ x }}</span>{% endfor %}</span>
         </span>
       </article>
       {%- endfor %}
