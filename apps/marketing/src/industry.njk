@@ -19,7 +19,7 @@ eleventyComputed:
   title: industry.name,
   sub: industry.tagline,
   chips: industry.signals
-}) %}<p class="rd-phead__sub rd-phead__sub--quiet">{{ industry.summary }}</p><div class="rd-actions"><a class="rd-btn rd-btn--white" href="/diagnose/?industry={{ industry.slug }}">Find your bottleneck in 2 minutes<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a><a class="rd-btn rd-btn--dark" href="{{ site.cta.href }}" data-open-start>Start a project {{ icon('arrow-up-right') }}</a></div>{% endcall %}
+}) %}<p class="rd-phead__sub rd-phead__sub--quiet">{{ industry.summary }}</p><div class="rd-actions"><a class="rd-btn rd-btn--white" href="/diagnose/#i={{ industry.slug }}">Find your bottleneck in 2 minutes<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a><a class="rd-btn rd-btn--dark" href="{{ site.cta.href }}" data-open-start>Start a project {{ icon('arrow-up-right') }}</a></div>{% endcall %}
 
 {# ==================================================== WHERE IT LEAKS === #}
 <section class="band section">
@@ -172,7 +172,7 @@ eleventyComputed:
         </div>
 
         <div style="margin-top:2.5rem;display:flex;flex-wrap:wrap;gap:1rem">
-          <a class="btn" href="/?start=1" data-open-start>
+          <a class="btn" href="/#start" data-open-start>
             Start this build <span class="btn__glyph" aria-hidden="true">&#8599;</span>
           </a>
           <button type="button" class="btn btn--ghost" data-open-diagnostic>

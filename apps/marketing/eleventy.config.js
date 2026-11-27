@@ -69,6 +69,20 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addFilter('urlencode', (str) => encodeURIComponent(String(str)));
 
+  // Markdown tables in articles: wrap each one and label every cell with its column heading,
+  // so on narrow screens a row can stack into a card (see ".prose table" in redesign.css).
+  eleventyConfig.addTransform('prose-tables', function (content) {
+    if (!String(this.page.inputPath).endsWith('.md') || !String(this.page.outputPath).endsWith('.html') || !content.includes('<table>')) return content;
+    return content.replace(/<table>([\s\S]*?)<\/table>/g, (whole, inner) => {
+      const heads = [...inner.matchAll(/<th[^>]*>([\s\S]*?)<\/th>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/"/g, '&quot;').trim());
+      const labelled = inner.replace(/<tr>([\s\S]*?)<\/tr>/g, (row, cells) => {
+        let i = 0;
+        return `<tr>${cells.replace(/<td([^>]*)>/g, (m, attrs) => `<td${attrs} data-label="${heads[i++] || ''}">`)}</tr>`;
+      });
+      return `<div class="prose-table"><table>${labelled}</table></div>`;
+    });
+  });
+
   // Only the industry fields the Bottleneck Finder shows, to keep its page payload small.
   eleventyConfig.addFilter('dg_industries', (list) =>
     (list || []).map((i) => ({ slug: i.slug, name: i.name, tagline: i.tagline, leaks: i.leaks, firstBuild: i.firstBuild, metrics: i.metrics }))

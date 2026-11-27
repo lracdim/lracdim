@@ -838,6 +838,26 @@ a.rd-chip:hover { border-color: var(--rd-line-2); color: var(--rd-fg); backgroun
 .case-image img { border-radius: 19px; }
 .post .prose { max-width: 46rem; margin-inline: auto; }
 
+/* Tables in articles. eleventy.config.js wraps each Markdown table in .prose-table and gives every
+   cell a data-label with its column heading, so on phones each row stacks into a labelled card. */
+.prose-table { margin: 8px 0 30px; border: 1px solid var(--rd-line-2); border-radius: var(--rd-r); background: var(--rd-fill); overflow: hidden; }
+.prose-table table { width: 100%; border-collapse: collapse; }
+.prose-table th { padding: 14px 16px 12px; text-align: left; vertical-align: bottom; font: 500 11px/1.4 var(--rd-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--rd-fg-3); border-bottom: 1px solid var(--rd-line-2); }
+.prose-table td { padding: 14px 16px; vertical-align: top; font-size: 15px; line-height: 1.55; color: var(--rd-fg-2); border-top: 1px solid var(--rd-line); }
+.prose-table tbody tr:first-child td { border-top: 0; }
+.prose-table td:first-child { color: var(--rd-fg); font-weight: 500; }
+.prose-table td:last-child { color: var(--rd-signal); }
+@media (max-width: 640px) {
+  .prose-table thead { display: none; }
+  .prose-table table, .prose-table tbody, .prose-table tr, .prose-table td { display: block; }
+  .prose-table tr { padding: 16px; border-top: 1px solid var(--rd-line); }
+  .prose-table tbody tr:first-child { border-top: 0; }
+  .prose-table td { padding: 0; border: 0; }
+  .prose-table td + td { margin-top: 10px; }
+  .prose-table td:first-child { font-size: 16px; }
+  .prose-table td + td::before { content: attr(data-label); display: block; margin-bottom: 2px; font: 500 10.5px/1.4 var(--rd-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--rd-fg-3); }
+}
+
 /* ==========================================================================
    Section headings — centred on every page, like the landing page
    ========================================================================== */

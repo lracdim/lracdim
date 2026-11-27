@@ -7,12 +7,12 @@
   "redirects": [
     {
       "source": "/start{/}?",
-      "destination": "/?start=1",
+      "destination": "/#start",
       "permanent": true
     },
     {
       "source": "/contact{/}?",
-      "destination": "/?start=1",
+      "destination": "/#start",
       "permanent": true
     },
     {

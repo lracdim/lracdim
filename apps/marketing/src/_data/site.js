@@ -61,8 +61,9 @@ export default {
   ],
 
   /* Opens the project-intake modal (assets/js/start-modal.js). The href is the fallback for a new tab
-     or a shared link: landing on /?start=1 opens the same modal. */
-  cta: { label: 'Hire me', href: '/?start=1' },
+     or a shared link: landing on /#start opens the same modal. It is a fragment, not a query, so search
+     engines never see a second URL for the home page (/?start=1 was reported as a duplicate). */
+  cta: { label: 'Hire me', href: '/#start' },
 
   /* Secondary and experimental destinations live in the footer only. */
   footerLinks: [

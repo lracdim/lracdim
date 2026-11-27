@@ -1,8 +1,9 @@
 /**
  * Project intake — multi-step modal (replaces the old /start/ page).
  *
- * Opened by any [data-open-start] element or link to /?start=1 (event delegation, so links that
- * scripts render later work too), by landing on /?start=1, or by dispatching `open-start` on window.
+ * Opened by any [data-open-start] element or link to /#start (event delegation, so links that
+ * scripts render later work too), by landing on /#start or the older /?start=1, or by dispatching
+ * `open-start` on window.
  *
  *   Step 1  About you        name*, email*, company, website
  *   Step 2  The project      project type*, budget, timeline
@@ -403,10 +404,10 @@ export function initStartModal() {
     else closeTimer = setTimeout(finish, FADE_MS);
   }
 
-  /* Any control that should start a project: [data-open-start], or a plain link to the old /start/
-     URL or the new /?start=1. Modified clicks (new tab, etc.) are left to the browser. */
+  /* Any control that should start a project: [data-open-start], or a plain link to /#start or the
+     older /start/ and /?start=1. Modified clicks (new tab, etc.) are left to the browser. */
   document.addEventListener('click', (e) => {
-    const trigger = e.target instanceof Element && e.target.closest('[data-open-start], a[href="/start/"], a[href="/?start=1"]');
+    const trigger = e.target instanceof Element && e.target.closest('[data-open-start], a[href="/#start"], a[href="#start"], a[href="/start/"], a[href="/?start=1"]');
     if (!trigger) return;
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
@@ -447,12 +448,17 @@ export function initStartModal() {
     }
   });
 
-  /* Landing on /?start=1 (the old /start/ URL redirects here) opens the popup, then tidies the URL. */
-  const params = new URLSearchParams(location.search);
-  if (params.has('start')) {
+  /* Landing on /#start (where /start/ and /contact/ redirect) or the older /?start=1 opens the popup,
+     then tidies the URL. */
+  const openFromUrl = () => {
+    const params = new URLSearchParams(location.search);
+    const fromHash = location.hash === '#start';
+    if (!fromHash && !params.has('start')) return;
     params.delete('start');
     const query = params.toString();
-    history.replaceState(history.state, '', location.pathname + (query ? `?${query}` : '') + location.hash);
+    history.replaceState(history.state, '', location.pathname + (query ? `?${query}` : '') + (fromHash ? '' : location.hash));
     open();
-  }
+  };
+  openFromUrl();
+  window.addEventListener('hashchange', openFromUrl);
 }

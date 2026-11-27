@@ -56,7 +56,7 @@ await page.setViewport({ width: 1440, height: 900 });
 
 // 2. Navigation and dimensions
 await page.goto(SITE + '/', { waitUntil: 'networkidle2' });
-const nav = await page.$$eval('.header__nav a', (as) => as.map((a) => a.textContent.trim()));
+const nav = await page.$$eval('.rd-hdr__in nav a',(as) => as.map((a) => a.textContent.trim()));
 check('primary nav is the five dimensions plus About', JSON.stringify(nav) === JSON.stringify(['Work', 'Vector', 'Signal', 'Forge', 'Labs', 'About']), nav.join(','));
 check('dimension selector has five cards', (await page.$$('.dim-card')).length === 5);
 for (const p of ['/work/', '/vector/', '/signal/', '/forge/', '/labs/']) {
@@ -156,7 +156,7 @@ if (apiUp) {
 
 // 6. Project intake — a three-step modal opened by "Hire me" (there is no /start/ page any more)
 await page.goto(SITE + '/', { waitUntil: 'networkidle2' });
-await page.click('.header__cta');
+await page.click('.rd-hdr__cta');
 await wait(600);
 check('Hire me opens the intake modal without leaving the page', await page.evaluate(() => !document.getElementById('start-modal').hidden && location.pathname === '/'));
 check('intake modal starts on step 1 with the name field focused', await page.evaluate(() => document.activeElement && document.activeElement.id === 'sm-name'));
@@ -184,6 +184,12 @@ await page.keyboard.press('Escape');
 await wait(600);
 check('Escape closes the modal', await page.evaluate(() => document.getElementById('start-modal').hidden));
 check('closing keeps a draft', await page.evaluate(() => !!sessionStorage.getItem('lracdim:start-draft')));
+await page.goto(SITE + '/#start', { waitUntil: 'networkidle2' });
+await wait(500);
+check('/#start opens the modal and tidies the URL', await page.evaluate(() => !document.getElementById('start-modal').hidden && location.hash === '' && location.search === ''));
+check('no link points at the /?start=1 duplicate', await page.evaluate(() => !document.querySelector('a[href*="?start="]')));
+await page.keyboard.press('Escape');
+await wait(600);
 await page.goto(SITE + '/?start=1', { waitUntil: 'networkidle2' });
 await wait(500);
 check('/?start=1 opens the modal and tidies the URL', await page.evaluate(() => !document.getElementById('start-modal').hidden && location.search === ''));
