@@ -38,6 +38,17 @@
     // Origins allowed to call the API. lracdimension.vercel.app and the bare
     // domain redirect to www, so www is the one visitors actually use.
     "CORS_ORIGINS": "https://www.lracdimension.online,https://lracdimension.online,https://lracdimension.vercel.app,http://localhost:8099",
+    // Origins of the studio dashboard (backend/dashboard), which calls
+    // /api/studio. Add the hosted dashboard's origin here when it is deployed,
+    // e.g. "http://localhost:5174,https://studio-lracdim.pages.dev".
+    "STUDIO_ORIGINS": "http://localhost:5174",
+    // Studio sign-in attempts per IP and per address, invite-link attempts per
+    // IP, examinations an admin may start, and fresh checks a client may run.
+    "RATE_LIMIT_STUDIO_LOGIN": "10/hour",
+    "RATE_LIMIT_STUDIO_LOGIN_EMAIL": "20/hour",
+    "RATE_LIMIT_STUDIO_INVITE": "20/hour",
+    "RATE_LIMIT_STUDIO_AUDITS": "30/hour",
+    "RATE_LIMIT_STUDIO_CLIENT_SCANS": "3/hour",
     // Senders. lracdimension.online is verified in Resend (region
     // ap-northeast-1); its DKIM, send/rsend CNAMEs and DMARC records live in
     // Z.com DNS. Replies reach Resend once the domain's MX points at it

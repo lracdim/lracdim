@@ -40,10 +40,12 @@ export function d1() {
     raw: db,
     prepare: (sql) => new Statement(db, sql),
     async batch(statements) {
+      // Synchronous inside the transaction, as a D1 batch is atomic: awaiting
+      // between statements would let a concurrent batch open a nested one.
       db.exec('BEGIN');
       try {
         const out = [];
-        for (const s of statements) out.push(await s.run());
+        for (const s of statements) out.push({ success: true, meta: { changes: Number(db.prepare(s.sql).run(...s.args).changes) } });
         db.exec('COMMIT');
         return out;
       } catch (err) {

@@ -6,7 +6,7 @@
  * Differences forced by the Workers free plan, and why:
  *  - Scheduled checks run from a Cron Trigger every 5 minutes, at most
  *    SWEEP_LIMIT targets per run (each run may make 50 outbound requests and
- *    50 database queries). Operator targets are due every 5 minutes; public
+ *    50 database queries). Operator and studio targets are due every 5 minutes; public
  *    scan targets every hour, capped at PUBLIC_TARGET_CAP, so the daily D1
  *    write quota is never at risk.
  *  - A Worker cannot read a remote TLS certificate. A successful https fetch
@@ -195,7 +195,13 @@ export async function checkTarget(env, target, { budget } = {}) {
   return { ...target, status: next, last_status_code: statusCode, last_response_ms: responseMs, last_checked_at: now, ssl_valid: sslValid };
 }
 
-async function createTarget(env, name, url, host, source) {
+/**
+ * Register a target. `source` is 'admin' (operator target, on the public
+ * board), 'public' (registered by a public scan) or 'studio' (a client
+ * website from the studio dashboard: checked as often as operator targets,
+ * never listed publicly).
+ */
+export async function createTarget(env, name, url, host, source) {
   const row = { id: newId(), name: name.trim().slice(0, 120), url, host, source, status: 'unknown', created_at: nowIso() };
   await env.DB.batch([
     env.DB.prepare("INSERT INTO monitoring_targets (id, name, url, host, enabled, source, status, created_at) VALUES (?, ?, ?, ?, 1, ?, 'unknown', ?)").bind(row.id, row.name, url, host, source, row.created_at),
@@ -331,7 +337,7 @@ async function latestSnapshot(env, id) {
 export async function sweep(env, now = Date.now()) {
   const budget = new Budget();
   const { results } = await env.DB.prepare(
-    "SELECT * FROM monitoring_targets WHERE enabled = 1 AND (last_checked_at IS NULL OR (source = 'admin' AND last_checked_at < ?) OR (source <> 'admin' AND last_checked_at < ?)) ORDER BY last_checked_at IS NOT NULL, last_checked_at ASC LIMIT ?"
+    "SELECT * FROM monitoring_targets WHERE enabled = 1 AND (last_checked_at IS NULL OR (source IN ('admin', 'studio') AND last_checked_at < ?) OR (source NOT IN ('admin', 'studio') AND last_checked_at < ?)) ORDER BY last_checked_at IS NOT NULL, last_checked_at ASC LIMIT ?"
   )
     .bind(new Date(now - ADMIN_INTERVAL_MS + 30_000).toISOString(), new Date(now - PUBLIC_INTERVAL_MS + 30_000).toISOString(), SWEEP_LIMIT)
     .all();
@@ -369,7 +375,12 @@ export async function signalRoute(request, env, ctx, url) {
   if (p === '/api/signal/events' && m === 'GET') {
     const [limit, bad] = intParam(url, 'limit', 50, 1, 200);
     if (bad) return bad;
-    const { results } = await env.DB.prepare("SELECT * FROM signal_events WHERE kind NOT IN ('check', 'snapshot') ORDER BY created_at DESC, rowid DESC LIMIT ?").bind(limit).all();
+    // Studio targets are clients' websites: their incidents stay off the public feed.
+    const { results } = await env.DB.prepare(
+      "SELECT * FROM signal_events WHERE kind NOT IN ('check', 'snapshot') AND target_id NOT IN (SELECT id FROM monitoring_targets WHERE source = 'studio') ORDER BY created_at DESC, rowid DESC LIMIT ?"
+    )
+      .bind(limit)
+      .all();
     return json(results.map(eventOut));
   }
   let match = p.match(/^\/api\/signal\/targets\/([^/]+)\/(snapshot|events|check)$/);

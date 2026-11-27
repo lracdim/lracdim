@@ -3,9 +3,10 @@
  *
  * Serves everything the public site calls: health, the project-intake form,
  * Vector examinations and their emailed full reports, Signal scans and
- * monitoring, and the Forge tools. The Cron Trigger in wrangler.jsonc runs
- * the scheduled Signal checks and the report-delivery backstop; full reports
- * are delivered by the ReportDeliveryWorkflow.
+ * monitoring, and the Forge tools; and, under /api/studio, the studio
+ * dashboard's API (src/studio/). The Cron Trigger in wrangler.jsonc runs
+ * the scheduled Signal checks, the report-delivery backstop and the studio's
+ * hourly uptime rollup; full reports are delivered by the ReportDeliveryWorkflow.
  */
 import { error, json, preflight, allowedOrigin, withCors } from './http.js';
 import { PROJECT_TYPES, submissions, submit } from './contact.js';
@@ -14,8 +15,20 @@ import { reportsRoute, resendWebhook } from './reports.js';
 import { reportMaintenance } from './report-delivery.js';
 import { signalRoute, sweep } from './signal.js';
 import { forgeRoute } from './forge.js';
+import { pruneAnonymisedStmts, rollupUptime, studioRoute } from './studio/routes.js';
 
 export { ReportDeliveryWorkflow } from './workflow.js';
+
+/**
+ * Hourly studio upkeep, from the 5-minute cron's first run of each hour:
+ * roll Signal checks up into daily uptime and drop pipeline notes about
+ * report requests the retention sweep has anonymised.
+ */
+async function studioMaintenance(env, scheduledTime) {
+  if (new Date(scheduledTime).getUTCMinutes() >= 5) return;
+  await rollupUptime(env, scheduledTime);
+  await env.DB.batch(pruneAnonymisedStmts(env));
+}
 
 async function health(env) {
   try {
@@ -37,6 +50,7 @@ async function route(request, env, ctx, url) {
     return method === 'POST' ? submit(request, env, ctx) : error(405, 'method_not_allowed', 'Use POST.');
   }
   if (pathname === '/api/webhooks/resend') return resendWebhook(request, env);
+  if (pathname.startsWith('/api/studio/')) return studioRoute(request, env, ctx, url);
   if (pathname.startsWith('/api/vector/')) {
     const gated = await reportsRoute(request, env, ctx, url);
     if (gated) return gated;
@@ -67,5 +81,6 @@ export default {
     ctx.waitUntil(
       reportMaintenance(env, ctx, event.scheduledTime).catch((err) => console.error('report maintenance failed', (err && err.stack) || err))
     );
+    ctx.waitUntil(studioMaintenance(env, event.scheduledTime).catch((err) => console.error('studio maintenance failed', (err && err.stack) || err)));
   }
 };

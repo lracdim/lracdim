@@ -18,8 +18,14 @@ export function error(status, code, message, fields) {
   return json({ error: body }, status);
 }
 
+/**
+ * CORS_ORIGINS lists the public site's origins; STUDIO_ORIGINS the studio
+ * dashboard's (local dev and wherever it is hosted). Both are allowed on every
+ * route: the dashboard authenticates with a bearer token, never a cookie, so
+ * an allowed origin gains nothing without one.
+ */
 export const allowedOrigins = (env) =>
-  (env.CORS_ORIGINS || '').split(',').map((o) => o.trim()).filter(Boolean);
+  `${env.CORS_ORIGINS || ''},${env.STUDIO_ORIGINS || ''}`.split(',').map((o) => o.trim()).filter(Boolean);
 
 /** The request's Origin when it is on the allow-list, otherwise null. */
 export function allowedOrigin(request, env) {
@@ -34,7 +40,7 @@ export function preflight(request, env) {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key, Authorization',
       'Access-Control-Max-Age': '600',
       Vary: 'Origin'

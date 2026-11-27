@@ -14,6 +14,7 @@ the same request and response shapes, so the site only needed a different
 | Signal | `POST /api/signal/scan`, `GET /api/signal/targets`, `…/{id}`, `…/{id}/events`, `…/{id}/snapshot`, `GET /api/signal/events`, `GET /api/signal/lookup`, `POST /api/signal/targets` and `…/{id}/check` (admin) | `routes/signal.py`, `services/monitor_service.py`, `services/signal_scan.py` |
 | Forge | `GET /api/forge/tools`, `POST /api/forge/{tool}/run` for the robots, sitemap, metadata, canonical and redirect tools | `routes/forge.py`, `services/forge_tools.py` |
 | Health | `GET /api/health` | `main.py` |
+| Studio dashboard | `/api/studio/*` (sign-in, admin and client portal; see "Studio dashboard" below) | the engine in `lracdimension/backend/engine` |
 
 The eight analyzers, the scoring and the SSRF policy are line-by-line ports.
 On five real pages (577 B to 572 KB) both implementations produce identical
@@ -197,6 +198,7 @@ npm run db:migrate:local      # create the tables for `npm run dev`
 npm run dev                   # http://127.0.0.1:8787, secrets from .dev.vars
 npm run db:migrate:remote     # apply new migrations to the live database
 npm run deploy
+npm run studio:create-admin   # create or update a studio dashboard admin (prompts)
 npx wrangler tail lracdim-api # live logs, with CPU time per request
 ```
 
@@ -219,7 +221,7 @@ npx wrangler secret put REPORT_SIGNING_KEY     # optional: signs report links (e
 npx wrangler secret list                  # names only
 ```
 
-Plain settings (`CORS_ORIGINS`, `RESEND_FROM`, `INTAKE_REPLY_TO`,
+Plain settings (`CORS_ORIGINS`, `STUDIO_ORIGINS`, the `RATE_LIMIT_STUDIO_*` limits, `RESEND_FROM`, `INTAKE_REPLY_TO`,
 `RESEND_AUTOREPLY`, the `RATE_LIMIT_*` limits, `SIGNAL_RESPONSE_WARN_MS`,
 `SITE_URL`, `API_URL` and the `REPORT_*` and `TURNSTILE_REQUIRED` report
 settings) live in `wrangler.jsonc`.
@@ -231,8 +233,82 @@ npx wrangler d1 execute lracdim-api --remote --command "SELECT created_at, name,
 npx wrangler d1 execute lracdim-api --remote --command "SELECT host, status, last_checked_at FROM monitoring_targets"
 ```
 
+## Studio dashboard
+
+The admin and client portal in `backend/dashboard` (see `backend/README.md`)
+calls `/api/studio`, served by `src/studio/`. Paths after the prefix are the
+Python engine's, so the dashboard needs only
+`VITE_API_URL=https://lracdim-api.lracdim.workers.dev/api/studio`.
+
+| Module | What it does |
+| --- | --- |
+| `routes.js` | Route table; unknown paths 404 before auth; access levels public, session, admin, client |
+| `auth.js` | PBKDF2 passwords, bearer sessions, invites, "view as client" |
+| `admin.js`, `client.js` | Handlers ported from `routes/admin.py`, `routes/client.py` |
+| `views.js` | Computed views from `services.py`: client rows and churn risk, ticket SLA, receivables, command centre, portal pages, monthly report |
+| `sites.js` | Client websites on Signal (uptime) and Vector (scores), the hourly uptime rollup |
+| `audits.js` | Dashboard audits are unlisted Vector examinations (`createAudit` in `vector.js`) |
+| `prospects.js` | The pipeline: `contact_submissions` + `report_requests`, with the studio's stage/value/notes in an overlay table |
+| `plans.js` | The care plans' prices, hours and features |
+| `util.js` | Queries, dates, validation, activity log |
+
+Tables are in `migrations/0005_studio.sql` (all prefixed `studio_`); tests
+in `test/studio.test.js`.
+
+**Auth.** Admins exist only through `npm run studio:create-admin` (below).
+Passwords are PBKDF2-SHA256, 100,000 iterations (WebCrypto's limit in a
+Worker), 16-byte salt, stored as `pbkdf2$100000$<salt b64>$<hash b64>`.
+Sessions are 32 random bytes sent as `Authorization: Bearer`; only their
+SHA-256 is stored, they last 12 hours, and `POST /v1/auth/logout` deletes
+them. Sign-in is limited to `RATE_LIMIT_STUDIO_LOGIN` (10/hour) per IP and
+`RATE_LIMIT_STUDIO_LOGIN_EMAIL` (20/hour) per address, and always answers
+"Email or password is incorrect." after the same hashing work. Client users
+are created disabled with no password; the admin copies a one-time invite
+link (`<dashboard>/invite#t=<token>`, token hash stored, 7 days) and
+`POST /v1/auth/accept-invite` sets the password. A new invite for an active
+user is a password reset and ends their sessions. "View as client" is a
+one-hour session of the client user carrying the admin's id
+(`impersonator_id`); it cannot use admin routes, and the activity log records
+its actions as "Client (via Admin)".
+
+**Where the numbers come from.** Uptime: Signal checks every 5 minutes (studio
+sites are Signal targets with `source = 'studio'`, on the 5-minute cadence and
+kept off the public board and events feed), rolled up hourly into
+`studio_uptime_days` because Signal keeps raw checks for 14 days only. Health
+and the eight category scores: the site's latest completed Vector
+examination; "visibility" is the mean of the SEO and AI-visibility scores.
+SSL validity comes from Signal; SSL and domain expiry dates are not measured
+and are null. Leads: the real intake and report-request rows (anonymised
+report requests are skipped, and the hourly upkeep drops the studio's notes
+about them). Everything else (clients, projects, tickets, invoices, work log)
+is entered in the dashboard. Nothing is generated.
+
+**Free plan.** Every view uses a fixed number of queries whatever the number
+of rows (the command centre about 14, a client page under 30), inside the
+50-per-request limit. The cron checks at most 8 targets per run, so more
+than about 8 operator and studio sites together stretch the 5-minute cadence.
+A sign-in costs one PBKDF2 (100,000 iterations), which is more CPU than the
+free plan's nominal 10 ms per request; Cloudflare has completed heavier
+requests (see "CPU time"), but if sign-ins start failing with CPU errors the
+fix is the Workers Paid plan, not fewer iterations.
+
+### Setting it up
+
+```bash
+npm run db:migrate:remote        # applies 0005_studio.sql
+npm run deploy
+npm run studio:create-admin      # prompts for email, name, password (hidden, twice)
+```
+
+`studio:create-admin` hashes the password locally and runs one
+`wrangler d1 execute lracdim-api --remote` with an
+`INSERT … ON CONFLICT(email) DO UPDATE`; it prints neither the password nor the
+hash. Run it again to change an admin's name or password (that also signs the
+admin out everywhere). `npm run studio:create-admin -- --local` targets the
+local database instead. Then add the dashboard's hosted origin to
+`STUDIO_ORIGINS` in `wrangler.jsonc` and deploy again.
+
 ## Not served here
 
-The studio dashboard's endpoints (`/api/studio/*`) and the CMS endpoints stay
-in the Python API, which the dashboard uses locally. The public site never
-calls them; the Worker answers them with 404.
+The CMS endpoints stay in the Python API. The public site never calls them;
+the Worker answers them with 404.

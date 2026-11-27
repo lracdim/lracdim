@@ -9,7 +9,8 @@
     "test": "node --import ./test/setup.js --test",
     "deploy": "wrangler deploy",
     "db:migrate:local": "wrangler d1 migrations apply lracdim-api --local",
-    "db:migrate:remote": "wrangler d1 migrations apply lracdim-api --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply lracdim-api --remote",
+    "studio:create-admin": "node scripts/studio-create-admin.mjs"
   },
   "devDependencies": {
     "wrangler": "4.151.1"

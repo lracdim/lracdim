@@ -54,6 +54,10 @@ const ANALYZERS = [
 // still unfinished well after that was stopped by the platform.
 const STALE_MS = 90_000;
 
+/** True for a queued or running examination the platform must have stopped. */
+export const isStale = (row, now = Date.now()) =>
+  (row.status === 'queued' || row.status === 'running') && now - Date.parse(row.started_at || row.created_at) > STALE_MS;
+
 export function stageList(current, failed = null) {
   const idx = STAGES.findIndex(([key]) => key === current);
   return STAGES.map(([key, label], i) => ({
@@ -140,6 +144,30 @@ export async function runAudit(env, id, { budget = new Budget(), started = Date.
   }
 }
 
+/**
+ * Validate an address, queue an examination of it and start it in the
+ * background. Returns the new audit row as auditOut takes it. Throws UnsafeURL
+ * for an address the SSRF policy refuses. Shared by the public route and the
+ * studio dashboard (src/studio/audits.js), which passes listed: false so its
+ * examinations of client and prospect sites stay off the public recent list.
+ */
+export async function createAudit(env, ctx, raw, { listed = true } = {}) {
+  const budget = new Budget();
+  const started = Date.now();
+  const { url } = await validateResolved(raw, budget); // the SSRF policy applies before anything is queued
+  const websiteId = await getOrCreateWebsite(env, url);
+  const id = newId();
+  const created = nowIso();
+  const stages = JSON.stringify(stageList(null));
+  await env.DB.prepare(
+    "INSERT INTO audits (id, website_id, url, status, stage, stages, listed, created_at) VALUES (?, ?, ?, 'queued', 'queued', ?, ?, ?)"
+  )
+    .bind(id, websiteId, url, stages, listed ? 1 : 0, created)
+    .run();
+  ctx.waitUntil(runAudit(env, id, { budget, started }));
+  return { id, website_id: websiteId, url, status: 'queued', stage: 'queued', stages, listed: listed ? 1 : 0, created_at: created };
+}
+
 async function start(request, env, ctx) {
   if (!(await hit(env, ctx, 'audits', clientIp(request), env.RATE_LIMIT_AUDITS || '6/hour'))) {
     return error(429, 'rate_limited', 'Too many requests. Try again later.');
@@ -149,32 +177,25 @@ async function start(request, env, ctx) {
   const [raw, badUrl] = stringField(body, 'url', 3, 2048);
   if (badUrl) return badUrl;
   if (body.listed !== undefined && body.listed !== null && typeof body.listed !== 'boolean') return fieldError('listed', 'Must be true or false.');
-  const listed = body.listed !== false;
-  const budget = new Budget();
-  const started = Date.now();
-  let url;
+  let row;
   try {
-    url = (await validateResolved(raw, budget)).url; // the SSRF policy applies before anything is queued
+    row = await createAudit(env, ctx, raw, { listed: body.listed !== false });
   } catch (err) {
     if (err instanceof UnsafeURL) return error(422, 'invalid_url', err.message);
     throw err;
   }
-  const websiteId = await getOrCreateWebsite(env, url);
-  const id = newId();
-  const created = nowIso();
-  await env.DB.prepare(
-    "INSERT INTO audits (id, website_id, url, status, stage, stages, listed, created_at) VALUES (?, ?, ?, 'queued', 'queued', ?, ?, ?)"
-  )
-    .bind(id, websiteId, url, JSON.stringify(stageList(null)), listed ? 1 : 0, created)
-    .run();
-  ctx.waitUntil(runAudit(env, id, { budget, started }));
-  return json(auditOut({ id, url, status: 'queued', stage: 'queued', stages: JSON.stringify(stageList(null)), created_at: created }), 202);
+  return json(auditOut(row), 202);
+}
+
+/** The audit row, with an examination the platform stopped marked as failed. */
+export async function loadAudit(env, id) {
+  return load(env, id);
 }
 
 async function load(env, id) {
   const row = await env.DB.prepare('SELECT * FROM audits WHERE id = ?').bind(id).first();
   if (!row) return null;
-  if ((row.status === 'queued' || row.status === 'running') && Date.now() - Date.parse(row.started_at || row.created_at) > STALE_MS) {
+  if (isStale(row)) {
     const fields = {
       status: 'failed',
       error_message: 'The examination took too long and was stopped. Very large pages can exceed the time this service allows; try again or examine a lighter page.',
