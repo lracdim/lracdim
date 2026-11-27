@@ -5,8 +5,9 @@
  *   POST /api/vector/audits/{id}/report-requests   ask for the full report by email
  *   GET  /api/vector/report-requests/{id}           delivery status of one request
  *   GET  /api/vector/report                         the full report (Authorization: Bearer <link token>)
+ *   GET  /api/vector/report/pdf                     the same report as a PDF (same header)
  *   POST /api/vector/unsubscribe/{token}            stop all email to an address (also RFC 8058 one-click)
- *   POST /api/webhooks/resend                       Resend delivery events (Svix-signed)
+ *   POST /api/webhooks/resend                       Resend delivery events, and email.received (forwarded, src/inbound.js); Svix-signed
  *
  * Admin (X-Admin-Key)
  *   GET  /api/vector/report-requests                latest requests, filter with ?status=
@@ -16,10 +17,12 @@
  *   POST /api/vector/report-requests/erase          {"email"}: anonymise every request from an address
  *   GET  /api/vector/report-stats                   volumes, the daily cap, suppressions
  */
-import { fullReport } from './audit-view.js';
+import { auditOut, fullReport } from './audit-view.js';
 import { clientIp, error, json, newId, nowIso, readJson, requireAdmin } from './http.js';
 import { hit } from './ratelimit.js';
-import { dispatchDelivery, intVar, logEvent } from './report-delivery.js';
+import { dispatchDelivery, intVar, logEvent, pdfData } from './report-delivery.js';
+import { PdfError, pdfEnabled, pdfFilename, renderReportPdf } from './report-pdf.js';
+import { forwardReceived } from './inbound.js';
 import { emailHash, hmac, ipHash, maskEmail, normalizeEmail, readUnsubscribeToken, sha256Hex, timingSafeEqual } from './secure.js';
 import { verifyTurnstile } from './turnstile.js';
 
@@ -97,6 +100,51 @@ export async function domainAcceptsMail(domain) {
 
 const count = async (env, sql, ...args) => ((await env.DB.prepare(sql).bind(...args).first()) || {}).n || 0;
 
+/** The website a report is about: the examined host in lower case, without "www.". */
+export function siteKeyOf(url) {
+  try {
+    return new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+  } catch {
+    return String(url || '').toLowerCase();
+  }
+}
+
+const dayMonth = (ms) => new Date(ms).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+// Requests that used up the week: delivered, or still on their way. A failed,
+// skipped or bounced request does not lock anyone out.
+const LIVE = "status IN ('queued', 'sending', 'sent')";
+
+/**
+ * The weekly limits. Each address gets one report per REPORT_EMAIL_COOLDOWN_DAYS
+ * and each website one per REPORT_SITE_COOLDOWN_DAYS (both 7; 0 turns a limit
+ * off). Returns an error Response, or null when the request may go ahead.
+ */
+async function weeklyLimit(env, key, site) {
+  const check = async (column, value, days) => {
+    if (!days) return null;
+    const since = new Date(Date.now() - days * 86_400_000).toISOString();
+    const row = await env.DB.prepare(`SELECT created_at FROM report_requests WHERE ${column} = ? AND created_at > ? AND ${LIVE} ORDER BY created_at DESC LIMIT 1`)
+      .bind(value, since)
+      .first();
+    if (!row) return null;
+    const last = Date.parse(row.created_at);
+    return { last: dayMonth(last), next: dayMonth(last + days * 86_400_000), retryAfter: new Date(last + days * 86_400_000).toISOString() };
+  };
+  const emailDays = intVar(env, 'REPORT_EMAIL_COOLDOWN_DAYS', 7, 0, 90);
+  const byEmail = await check('email_hash', key, emailDays);
+  if (byEmail) {
+    const message = `This address already received a report on ${byEmail.last}. Each address gets one report a week, so the next can be requested from ${byEmail.next}.`;
+    return json({ error: { code: 'email_weekly_limit', message, fields: [{ field: 'email', message }], retry_after: byEmail.retryAfter } }, 429);
+  }
+  const siteDays = intVar(env, 'REPORT_SITE_COOLDOWN_DAYS', 7, 0, 90);
+  const bySite = await check('site_key', site, siteDays);
+  if (bySite) {
+    const message = `A full report for ${site} was already sent on ${bySite.last}. Each website gets one report a week, so the next can be requested from ${bySite.next}.`;
+    return json({ error: { code: 'site_weekly_limit', message, retry_after: bySite.retryAfter } }, 429);
+  }
+  return null;
+}
+
 /* --------------------------------------------------------- public routes */
 
 async function requestReport(request, env, ctx, auditId) {
@@ -113,7 +161,7 @@ async function requestReport(request, env, ctx, auditId) {
   const { data, fields } = validateRequest(body);
   if (fields.length) return error(422, 'validation', `${fields[0].field}: ${fields[0].message}`, fields);
 
-  const audit = await env.DB.prepare('SELECT id, status FROM audits WHERE id = ?').bind(auditId).first();
+  const audit = await env.DB.prepare('SELECT id, url, status FROM audits WHERE id = ?').bind(auditId).first();
   if (!audit) return error(404, 'not_found', 'No examination with that id.');
   if (audit.status !== 'completed') return error(409, 'not_ready', 'The examination has not finished yet.');
 
@@ -121,14 +169,15 @@ async function requestReport(request, env, ctx, auditId) {
   if (!human.ok) return error(human.status, human.code, human.message);
 
   const key = await emailHash(env, data.email);
-  const dayAgo = new Date(Date.now() - 86_400_000).toISOString();
+  const site = siteKeyOf(audit.url);
   const masked = maskEmail(data.email);
 
-  // The same report to the same address within a day: answer with the first request, send nothing new.
+  // The same report to the same address again (a second click, a reload): answer with the first request, send nothing new.
+  const dupSince = new Date(Date.now() - Math.max(1, intVar(env, 'REPORT_EMAIL_COOLDOWN_DAYS', 7, 0, 90)) * 86_400_000).toISOString();
   const dup = await env.DB.prepare(
-    "SELECT id, status FROM report_requests WHERE audit_id = ? AND email_hash = ? AND created_at > ? AND status IN ('queued', 'sending', 'sent') ORDER BY created_at DESC LIMIT 1"
+    `SELECT id, status FROM report_requests WHERE audit_id = ? AND email_hash = ? AND created_at > ? AND ${LIVE} ORDER BY created_at DESC LIMIT 1`
   )
-    .bind(auditId, key, dayAgo)
+    .bind(auditId, key, dupSince)
     .first();
   if (dup) return json({ id: dup.id, status: dup.status, email_masked: masked, duplicate: true }, 200);
 
@@ -141,9 +190,8 @@ async function requestReport(request, env, ctx, auditId) {
     return error(409, 'suppressed', message, [{ field: 'email', message }]);
   }
 
-  if ((await count(env, 'SELECT COUNT(*) AS n FROM report_requests WHERE email_hash = ? AND created_at > ?', key, dayAgo)) >= intVar(env, 'REPORT_PER_EMAIL_DAILY', 3, 1, 100)) {
-    return error(429, 'email_limited', 'This address has received the most reports allowed in a day. Try again tomorrow.');
-  }
+  const limited = await weeklyLimit(env, key, site);
+  if (limited) return limited;
 
   const midnight = new Date();
   midnight.setUTCHours(0, 0, 0, 0);
@@ -161,10 +209,10 @@ async function requestReport(request, env, ctx, auditId) {
   const id = newId();
   const now = nowIso();
   await env.DB.prepare(
-    'INSERT INTO report_requests (id, audit_id, name, email, email_hash, company, note, source, consent_version, ip_key, status, created_at, updated_at) ' +
-      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?)"
+    'INSERT INTO report_requests (id, audit_id, name, email, email_hash, site_key, company, note, source, consent_version, ip_key, status, created_at, updated_at) ' +
+      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?)"
   )
-    .bind(id, auditId, data.name, data.email, key, data.company, data.note, data.source, CONSENT_VERSION, await ipHash(env, ip), now, now)
+    .bind(id, auditId, data.name, data.email, key, site, data.company, data.note, data.source, CONSENT_VERSION, await ipHash(env, ip), now, now)
     .run();
   await logEvent(env, id, 'requested', `source=${data.source}; turnstile=${human.skipped ? 'off' : 'passed'}; consent=${CONSENT_VERSION}`);
   await dispatchDelivery(env, ctx, id, { apiOrigin: new URL(request.url).origin });
@@ -184,32 +232,78 @@ async function requestStatus(request, env, id) {
   return json({ id: row.id, status: row.status, email_masked: maskEmail(row.email), sent_at: row.sent_at ?? null });
 }
 
+/**
+ * The report link in an Authorization header, checked: returns {hash, link,
+ * row} (link joined with its request, row the audit) or {res} with the error.
+ */
+async function resolveLink(request, env) {
+  const m = /^Bearer\s+([A-Za-z0-9_-]{20,128})$/.exec(request.headers.get('Authorization') || '');
+  if (!m) return { res: error(401, 'invalid_link', 'This report link is not valid. Open it from the email again.') };
+  const hash = await sha256Hex(m[1]);
+  const link = await env.DB.prepare(
+    'SELECT t.*, r.name, r.company, r.summary, r.summary_source, r.anonymized FROM report_tokens t JOIN report_requests r ON r.id = t.request_id WHERE t.token_hash = ?'
+  )
+    .bind(hash)
+    .first();
+  if (!link || link.anonymized) return { res: error(404, 'invalid_link', 'This report link is not valid. Check that the whole link was copied from the email.') };
+  if (link.revoked) return { res: json({ error: { code: 'link_revoked', message: 'This report link has been withdrawn.', audit_id: link.audit_id } }, 410) };
+  if (Date.parse(link.expires_at) < Date.now()) {
+    return { res: json({ error: { code: 'link_expired', message: 'This report link has expired.', audit_id: link.audit_id } }, 410) };
+  }
+  const row = await env.DB.prepare('SELECT * FROM audits WHERE id = ?').bind(link.audit_id).first();
+  if (!row || row.status !== 'completed') return { res: error(404, 'not_found', 'The examination behind this link no longer exists.') };
+  return { hash, link, row };
+}
+
 async function openReport(request, env, ctx) {
   if (!(await hit(env, ctx, 'report_open', clientIp(request), env.RATE_LIMIT_REPORT_OPEN || '120/hour'))) {
     return error(429, 'rate_limited', 'Too many requests. Try again later.');
   }
-  const m = /^Bearer\s+([A-Za-z0-9_-]{20,128})$/.exec(request.headers.get('Authorization') || '');
-  if (!m) return error(401, 'invalid_link', 'This report link is not valid. Open it from the email again.');
-  const hash = await sha256Hex(m[1]);
-  const link = await env.DB.prepare(
-    'SELECT t.*, r.name, r.anonymized FROM report_tokens t JOIN report_requests r ON r.id = t.request_id WHERE t.token_hash = ?'
-  )
-    .bind(hash)
-    .first();
-  if (!link || link.anonymized) return error(404, 'invalid_link', 'This report link is not valid. Check that the whole link was copied from the email.');
-  if (link.revoked) return json({ error: { code: 'link_revoked', message: 'This report link has been withdrawn.', audit_id: link.audit_id } }, 410);
-  if (Date.parse(link.expires_at) < Date.now()) {
-    return json({ error: { code: 'link_expired', message: 'This report link has expired.', audit_id: link.audit_id } }, 410);
-  }
-  const row = await env.DB.prepare('SELECT * FROM audits WHERE id = ?').bind(link.audit_id).first();
-  if (!row || row.status !== 'completed') return error(404, 'not_found', 'The examination behind this link no longer exists.');
+  const { res, hash, link, row } = await resolveLink(request, env);
+  if (res) return res;
   ctx.waitUntil(
     (async () => {
       await env.DB.prepare('UPDATE report_tokens SET views = views + 1, last_viewed_at = ? WHERE token_hash = ?').bind(nowIso(), hash).run();
       if (!link.views) await logEvent(env, link.request_id, 'viewed', 'first view of the online report');
     })().catch((err) => console.warn('report view not recorded', err && err.message))
   );
-  return json({ ...fullReport(row), link: { expires_at: link.expires_at }, requester: { first_name: firstName(link.name) } });
+  return json({ ...fullReport(row), link: { expires_at: link.expires_at }, requester: { first_name: firstName(link.name) }, pdf: pdfEnabled(env) });
+}
+
+/**
+ * GET /api/vector/report/pdf: the same PDF the email carries, printed on
+ * demand. Each one costs Browser Run time (10 minutes a day on the free plan),
+ * so it is limited per visitor and per link; the page falls back to the
+ * browser's own print dialog when this refuses.
+ */
+async function reportPdf(request, env, ctx) {
+  if (!(await hit(env, ctx, 'report_pdf', clientIp(request), env.RATE_LIMIT_REPORT_PDF || '10/hour'))) {
+    return error(429, 'rate_limited', 'Too many PDF downloads from this connection. Try again later, or use your browser’s print dialog.');
+  }
+  const { res, hash, link, row } = await resolveLink(request, env);
+  if (res) return res;
+  if (!pdfEnabled(env)) return error(503, 'pdf_unavailable', 'PDF downloads are not available right now. Use your browser’s print dialog instead.');
+  if (!(await hit(env, ctx, 'report_pdf_link', hash, env.RATE_LIMIT_REPORT_PDF_LINK || '5/day'))) {
+    return error(429, 'rate_limited', 'This report has been downloaded several times today. The PDF attached to the email is the same file.');
+  }
+  let pdf;
+  try {
+    pdf = await renderReportPdf(env, pdfData(env, link, row), { tries: 1 });
+  } catch (err) {
+    if (!(err instanceof PdfError)) throw err;
+    console.warn(JSON.stringify({ event: 'report.pdf_download_failed', request: link.request_id, reason: err.message }));
+    return error(503, 'pdf_unavailable', 'The PDF could not be made just now. Try again in a minute, or use your browser’s print dialog.');
+  }
+  ctx.waitUntil(logEvent(env, link.request_id, 'pdf_downloaded', `${pdf.bytes.length} bytes in ${pdf.ms} ms`).catch(() => {}));
+  return new Response(pdf.bytes, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${pdfFilename(auditOut(row))}"`,
+      'Access-Control-Expose-Headers': 'Content-Disposition',
+      'Cache-Control': 'private, no-store',
+      'X-Content-Type-Options': 'nosniff'
+    }
+  });
 }
 
 async function unsubscribe(request, env, ctx, token) {
@@ -265,6 +359,8 @@ export async function resendWebhook(request, env) {
   }
   const type = String(evt.type || '');
   const data = evt.data || {};
+  // Mail to the domain (replies to reports and inquiries): forwarded to the owner.
+  if (type === 'email.received') return forwardReceived(env, data);
   const req = data.email_id ? await env.DB.prepare('SELECT id, email_hash FROM report_requests WHERE email_id = ?').bind(data.email_id).first() : null;
   const to = normalizeEmail(Array.isArray(data.to) ? data.to[0] : data.to);
   const suppress = async (reason, detail) => {
@@ -354,6 +450,7 @@ async function adminErase(request, env) {
   const [, erased] = await env.DB.batch([
     env.DB.prepare('UPDATE report_tokens SET revoked = 1 WHERE request_id IN (SELECT id FROM report_requests WHERE email_hash = ?)').bind(key),
     env.DB.prepare("UPDATE report_requests SET name = '', email = '', company = NULL, note = NULL, summary = NULL, anonymized = 1, updated_at = ? WHERE email_hash = ? AND anonymized = 0").bind(now, key),
+    env.DB.prepare('DELETE FROM report_files WHERE request_id IN (SELECT id FROM report_requests WHERE email_hash = ?)').bind(key),
     ...(body.suppress === false
       ? []
       : [env.DB.prepare("INSERT INTO email_suppressions (email_hash, reason, detail, created_at) VALUES (?, 'manual', 'erasure request', ?) ON CONFLICT (email_hash) DO NOTHING").bind(key, now)])
@@ -397,6 +494,7 @@ export async function reportsRoute(request, env, ctx, url) {
   let match = p.match(/^\/api\/vector\/audits\/([^/]+)\/report-requests$/);
   if (match) return m === 'POST' ? requestReport(request, env, ctx, decodeURIComponent(match[1])) : error(405, 'method_not_allowed', 'Use POST.');
   if (p === '/api/vector/report') return m === 'GET' ? openReport(request, env, ctx) : error(405, 'method_not_allowed', 'Use GET.');
+  if (p === '/api/vector/report/pdf') return m === 'GET' ? reportPdf(request, env, ctx) : error(405, 'method_not_allowed', 'Use GET.');
   match = p.match(/^\/api\/vector\/unsubscribe\/([^/]+)$/);
   if (match) return unsubscribe(request, env, ctx, decodeURIComponent(match[1]));
   if (p === '/api/vector/report-requests' && m === 'GET') return adminList(request, env, url);

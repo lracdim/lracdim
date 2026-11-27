@@ -1,7 +1,7 @@
 /**
- * Notification channels, ported from the Python API's services/notify.py.
- * Each channel is optional and configured by environment; `notify` fans out
- * to whichever are configured and never throws.
+ * Email through Resend: owner alerts (NOTIFY_EMAIL), the project-inquiry
+ * acknowledgement, and the sending primitive the report pipeline uses.
+ * Resend is the only channel; `notify` never throws.
  */
 
 export const RESEND_ENDPOINT = 'https://api.resend.com/emails';
@@ -21,6 +21,7 @@ const LABELS = {
   current_system: 'Current system',
   desired_outcome: 'Desired outcome',
   classification: 'Triage (internal)',
+  pdf: 'PDF',
   id: 'Submission id'
 };
 
@@ -49,6 +50,21 @@ export function readable(payload) {
 const truthy = (v) => ['1', 'true', 'yes'].includes(String(v || '').toLowerCase());
 export const sender = (env) => env.RESEND_FROM || DEFAULT_FROM;
 
+/** The bare address in a From value: "Name <a@b.c>" → "a@b.c". */
+export const addressOf = (from) => {
+  const m = /<([^<>\s]+@[^<>\s]+)>\s*$/.exec(String(from || ''));
+  return m ? m[1] : String(from || '').trim();
+};
+
+/*
+ * Addresses. NOTIFY_EMAIL is the owner's private inbox: alerts go there and
+ * it is never shown to a visitor, not even as a Reply-To.
+ *   RESEND_FROM       owner alerts and the project-inquiry acknowledgement
+ *   INTAKE_REPLY_TO   where a visitor's reply to that acknowledgement goes
+ *   REPORT_FROM       the emailed Vector report (src/report-delivery.js)
+ *   REPORT_REPLY_TO   where a reply to the report goes
+ */
+
 /**
  * A refused send. `permanent` is true when retrying the same request cannot
  * succeed (a bad address, an unverified domain, a revoked key); 409 (a
@@ -69,12 +85,13 @@ export class ResendError extends Error {
  * inject a header. The key travels only in the Authorization header and is
  * never logged.
  */
-export async function sendEmail(env, { to, subject, text, html, replyTo, idempotencyKey, headers, tags }) {
-  const body = { from: sender(env), to: [to], subject: String(subject).replace(/[\r\n]+/g, ' ').slice(0, 200), text };
+export async function sendEmail(env, { from, to, subject, text, html, replyTo, idempotencyKey, headers, tags, attachments }) {
+  const body = { from: from || sender(env), to: [to], subject: String(subject).replace(/[\r\n]+/g, ' ').slice(0, 200), text };
   if (html) body.html = html;
   if (replyTo) body.reply_to = replyTo;
   if (headers) body.headers = Object.fromEntries(Object.entries(headers).filter(([k, v]) => !/[\r\n]/.test(k + v)));
   if (tags) body.tags = tags;
+  if (attachments && attachments.length) body.attachments = attachments; // [{filename, content: base64}]
   const reqHeaders = { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' };
   // Resend drops a second request with the same key, so a retry never sends twice.
   if (idempotencyKey) reqHeaders['Idempotency-Key'] = idempotencyKey.slice(0, 256);
@@ -104,40 +121,22 @@ export async function sendResend(env, to, subject, text, { replyTo, idempotencyK
   return true;
 }
 
-async function webhook(env, subject, payload) {
-  if (!env.NOTIFY_WEBHOOK) return false;
-  // Google Apps Script answers a POST with a redirect after running doPost;
-  // the redirect is not followed because the work is already done.
-  const res = await fetch(env.NOTIFY_WEBHOOK, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ subject, ...payload }),
-    redirect: 'manual',
-    signal: AbortSignal.timeout(TIMEOUT_MS)
-  });
-  if (res.status >= 400) throw new Error(`webhook returned ${res.status}`);
-  return true;
-}
-
-async function resend(env, subject, payload) {
-  const submitter = typeof payload.email === 'string' ? payload.email : undefined;
-  return sendResend(env, env.NOTIFY_EMAIL, subject, readable(payload), {
-    replyTo: submitter, // answering the alert answers the visitor
-    idempotencyKey: payload.id ? `notify-${payload.id}` : undefined
-  });
-}
-
-/** Returns which channels delivered. Failures are logged, not thrown. */
+/**
+ * An alert to the owner's inbox (NOTIFY_EMAIL) through Resend. Returns
+ * {resend: true} when Resend accepted it; a failure is logged, not thrown.
+ */
 export async function notify(env, subject, payload) {
-  const channels = { webhook, resend };
-  const names = Object.keys(channels);
-  const results = await Promise.allSettled(names.map((n) => channels[n](env, subject, payload)));
-  const delivered = {};
-  results.forEach((r, i) => {
-    delivered[names[i]] = r.status === 'fulfilled' && r.value === true;
-    if (r.status === 'rejected') console.warn(`${names[i]} notification failed: ${r.reason && r.reason.message}`);
-  });
-  return delivered;
+  const submitter = typeof payload.email === 'string' ? payload.email : undefined;
+  try {
+    const sent = await sendResend(env, env.NOTIFY_EMAIL, subject, readable(payload), {
+      replyTo: submitter, // answering the alert answers the visitor
+      idempotencyKey: payload.id ? `notify-${payload.id}` : undefined
+    });
+    return { resend: sent };
+  } catch (err) {
+    console.warn(`owner alert failed: ${err && err.message}`);
+    return { resend: false };
+  }
 }
 
 /**
@@ -159,7 +158,8 @@ export async function acknowledge(env, to, name, projectType, submissionId) {
     'John Carl Dimatulac\nLRACDIMENSION';
   try {
     return await sendResend(env, to, 'Your project inquiry is in — LRACDIMENSION', text, {
-      replyTo: env.NOTIFY_EMAIL || undefined,
+      // A public address, never NOTIFY_EMAIL (the owner's private inbox).
+      replyTo: env.INTAKE_REPLY_TO || addressOf(sender(env)),
       idempotencyKey: `ack-${submissionId}`
     });
   } catch (err) {

@@ -5,9 +5,11 @@
  *
  *   prepare        load the request, stop if it was sent, suppressed or erased
  *   summarize      plain-English summary (Workers AI, rules as fallback), stored
+ *   attach pdf     print the full report to PDF (Browser Run), held until sent;
+ *                  any failure means the email goes without the file
  *   send report    issue the report link, render, send through Resend
  *   mark failed    only when sending failed for good
- *   notify owner   tell the site owner about the lead, sent or not
+ *   notify owner   email the site owner (NOTIFY_EMAIL) about the lead, sent or not
  *
  * In production it runs inside the ReportDeliveryWorkflow (src/workflow.js),
  * so each step is retried with backoff and survives the request ending. When
@@ -20,13 +22,21 @@
  */
 import { auditOut, fullPrescription, parse } from './audit-view.js';
 import { nowIso } from './http.js';
-import { notify, sendEmail, ResendError } from './notify.js';
+import { addressOf, notify, sendEmail, sender, ResendError } from './notify.js';
 import { renderReportEmail } from './report-email.js';
+import { PdfError, pdfEnabled, pdfFilename, renderReportPdf, toBase64 } from './report-pdf.js';
 import { summaryFacts, writeSummary } from './report-summary.js';
+import { METHODOLOGY } from './scoring.js';
 import { maskEmail, reportToken, sha256Hex, unsubscribeToken } from './secure.js';
 
 export const DEFAULT_SITE_URL = 'https://www.lracdimension.online';
 const truthy = (v) => ['1', 'true', 'yes'].includes(String(v || '').toLowerCase());
+// base64 of this stays under D1's 2 MB row limit; a real report is 100 to 400 KB.
+const PDF_MAX_BYTES = 1_400_000;
+
+/** The report email's sender and Reply-To: public addresses, never NOTIFY_EMAIL. */
+export const reportFrom = (env) => env.REPORT_FROM || sender(env);
+export const reportReplyTo = (env) => env.REPORT_REPLY_TO || addressOf(reportFrom(env));
 
 export function intVar(env, name, fallback, min = 0, max = 1e9) {
   const n = parseInt(env[name], 10);
@@ -86,6 +96,47 @@ async function summarize(env, id) {
   return { source };
 }
 
+/** What the PDF is printed from: a report_requests row and its audit row. */
+export function pdfData(env, row, audit) {
+  return {
+    name: row.name,
+    company: row.company,
+    audit: auditView(audit),
+    results: parse(audit.results, []),
+    issues: parse(audit.issues, []),
+    prescription: fullPrescription(audit),
+    summary: row.summary,
+    summarySource: row.summary_source,
+    methodology: METHODOLOGY,
+    siteUrl: siteUrl(env),
+    contactEmail: reportReplyTo(env)
+  };
+}
+
+async function attachPdf(env, id) {
+  if (!pdfEnabled(env)) return { pdf: 'off' };
+  const row = await loadRequest(env, id);
+  if (!row || row.status === 'sent' || row.anonymized) return { pdf: 'not needed' };
+  if (await env.DB.prepare('SELECT 1 AS ok FROM report_files WHERE request_id = ?').bind(id).first()) return { pdf: 'ready' };
+  const audit = await loadAudit(env, row.audit_id);
+  try {
+    const { bytes, ms } = await renderReportPdf(env, pdfData(env, row, audit));
+    if (bytes.length > PDF_MAX_BYTES) {
+      await logEvent(env, id, 'pdf_skipped', `too large (${bytes.length} bytes)`);
+      return { pdf: 'skipped' };
+    }
+    await env.DB.prepare('INSERT OR REPLACE INTO report_files (request_id, filename, content_b64, bytes, created_at) VALUES (?, ?, ?, ?, ?)')
+      .bind(id, pdfFilename(auditView(audit)), toBase64(bytes), bytes.length, nowIso())
+      .run();
+    await logEvent(env, id, 'pdf_rendered', `${bytes.length} bytes in ${ms} ms`);
+    return { pdf: 'ready' };
+  } catch (err) {
+    if (!(err instanceof PdfError)) throw err; // database trouble: the step retries
+    await logEvent(env, id, 'pdf_skipped', err.message);
+    return { pdf: 'skipped' };
+  }
+}
+
 /** Issues the report link for a request and returns {token, url}. Safe to call again: same token, first expiry kept. */
 export async function issueReportLink(env, row) {
   const token = await reportToken(env, row.id);
@@ -109,7 +160,9 @@ async function sendReport(env, id, params) {
   const link = await issueReportLink(env, row);
   const unsub = await unsubscribeToken(env, id);
   const apiBase = (env.API_URL || params.apiOrigin || '').replace(/\/$/, '');
-  const replyTo = env.REPORT_REPLY_TO || env.NOTIFY_EMAIL || '';
+  const from = reportFrom(env);
+  const replyTo = reportReplyTo(env);
+  const file = await env.DB.prepare('SELECT filename, content_b64, bytes FROM report_files WHERE request_id = ?').bind(id).first();
   const email = renderReportEmail({
     name: row.name,
     audit: auditView(audit),
@@ -122,13 +175,14 @@ async function sendReport(env, id, params) {
     linkDays: linkDays(env),
     unsubscribeUrl: `${siteUrl(env)}/vector/unsubscribe/#t=${unsub}`,
     siteUrl: siteUrl(env),
-    canReply: !!replyTo
+    canReply: !!replyTo && !/@resend\.dev$/i.test(replyTo),
+    pdfFilename: file ? file.filename : ''
   });
 
   let emailId;
   if (dryRun) {
     emailId = `dry-run-${id.slice(0, 8)}`;
-    console.log(JSON.stringify({ event: 'report.dry_run', request: id, to: maskEmail(row.email), subject: email.subject, html_bytes: email.html.length, text_bytes: email.text.length, report_url: link.url }));
+    console.log(JSON.stringify({ event: 'report.dry_run', request: id, from, reply_to: replyTo, to: maskEmail(row.email), subject: email.subject, html_bytes: email.html.length, text_bytes: email.text.length, pdf: file ? `${file.filename} (${file.bytes} bytes)` : null, report_url: link.url }));
   } else {
     const headers = {};
     if (apiBase) {
@@ -138,11 +192,13 @@ async function sendReport(env, id, params) {
     }
     try {
       const out = await sendEmail(env, {
+        from,
         to: row.email,
         subject: email.subject,
         text: email.text,
         html: email.html,
         replyTo: replyTo || undefined,
+        attachments: file ? [{ filename: file.filename, content: file.content_b64 }] : undefined,
         // Same key for every retry of this attempt, so Resend never sends it twice.
         idempotencyKey: `report-${id}-${row.attempts}`,
         headers,
@@ -162,7 +218,15 @@ async function sendReport(env, id, params) {
     }
   }
   await setRequest(env, id, { status: 'sent', email_id: emailId, sent_at: nowIso(), last_error: null });
-  await logEvent(env, id, 'sent', emailId);
+  await logEvent(env, id, 'sent', file ? `${emailId} with ${file.filename}` : emailId);
+  if (file) {
+    // The report is in the recipient's inbox now; nothing of it stays here.
+    try {
+      await env.DB.prepare('DELETE FROM report_files WHERE request_id = ?').bind(id).run();
+    } catch (err) {
+      console.warn(`report ${id}: PDF not removed yet (the sweep will)`, err && err.message);
+    }
+  }
   return { status: 'sent' };
 }
 
@@ -175,8 +239,7 @@ async function markFailed(env, id, message) {
 async function notifyOwner(env, id) {
   const row = await loadRequest(env, id);
   if (!row || row.owner_notified || row.anonymized) return { notified: !!(row && row.owner_notified) };
-  const configured = (env.RESEND_API_KEY && env.NOTIFY_EMAIL) || env.NOTIFY_WEBHOOK;
-  if (!configured) return { notified: false };
+  if (!(env.RESEND_API_KEY && env.NOTIFY_EMAIL)) return { notified: false };
   const auditRow = await loadAudit(env, row.audit_id);
   const audit = auditView(auditRow);
   const issues = parse(auditRow.issues, []);
@@ -189,6 +252,9 @@ async function notifyOwner(env, id) {
   const subject = delivered
     ? `[LRACDIMENSION] Report lead: ${host} (${audit.health_score}/100) — ${row.name}`
     : `[LRACDIMENSION] Report NOT delivered (${row.status}): ${host} — ${row.name}`;
+  const pdfEvent = await env.DB.prepare("SELECT kind, detail FROM report_events WHERE request_id = ? AND kind IN ('pdf_rendered', 'pdf_skipped') ORDER BY id DESC LIMIT 1")
+    .bind(id)
+    .first();
   const payload = {
     id,
     name: row.name,
@@ -198,6 +264,7 @@ async function notifyOwner(env, id) {
     health_score: audit.health_score,
     biggest_problem: row.note,
     delivery: row.status === 'sent' ? `sent ${row.sent_at}` : `${row.status}: ${row.last_error || 'no detail'}`,
+    pdf: !pdfEvent ? 'not made (PDF rendering is off)' : pdfEvent.kind === 'pdf_rendered' ? `attached (${pdfEvent.detail})` : `not attached: ${pdfEvent.detail}`,
     top_issues: issues.slice(0, 5).map((i) => `[${i.severity}] ${i.title}`),
     full_report: link.url,
     summary: row.summary,
@@ -210,7 +277,7 @@ async function notifyOwner(env, id) {
     return { notified: true };
   }
   const result = await notify(env, subject, payload);
-  if (!Object.values(result).some(Boolean)) throw new Error('owner notification failed on every channel');
+  if (!result.resend) throw new Error('the owner alert was not accepted by Resend');
   await setRequest(env, id, { owner_notified: 1 });
   await logEvent(env, id, 'owner_notified', Object.keys(result).filter((k) => result[k]).join(','));
   return { notified: true };
@@ -221,6 +288,8 @@ async function notifyOwner(env, id) {
 const RETRY = {
   prepare: { retries: { limit: 3, delay: '5 seconds', backoff: 'exponential' }, timeout: '30 seconds' },
   summarize: { retries: { limit: 2, delay: '10 seconds', backoff: 'linear' }, timeout: '1 minute' },
+  // A 429 from Browser Run is waited out inside the step (up to ~35 s).
+  pdf: { retries: { limit: 2, delay: '15 seconds', backoff: 'linear' }, timeout: '2 minutes' },
   send: { retries: { limit: 5, delay: '30 seconds', backoff: 'exponential' }, timeout: '1 minute' },
   mark: { retries: { limit: 3, delay: '5 seconds', backoff: 'exponential' }, timeout: '30 seconds' },
   notify: { retries: { limit: 3, delay: '1 minute', backoff: 'exponential' }, timeout: '1 minute' }
@@ -235,6 +304,12 @@ export async function deliverReport(env, requestId, step, params = {}) {
   const prep = await step.do('prepare', RETRY.prepare, () => prepare(env, requestId));
   if (prep.done) return { status: prep.status };
   await step.do('summarize', RETRY.summarize, () => summarize(env, requestId));
+  try {
+    await step.do('attach pdf', RETRY.pdf, () => attachPdf(env, requestId));
+  } catch (err) {
+    // Only database trouble reaches here; the report goes out without the file.
+    console.error(`report ${requestId}: PDF step failed`, err && err.message);
+  }
   let sent;
   try {
     sent = await step.do('send report', RETRY.send, () => sendReport(env, requestId, params));
@@ -335,6 +410,8 @@ export async function reportMaintenance(env, ctx, scheduledTime = Date.now()) {
   const old = new Date(now.getTime() - retention * 86_400_000).toISOString();
   const expired = new Date(now.getTime() - 30 * 86_400_000).toISOString();
   await env.DB.batch([
+    // A PDF is normally deleted the moment its email is accepted; this catches any left behind.
+    env.DB.prepare('DELETE FROM report_files WHERE created_at < ?').bind(new Date(now.getTime() - 86_400_000).toISOString()),
     env.DB.prepare('DELETE FROM report_tokens WHERE expires_at < ?').bind(expired),
     env.DB.prepare("UPDATE report_requests SET name = '', email = '', company = NULL, note = NULL, summary = NULL, anonymized = 1 WHERE anonymized = 0 AND created_at < ?").bind(old),
     env.DB.prepare('DELETE FROM report_events WHERE created_at < ?').bind(old)

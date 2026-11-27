@@ -49,6 +49,30 @@ export async function api(path, { method = 'GET', body, timeout = 20000, headers
   return data;
 }
 
+/** A binary download (a PDF): returns {blob, filename}; errors are ApiErrors as above. */
+export async function apiBlob(path, { headers = {}, timeout = 60000 } = {}) {
+  if (!API_BASE) throw new ApiError('no_api', 'The API is not connected on this deployment.', 0);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const res = await fetch(API_BASE + path, { headers, signal: controller.signal, mode: 'cors' });
+    if (!res.ok) {
+      let e = {};
+      try {
+        e = ((await res.json()) || {}).error || {};
+      } catch {}
+      throw new ApiError(e.code || 'http_' + res.status, e.message || `Request failed (${res.status}).`, res.status, e.fields, e);
+    }
+    const m = /filename="([^"]+)"/.exec(res.headers.get('Content-Disposition') || '');
+    return { blob: await res.blob(), filename: m ? m[1] : 'report.pdf' };
+  } catch (err) {
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(err && err.name === 'AbortError' ? 'timeout' : 'network', err && err.name === 'AbortError' ? 'The download took too long.' : 'The API could not be reached.', 0);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export const relTime = (iso) => {
   if (!iso) return 'never';
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;

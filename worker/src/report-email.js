@@ -55,6 +55,7 @@ function dateLabel(iso) {
  * @param {string} r.unsubscribeUrl  page that stops all email to this address
  * @param {string} r.siteUrl         https://www.lracdimension.online
  * @param {boolean} r.canReply       whether a reply reaches a person
+ * @param {string} [r.pdfFilename]   name of the attached PDF, when there is one
  */
 export function renderReportEmail(r) {
   const { audit, issues, prescription } = r;
@@ -135,6 +136,7 @@ export function renderReportEmail(r) {
   <tr><td style="padding:30px 32px 8px">
     <p style="margin:0 0 14px;font:16px/1.6 ${FONT};color:${C.ink}">Hi ${esc(first)},</p>
     <p style="margin:0 0 6px;font:16px/1.6 ${FONT};color:${C.ink}">Here is the full examination of <strong>${esc(host)}</strong> you asked for, measured on ${esc(when)}.</p>
+    ${r.pdfFilename ? `<p style="margin:10px 0 0;font:15px/1.6 ${FONT};color:${C.ink}">The whole report is also attached as a PDF (<span style="font-family:${MONO};font-size:13px">${esc(r.pdfFilename)}</span>), ready to print or forward to whoever looks after the site.</p>` : ''}
   </td></tr>
   <tr><td style="padding:18px 32px 26px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid ${C.line};border-radius:8px"><tr>
@@ -171,6 +173,7 @@ export function renderReportEmail(r) {
     `Hi ${first},`,
     '',
     `Here is the full examination of ${host} you asked for, measured on ${when}.`,
+    ...(r.pdfFilename ? ['', `The whole report is also attached as a PDF (${r.pdfFilename}), ready to print or forward.`] : []),
     '',
     `WEBSITE HEALTH: ${health} / 100`,
     `${cap(verdict(health).text)}.`,

@@ -10,7 +10,7 @@ the same request and response shapes, so the site only needed a different
 | --- | --- | --- |
 | Intake | `POST /api/contact`, `GET /api/contact/project-types`, `GET /api/contact/submissions` (admin) | `routes/contact.py` |
 | Vector | `POST /api/vector/audits`, `GET /api/vector/audits/{id}`, `…/{id}/results` (the summary; the full report with `X-Admin-Key`), `GET /api/vector/recent`, `GET /api/vector/websites/{host}/audits` | `routes/vector.py`, `services/audit_service.py`, `analyzers/` |
-| Emailed reports | `POST /api/vector/audits/{id}/report-requests`, `GET /api/vector/report-requests/{id}`, `GET /api/vector/report`, `POST /api/vector/unsubscribe/{token}`, `POST /api/webhooks/resend`, admin: `GET /api/vector/report-requests`, `…/{id}/retry`, `…/{id}/revoke`, `…/erase`, `GET /api/vector/report-stats` | new in the Worker, see "Emailed full reports" below |
+| Emailed reports | `POST /api/vector/audits/{id}/report-requests`, `GET /api/vector/report-requests/{id}`, `GET /api/vector/report`, `GET /api/vector/report/pdf`, `POST /api/vector/unsubscribe/{token}`, `POST /api/webhooks/resend`, admin: `GET /api/vector/report-requests`, `…/{id}/retry`, `…/{id}/revoke`, `…/erase`, `GET /api/vector/report-stats` | new in the Worker, see "Emailed full reports" below |
 | Signal | `POST /api/signal/scan`, `GET /api/signal/targets`, `…/{id}`, `…/{id}/events`, `…/{id}/snapshot`, `GET /api/signal/events`, `GET /api/signal/lookup`, `POST /api/signal/targets` and `…/{id}/check` (admin) | `routes/signal.py`, `services/monitor_service.py`, `services/signal_scan.py` |
 | Forge | `GET /api/forge/tools`, `POST /api/forge/{tool}/run` for the robots, sitemap, metadata, canonical and redirect tools | `routes/forge.py`, `services/forge_tools.py` |
 | Health | `GET /api/health` | `main.py` |
@@ -47,23 +47,56 @@ scores, findings, evidence and metrics.
 Anyone sees an examination's **summary**: the health score, the eight
 category scores, severity counts and the top three issues without their
 evidence or fixes (`/results`). The **full report** (every issue with
-evidence, the fix list, raw measurements) is emailed: the visitor fills in the
-form under the summary, and the report-delivery Workflow sends it.
+evidence, the fix list, raw measurements) is emailed, with the whole report
+attached as a PDF: the visitor fills in the form under the summary, and the
+report-delivery Workflow sends it.
 
 ```
-site form ──POST report-requests──▶ validate · Turnstile · limits · MX check · suppression list
+site form ──POST report-requests──▶ validate · Turnstile · weekly limits · MX check · suppression list
                                      └─ store request (D1) ─▶ ReportDeliveryWorkflow
                                           prepare ─▶ summarize (Workers AI, rules fallback)
+                                          ─▶ attach pdf (Browser Run; skipped on any failure)
                                           ─▶ send report (Resend, 5 retries, idempotent)
-                                          ─▶ notify owner (NOTIFY_EMAIL / NOTIFY_WEBHOOK)
+                                          ─▶ notify owner (NOTIFY_EMAIL, through Resend)
 email link ─▶ /vector/report/#t=<token> ─GET /api/vector/report (Bearer)─▶ full report
+                                         ─GET /api/vector/report/pdf (Bearer)─▶ the same PDF
 ```
 
 - **Code**: `src/reports.js` (HTTP), `src/report-delivery.js` (the pipeline),
   `src/workflow.js` (the Workflow class), `src/report-email.js` (HTML and text
-  email), `src/report-summary.js` (AI and rule-based summary), `src/turnstile.js`,
-  `src/secure.js`; tables in `migrations/0003_report_delivery.sql`; tests in
-  `test/report.test.js`.
+  email), `src/report-pdf.js` (the A4 PDF), `src/report-summary.js` (AI and
+  rule-based summary), `src/turnstile.js`, `src/secure.js`; tables in
+  `migrations/0003_report_delivery.sql` and `0004_report_limits_pdf.sql`;
+  tests in `test/report.test.js`.
+- **Senders.** The report comes from `REPORT_FROM` (John Carl Dimatulac
+  <john@lracdimension.online>) with Reply-To `REPORT_REPLY_TO`; owner alerts
+  and the project-inquiry acknowledgement come from `RESEND_FROM`
+  (hello@lracdimension.online), Reply-To `INTAKE_REPLY_TO`. `NOTIFY_EMAIL` is
+  the owner's private inbox: it receives alerts and is never a sender or a
+  Reply-To on anything a visitor gets.
+- **Replies (Resend Inbound).** Mail to any address at the domain is received
+  by Resend once the domain's MX points at it, and the `email.received`
+  webhook (same endpoint and secret as the delivery events) makes
+  `src/inbound.js` fetch the message and forward it to `INBOUND_FORWARD_TO`
+  (default `NOTIFY_EMAIL`), From "Sender via LRACDIMENSION", Reply-To the
+  original sender, attachments by Resend's signed URLs, idempotency key
+  `inbound-<id>`. Failed SPF and DKIM put "[unverified sender]" in the
+  subject. Mail from the site's own addresses is dropped, so nothing loops.
+  Each forward is one more send against Resend's daily quota.
+- **PDF.** `src/report-pdf.js` builds a self-contained A4 page (no scripts or
+  external requests, everything escaped) and prints it with Browser Run's
+  `pdf` Quick Action (`BROWSER` binding): about 1 to 3 seconds and 250 KB for
+  a typical report. The free plan allows 10 browser minutes a day and one
+  Quick Action every 10 seconds; a 429 is waited out twice, then the email
+  goes without the file and the owner alert says why. The PDF is stored in
+  `report_files` only between rendering and sending, so every send retry
+  attaches identical bytes under the same idempotency key, and deleted once
+  Resend accepts the email (the hourly sweep removes any left after a day).
+  The online report's "Download PDF" prints the same document on demand
+  (10 per visitor an hour, 5 per link a day) and falls back to the browser's
+  print dialog. `REPORT_PDF=off` turns both off. Locally, wrangler's Browser
+  Run emulator lacks Quick Actions; add `"remote": true` to the binding to use
+  the real service, or leave the PDF off.
 - **Durable delivery.** Each step is a Workflow step with its own retries.
   Steps re-read D1 and return only ids, so no address or report is kept in
   Workflow state. If the binding is missing or refuses an instance, the same
@@ -77,11 +110,16 @@ email link ─▶ /vector/report/#t=<token> ─GET /api/vector/report (Bearer)�
   Referer header. Audit ids are not secrets (the recent list shows them), so
   they never unlock the full report.
 - **Abuse protection.** Turnstile checked server-side (host and action too),
-  5 requests per IP per hour, 3 reports per address per 24 h, a daily cap
+  5 requests per IP per hour, one report per address and one per website a
+  week (`REPORT_EMAIL_COOLDOWN_DAYS`, `REPORT_SITE_COOLDOWN_DAYS`; the website
+  is the examined host without `www.`, so any page of it counts), a daily cap
   (`REPORT_DAILY_CAP`, 40: each report is two emails and Resend's free plan
   allows 100 a day), an MX lookup, a honeypot, names containing links refused,
   and a suppression list fed by unsubscribes and Resend bounce and complaint
-  webhooks. The same report to the same address within a day is not resent.
+  webhooks. Only queued, sending and sent requests use up the week; a failed
+  one does not. Asking again for the same report answers with the first
+  request instead of an error. The limits apply to Vector reports only, not
+  to the project-intake form.
 - **AI summary.** Workers AI (`REPORT_AI_MODEL`) gets scores, counts and the
   analyzers' own issue titles and fixes, never text copied from the examined
   page. Its answer is stripped of links, addresses and markup and must state
@@ -112,10 +150,15 @@ email link ─▶ /vector/report/#t=<token> ─GET /api/vector/report (Bearer)�
    `wrangler.jsonc` and deploy again.
 3. Resend webhook: in Resend → Webhooks, add
    `https://lracdim-api.lracdim.workers.dev/api/webhooks/resend` for
-   `email.delivered`, `email.bounced`, `email.complained` and
-   `email.delivery_delayed`, then `npx wrangler secret put RESEND_WEBHOOK_SECRET`
-   with its signing secret (`whsec_…`).
-4. Optional: `npx wrangler secret put REPORT_SIGNING_KEY` (a long random
+   `email.received`, `email.delivered`, `email.bounced`, `email.complained`
+   and `email.delivery_delayed`, then `npx wrangler secret put
+   RESEND_WEBHOOK_SECRET` with its signing secret (`whsec_…`).
+4. Receiving: in Resend → Domains → lracdimension.online, turn on receiving
+   and copy the MX record it shows into the domain's DNS (Z.com) with the
+   lowest priority number of all MX records; remove the old Titan MX records
+   (`mx1.titan.email`, `mx2.titan.email`) once nothing is needed from that
+   mailbox. Resend only receives when its MX has the lowest priority value.
+5. Optional: `npx wrangler secret put REPORT_SIGNING_KEY` (a long random
    string) to sign links with a key of their own. Changing it invalidates every
    link already sent.
 
@@ -168,7 +211,6 @@ Set once per secret; the prompt reads the value without echoing it.
 ```bash
 npx wrangler secret put RESEND_API_KEY    # Resend key
 npx wrangler secret put NOTIFY_EMAIL      # where alerts go (any inbox: lracdimension.online is a verified Resend domain)
-npx wrangler secret put NOTIFY_WEBHOOK    # Google Sheets web app URL, optional
 npx wrangler secret put ADMIN_KEY         # guards the admin endpoints
 npx wrangler secret put RATE_LIMIT_SALT   # any long random string
 npx wrangler secret put TURNSTILE_SECRET  # Turnstile widget secret, for the report form
@@ -177,9 +219,10 @@ npx wrangler secret put REPORT_SIGNING_KEY     # optional: signs report links (e
 npx wrangler secret list                  # names only
 ```
 
-Plain settings (`CORS_ORIGINS`, `RESEND_FROM`, `RESEND_AUTOREPLY`, the
-`RATE_LIMIT_*` limits, `SIGNAL_RESPONSE_WARN_MS`, `SITE_URL`, `API_URL` and the
-`REPORT_*` and `TURNSTILE_REQUIRED` report settings) live in `wrangler.jsonc`.
+Plain settings (`CORS_ORIGINS`, `RESEND_FROM`, `INTAKE_REPLY_TO`,
+`RESEND_AUTOREPLY`, the `RATE_LIMIT_*` limits, `SIGNAL_RESPONSE_WARN_MS`,
+`SITE_URL`, `API_URL` and the `REPORT_*` and `TURNSTILE_REQUIRED` report
+settings) live in `wrangler.jsonc`.
 
 ## Reading data
 

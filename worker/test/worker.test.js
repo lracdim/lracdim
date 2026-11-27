@@ -102,16 +102,15 @@ test('the owner alert goes through Resend with the visitor as reply-to', async (
   assert.equal(rows()[0].notified, 1);
 });
 
-test('the Sheets webhook gets the subject and payload, without following its redirect', async () => {
+test('Resend is the only channel: a leftover NOTIFY_WEBHOOK (the old Google Sheets script) is never called', async () => {
   env.NOTIFY_WEBHOOK = 'https://script.google.com/macros/s/abc/exec';
-  respondWith(() => new Response(null, { status: 302, headers: { Location: 'https://script.googleusercontent.com/x' } }));
   const out = await (await call('/api/contact', { method: 'POST', body: INTAKE })).json();
-  assert.equal(out.notified, true);
-  const [hook] = calls;
-  assert.equal(hook.url, env.NOTIFY_WEBHOOK);
-  assert.equal(hook.body.subject, '[LRACDIMENSION] New project inquiry: Automation — Jane Doe');
-  assert.equal(hook.body.email, 'jane@example.com');
-  assert.equal(hook.body.classification.method, 'keyword rules v1');
+  assert.equal(out.notified, false); // no Resend key here, and nothing else to deliver through
+  assert.equal(calls.length, 0);
+  env.RESEND_API_KEY = 're_test';
+  env.NOTIFY_EMAIL = 'owner@example.com';
+  await call('/api/contact', { method: 'POST', body: INTAKE });
+  assert.ok(calls.length > 0 && calls.every((c) => c.url === 'https://api.resend.com/emails'));
 });
 
 test('a failing channel never fails the submission', async () => {
@@ -213,7 +212,13 @@ test('the visitor acknowledgement waits for a verified sender', async () => {
   assert.equal(await acknowledge(env, 'jane@example.com', 'Jane Doe', 'Automation', 'abc'), true);
   const [mail] = calls;
   assert.deepEqual(mail.body.to, ['jane@example.com']);
-  assert.equal(mail.body.reply_to, 'owner@example.com');
+  assert.equal(mail.body.from, 'John Carl <hello@lracdimension.online>');
+  // A visitor never sees the owner's private inbox, not even as the Reply-To.
+  assert.equal(mail.body.reply_to, 'hello@lracdimension.online');
+  assert.ok(!JSON.stringify(mail.body).includes('owner@example.com'));
   assert.ok(mail.body.text.startsWith('Hi Jane,'));
   assert.equal(mail.headers['idempotency-key'], 'ack-abc');
+  env.INTAKE_REPLY_TO = 'inquiries@lracdimension.online';
+  await acknowledge(env, 'jane@example.com', 'Jane Doe', 'Automation', 'abd');
+  assert.equal(calls.at(-1).body.reply_to, 'inquiries@lracdimension.online');
 });

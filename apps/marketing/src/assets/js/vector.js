@@ -13,7 +13,7 @@
  * Browser mode (no API): the original in-browser structural read, labelled
  * as such. Nothing is presented as more than it is.
  */
-import { api, esc, hasApi } from './api.js';
+import { api, apiBlob, esc, hasApi } from './api.js';
 import { CFG } from './config.js';
 import { runAnalysis, normalizeUrl } from './analyzer/service.js';
 import { postLead } from './leads.js';
@@ -164,14 +164,18 @@ function bindCommon(el, onReset) {
   }
 }
 
-/** The whole report: from the emailed link, or with the admin key. */
-export function renderFullReport(el, res, history_, { onReset }) {
+/**
+ * The whole report: from the emailed link, or with the admin key. `pdf`, when
+ * given, fetches the server-made PDF (the one attached to the email); without
+ * it, or when it fails, the button opens the browser's print dialog instead.
+ */
+export function renderFullReport(el, res, history_, { onReset, pdf }) {
   const { audit, results, issues, prescription, methodology } = res;
   const counts = { critical: 0, high: 0, medium: 0, low: 0 };
   issues.forEach((i) => (counts[i.severity] = (counts[i.severity] || 0) + 1));
   const summaryUrl = `${location.origin}/vector/audit/${audit.id}/`;
   el.innerHTML = `
-    ${reportHead(audit, 'Full report · engine', `<button type="button" class="text-link" data-vector-reset>New examination ↗</button><a class="text-link" href="/vector/audit/${esc(audit.id)}/">Public summary ↗</a><button type="button" class="text-link" data-vector-print>Save as PDF ↗</button><button type="button" class="text-link" data-vector-csv>Download CSV ↗</button>`)}
+    ${reportHead(audit, 'Full report · engine', `<button type="button" class="text-link" data-vector-reset>New examination ↗</button><a class="text-link" href="/vector/audit/${esc(audit.id)}/">Public summary ↗</a><button type="button" class="text-link" data-vector-print>${pdf ? 'Download PDF' : 'Save as PDF'} ↗</button><button type="button" class="text-link" data-vector-csv>Download CSV ↗</button>`)}
     ${healthBlock(audit, methodology)}
     ${categoryTable(results)}
     ${renderVitals(results)}
@@ -187,12 +191,33 @@ export function renderFullReport(el, res, history_, { onReset }) {
     ${renderMetrics(results)}
     <p class="fine-print vector-mode">Measured from the live document, its response headers, robots.txt, sitemap, llms.txt, and a sample of its links. ${vitalsOf(results) ? 'Core Web Vitals come from Google PageSpeed Insights.' : 'Core Web Vitals were not measured on this run, so performance figures are document-level indicators only.'} AI visibility reports whether AI crawlers can read the site, not whether any AI answer mentions it. Security is a header review, not a vulnerability scan.</p>
     <div class="vector-handoff"><p class="overline">Next step</p><h3>Want this fixed?</h3><p>Start a project and this report comes with you: the intake attaches the score, the URL, and the report link so we begin from the findings, not from a blank brief.</p><div class="actions"><a class="btn" href="/#start" data-open-start>Start a project ↗</a><a class="text-link" href="/vector/#coverage">What this measures ↗</a></div></div>
-    <footer class="vector-print-footer" aria-hidden="true">Website examination by John Carl Dimatulac · LRACDIMENSION · www.lracdimension.online · lracdim@gmail.com · Summary: ${esc(summaryUrl)}</footer>`;
+    <footer class="vector-print-footer" aria-hidden="true">Website examination by John Carl Dimatulac · LRACDIMENSION · www.lracdimension.online${CFG.email ? ` · ${esc(CFG.email)}` : ''} · Summary: ${esc(summaryUrl)}</footer>`;
   bindCommon(el, onReset);
   const printBtn = el.querySelector('[data-vector-print]');
-  if (printBtn) printBtn.addEventListener('click', () => {
+  const printDialog = () => {
     document.body.classList.add('vector-printing');
     window.print();
+  };
+  if (printBtn) printBtn.addEventListener('click', async () => {
+    if (!pdf) return printDialog();
+    const label = printBtn.textContent;
+    printBtn.disabled = true;
+    printBtn.textContent = 'Preparing PDF…';
+    try {
+      const { blob, filename } = await pdf();
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement('a'), { href: url, download: filename });
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    } catch {
+      // Daily PDF budget used, a busy browser, or offline: the print dialog makes one locally.
+      printDialog();
+    } finally {
+      printBtn.disabled = false;
+      printBtn.textContent = label;
+    }
   });
   const csvBtn = el.querySelector('[data-vector-csv]');
   if (csvBtn) csvBtn.addEventListener('click', () => downloadCsv(res));
@@ -225,9 +250,9 @@ function gateHtml(locked) {
       <ul class="vector-gate__list">
         ${more}${fixes}
         <li>A plain-English summary of what to fix first</li>
-        <li>Raw measurements, the scoring method, and PDF and CSV downloads</li>
+        <li>The whole report as a PDF, plus the raw measurements and a CSV online</li>
       </ul>
-      <p class="fine-print">Free. One email with your report and a private link to it. No newsletter.</p>
+      <p class="fine-print">Free. One email with the report, a PDF copy and a private link to it. No newsletter. One report per address and per website each week.</p>
     </div>
     <form class="vector-gate__form" data-vector-gate-form novalidate>
       ${field('name', 'Your name', '<input class="field__input" id="gate-name" name="name" type="text" autocomplete="name" maxlength="120" required>')}
@@ -267,7 +292,7 @@ function loadTurnstile() {
 const STATUS = {
   pending: (to) => `<p class="overline">Full report</p><h3><span class="vector-gate__spin" aria-hidden="true"></span>Preparing your report…</h3><p>It is going to <b>${esc(to)}</b>. This usually takes under a minute.</p>`,
   sent: (to) => `<p class="overline">Full report</p><h3>Sent. Check your inbox.</h3><p>The full report went to <b>${esc(to)}</b>. If it is not there in a few minutes, check the spam or promotions folder.</p>`,
-  duplicate: (to) => `<p class="overline">Full report</p><h3>Already on its way.</h3><p>This report was sent to <b>${esc(to)}</b> in the last day. Check your inbox, including spam.</p>`,
+  duplicate: (to) => `<p class="overline">Full report</p><h3>Already sent.</h3><p>This report already went to <b>${esc(to)}</b> this week. Check your inbox, including the spam and promotions folders.</p>`,
   slow: (to) => `<p class="overline">Full report</p><h3>Still sending.</h3><p>It will reach <b>${esc(to)}</b> within a few minutes.</p>`,
   failed: () => `<p class="overline">Full report</p><h3>The email could not be sent.</h3><p>I have been notified and will send the report to you myself. You can also <a class="text-link text-link--inline" href="/#start" data-open-start>start a project</a> and mention it.</p>`
 };
@@ -679,7 +704,10 @@ export async function initVectorReport() {
   } catch {}
   stateEl.hidden = true;
   reportEl.hidden = false;
-  renderFullReport(reportEl, res, history_, { onReset: () => location.assign('/vector/') });
+  renderFullReport(reportEl, res, history_, {
+    onReset: () => location.assign('/vector/'),
+    pdf: res.pdf ? () => apiBlob('/api/vector/report/pdf', { headers: { Authorization: `Bearer ${token}` } }) : null
+  });
   try {
     document.title = `Full report: ${new URL(res.audit.summary.final_url || res.audit.url).hostname} · Vector`;
   } catch {}

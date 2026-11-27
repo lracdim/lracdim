@@ -16,7 +16,8 @@ import { maskEmail, readUnsubscribeToken, unsubscribeToken } from '../src/secure
 let h;
 beforeEach(() => {
   h = setup();
-  Object.assign(h.env, { REPORT_INLINE_RETRY_MS: '0', API_URL: 'https://api.example' });
+  // The weekly limits are off here so tests can ask twice; their own test turns them on.
+  Object.assign(h.env, { REPORT_INLINE_RETRY_MS: '0', API_URL: 'https://api.example', REPORT_EMAIL_COOLDOWN_DAYS: '0', REPORT_SITE_COOLDOWN_DAYS: '0', REPORT_PDF_RETRY_MS: '0' });
 });
 afterEach(() => h.restore());
 
@@ -71,7 +72,25 @@ const ownerMail = () => resendCalls().filter((c) => !c.body.html);
 const request = (id) => h.env.DB.raw.prepare('SELECT * FROM report_requests WHERE id = ?').get(id);
 const events = (id) => h.env.DB.raw.prepare('SELECT kind FROM report_events WHERE request_id = ? ORDER BY id').all(id).map((e) => e.kind);
 const tokenIn = (mail) => /\/vector\/report\/#t=([A-Za-z0-9_-]+)/.exec(mail.body.text)[1];
-const live = () => Object.assign(h.env, { RESEND_API_KEY: 're_test', NOTIFY_EMAIL: 'owner@example.com' });
+const live = () =>
+  Object.assign(h.env, {
+    RESEND_API_KEY: 're_test',
+    NOTIFY_EMAIL: 'owner@example.com',
+    RESEND_FROM: 'LRACDIMENSION <hello@lracdimension.online>',
+    REPORT_FROM: 'John Carl Dimatulac <john@lracdimension.online>'
+  });
+// What Browser Run's pdf Quick Action answers: the bytes of a PDF.
+const PDF_BYTES = new TextEncoder().encode('%PDF-1.7\n% test document\n%%EOF\n');
+const browser = (answer = () => new Response(PDF_BYTES, { headers: { 'Content-Type': 'application/pdf' } })) => {
+  const calls = [];
+  h.env.BROWSER = {
+    quickAction: async (action, options) => {
+      calls.push({ action, options });
+      return answer(calls.length);
+    }
+  };
+  return calls;
+};
 
 // ------------------------------------------------------------ the request
 
@@ -117,7 +136,11 @@ test('a request is stored, delivered inline, and the full report reaches the req
   const [mail] = reportMail();
   assert.deepEqual(mail.body.to, ['jane@example.com']);
   assert.equal(mail.body.subject, 'Your website report: example.com scored 72/100');
-  assert.equal(mail.body.reply_to, 'owner@example.com');
+  // From John, replies to John; the owner's private alert inbox never appears.
+  assert.equal(mail.body.from, 'John Carl Dimatulac <john@lracdimension.online>');
+  assert.equal(mail.body.reply_to, 'john@lracdimension.online');
+  assert.ok(!JSON.stringify(mail.body).includes('owner@example.com'));
+  assert.equal(mail.body.attachments, undefined); // no BROWSER binding: no PDF
   assert.equal(mail.headers['idempotency-key'], `report-${out.id}-1`);
   const unsub = await unsubscribeToken(h.env, out.id);
   assert.equal(mail.body.headers['List-Unsubscribe'], `<https://api.example/api/vector/unsubscribe/${unsub}>`);
@@ -136,6 +159,7 @@ test('a request is stored, delivered inline, and the full report reaches the req
   const [owner] = ownerMail();
   assert.deepEqual(owner.body.to, ['owner@example.com']);
   assert.equal(owner.body.subject, '[LRACDIMENSION] Report lead: example.com (72/100) — Jane Doe');
+  assert.equal(owner.body.from, 'LRACDIMENSION <hello@lracdimension.online>');
   assert.equal(owner.body.reply_to, 'jane@example.com');
   assert.ok(owner.body.text.includes('Leads drop off at the form'));
   assert.equal(owner.headers['idempotency-key'], `notify-${out.id}`);
@@ -221,7 +245,7 @@ test('with the Workflow bound, the request only creates an instance, and the ins
   const wf = new ReportDeliveryWorkflow({}, h.env);
   const out = await wf.run({ payload: created[0].params }, step);
   assert.deepEqual(out, { status: 'sent' });
-  assert.deepEqual(names, [['prepare', 3], ['summarize', 2], ['send report', 5], ['notify owner', 3]]);
+  assert.deepEqual(names, [['prepare', 3], ['summarize', 2], ['attach pdf', 2], ['send report', 5], ['notify owner', 3]]);
   assert.equal(reportMail().length, 1);
   // A replayed instance finds the request sent and does nothing.
   assert.deepEqual(await wf.run({ payload: created[0].params }, step), { status: 'sent' });
@@ -324,6 +348,119 @@ test('the rule-based summary states the score, the weak areas and the first fix'
   assert.equal(sanitizeSummary('# Title\n- one <b>two</b> see www.x.com'), 'Title one two see');
 });
 
+// -------------------------------------------------------------------- PDF
+
+test('the full report is printed to PDF and attached; nothing of it is kept after sending', async () => {
+  seedAudit();
+  live();
+  const calls = browser();
+  const { id } = await (await ask()).json();
+  assert.equal(request(id).status, 'sent');
+  assert.equal(calls.length, 1);
+  const { action, options } = calls[0];
+  assert.equal(action, 'pdf');
+  assert.equal(options.pdfOptions.format, 'a4');
+  assert.equal(options.pdfOptions.printBackground, true);
+  assert.match(options.pdfOptions.footerTemplate, /class="pageNumber".*class="totalPages"/);
+  // Self-contained and escaped: nothing from the examined page becomes markup, nothing is fetched.
+  assert.ok(options.html.includes('<h1>example.com</h1>'));
+  assert.ok(options.html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
+  assert.ok(!/<script|<link|@import|<img/i.test(options.html));
+  for (const i of ISSUES) assert.ok(options.html.includes(i.title) && options.html.includes(i.recommendation), i.code);
+  assert.ok(options.html.includes('Prepared for Jane Doe, Acme'));
+  assert.ok(options.html.includes('Scoring methodology'));
+  assert.ok(options.html.includes('mailto:john@lracdimension.online'));
+
+  const [mail] = reportMail();
+  assert.equal(mail.body.attachments.length, 1);
+  const [file] = mail.body.attachments;
+  assert.match(file.filename, /^vector-report-example\.com-\d{4}-\d{2}-\d{2}\.pdf$/);
+  assert.equal(Buffer.from(file.content, 'base64').toString('latin1'), Buffer.from(PDF_BYTES).toString('latin1'));
+  assert.ok(mail.body.html.includes('also attached as a PDF'));
+  assert.ok(mail.body.text.includes(file.filename));
+  assert.deepEqual(events(id), ['requested', 'dispatched', 'processing', 'summarized', 'pdf_rendered', 'sent', 'owner_notified']);
+  assert.equal(h.rows('report_files').length, 0);
+  assert.match(ownerMail()[0].body.text, /PDF: attached \(\d+ bytes in \d+ ms\)/);
+});
+
+test('when the PDF cannot be made the report still goes, without the attachment', async () => {
+  seedAudit();
+  seedAudit('a2');
+  live();
+  browser(() => new Response('Browser time limit exceeded for today', { status: 429 }));
+  const { id } = await (await ask()).json();
+  assert.equal(request(id).status, 'sent');
+  assert.equal(reportMail()[0].body.attachments, undefined);
+  assert.ok(!reportMail()[0].body.html.includes('attached as a PDF'));
+  assert.ok(events(id).includes('pdf_skipped'));
+  assert.match(ownerMail()[0].body.text, /PDF:\s+not attached: browser returned 429/);
+  // An error page is not passed off as a PDF.
+  browser(() => new Response('<html>oops</html>', { status: 200 }));
+  const second = await (await ask('a2')).json();
+  assert.equal(request(second.id).status, 'sent');
+  assert.equal(reportMail()[1].body.attachments, undefined);
+  // REPORT_PDF=off: the browser is not even asked.
+  seedAudit('a3');
+  h.env.REPORT_PDF = 'off';
+  const calls = browser();
+  const third = await (await ask('a3')).json();
+  assert.equal(request(third.id).status, 'sent');
+  assert.equal(calls.length, 0);
+  assert.ok(!events(third.id).some((e) => e.startsWith('pdf_')));
+});
+
+test('a 429 from the browser is waited out, and a retried send carries the very same PDF', async () => {
+  seedAudit();
+  live();
+  const calls = browser((n) => (n === 1 ? new Response('slow down', { status: 429, headers: { 'Retry-After': '10' } }) : new Response(PDF_BYTES)));
+  let sends = 0;
+  h.respond = (url, init) => {
+    if (JSON.parse(init.body).html && sends++ === 0) return Response.json({ message: 'internal' }, { status: 500 });
+    return Response.json({ id: 'email_ok' });
+  };
+  const { id } = await (await ask()).json();
+  assert.equal(request(id).status, 'sent');
+  assert.equal(calls.length, 2); // one refusal, one PDF; the send retry did not print again
+  const [a, b] = reportMail();
+  assert.ok(a.body.attachments);
+  assert.deepEqual(a.body, b.body); // an identical request under the same idempotency key
+  assert.equal(a.headers['idempotency-key'], b.headers['idempotency-key']);
+});
+
+test('the report link downloads the same PDF, within limits', async () => {
+  seedAudit();
+  live();
+  browser();
+  await ask();
+  const token = tokenIn(reportMail()[0]);
+  const auth = { headers: { Authorization: `Bearer ${token}` } };
+  assert.equal((await (await h.call('/api/vector/report', auth)).json()).pdf, true);
+  const res = await h.call('/api/vector/report/pdf', auth);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('Content-Type'), 'application/pdf');
+  assert.match(res.headers.get('Content-Disposition'), /^attachment; filename="vector-report-example\.com-\d{4}-\d{2}-\d{2}\.pdf"$/);
+  assert.equal(Buffer.from(await res.arrayBuffer()).toString('latin1'), Buffer.from(PDF_BYTES).toString('latin1'));
+  assert.equal((await h.call('/api/vector/report/pdf', { headers: { Authorization: `Bearer ${'x'.repeat(43)}` } })).status, 404);
+  assert.equal((await h.call('/api/vector/report/pdf')).status, 401);
+  for (let n = 2; n <= 5; n++) assert.equal((await h.call('/api/vector/report/pdf', auth)).status, 200, `download ${n}`);
+  const sixth = await h.call('/api/vector/report/pdf', auth);
+  assert.equal(sixth.status, 429);
+  delete h.env.BROWSER;
+  assert.equal((await (await h.call('/api/vector/report', auth)).json()).pdf, false);
+  const off = await h.call('/api/vector/report/pdf', auth);
+  assert.equal(off.status, 503);
+  assert.equal((await off.json()).error.code, 'pdf_unavailable');
+});
+
+test('a report lead never reaches the old Google Sheets webhook, so nothing can auto-reply from Gmail', async () => {
+  seedAudit();
+  live();
+  h.env.NOTIFY_WEBHOOK = 'https://script.google.com/macros/s/abc/exec';
+  await ask();
+  assert.ok(h.outbound().every((c) => !c.url.startsWith('https://script.google.com/')));
+  assert.equal(ownerMail().length, 1);
+});
+
 // ---------------------------------------------------- duplicates & limits
 
 test('the same report to the same address within a day is not sent twice', async () => {
@@ -336,28 +473,65 @@ test('the same report to the same address within a day is not sent twice', async
   assert.equal(reportMail().length, 1);
 });
 
-test('limits: per visitor, per address per day, and the daily cap', async () => {
+test('one report per address and one per website a week', async () => {
+  seedAudit('a1', { host: 'example.com' });
+  seedAudit('a2', { host: 'other.example' });
+  seedAudit('a3', { host: 'www.example.com' });
+  seedAudit('a4', { host: 'third.example' });
+  live();
+  Object.assign(h.env, { REPORT_EMAIL_COOLDOWN_DAYS: '7', REPORT_SITE_COOLDOWN_DAYS: '7', RATE_LIMIT_REPORTS: '50/hour' });
+  const first = await (await ask('a1')).json();
+  assert.equal(request(first.id).site_key, 'example.com');
+
+  // Same address, another website: refused on the email field, with the date it opens again.
+  const byEmail = await ask('a2', { email: 'JANE@example.com' });
+  assert.equal(byEmail.status, 429);
+  const e1 = (await byEmail.json()).error;
+  assert.equal(e1.code, 'email_weekly_limit');
+  assert.equal(e1.fields[0].field, 'email');
+  assert.match(e1.message, /one report a week/);
+  assert.equal(Date.parse(e1.retry_after) - Date.parse(request(first.id).created_at), 7 * 86_400_000);
+
+  // Same website (www and a different page count too), another address.
+  const bySite = await ask('a3', { email: 'sam@example.com' });
+  assert.equal(bySite.status, 429);
+  const e2 = (await bySite.json()).error;
+  assert.equal(e2.code, 'site_weekly_limit');
+  assert.match(e2.message, /^A full report for example\.com was already sent on /);
+
+  // Another address and another website: fine.
+  assert.equal((await ask('a4', { email: 'lee@example.com' })).status, 202);
+  // Asking again for the very same report is not an error: it points at the first request.
+  const again = await ask('a1');
+  assert.equal(again.status, 200);
+  assert.equal((await again.json()).duplicate, true);
+
+  // A request that failed does not use up the week.
+  h.env.DB.raw.prepare("UPDATE report_requests SET status = 'failed' WHERE id = ?").run(first.id);
+  assert.equal((await ask('a3', { email: 'sam@example.com' })).status, 202);
+  // Older than a week: allowed again.
+  h.env.DB.raw.prepare("UPDATE report_requests SET created_at = '2020-01-01T00:00:00.000Z'").run();
+  assert.equal((await ask('a2', { email: 'jane@example.com' })).status, 202);
+  assert.equal(reportMail().length, 4);
+});
+
+test('limits: per visitor and the daily cap', async () => {
   for (const id of ['a1', 'a2', 'a3', 'a4']) seedAudit(id);
   live();
-  h.env.REPORT_PER_EMAIL_DAILY = '2';
   assert.equal((await ask('a1')).status, 202);
-  assert.equal((await ask('a2')).status, 202);
-  const third = await ask('a3');
-  assert.equal(third.status, 429);
-  assert.equal((await third.json()).error.code, 'email_limited');
-
+  assert.equal((await ask('a2', { email: 'ann@example.com' })).status, 202);
   h.env.REPORT_DAILY_CAP = '3';
   assert.equal((await ask('a3', { email: 'sam@example.com' })).status, 202);
   const capped = await ask('a4', { email: 'lee@example.com' });
   assert.equal(capped.status, 503);
   assert.equal((await capped.json()).error.code, 'capacity');
 
-  h.env.RATE_LIMIT_REPORTS = '6/hour';
+  h.env.RATE_LIMIT_REPORTS = '5/hour';
+  const fifth = await ask('a4', { email: 'kim@example.com' });
+  assert.equal(fifth.status, 503); // still capped; the IP limit is next
   const sixth = await ask('a4', { email: 'kim@example.com' });
-  assert.equal(sixth.status, 503); // still capped; the IP limit is next
-  const seventh = await ask('a4', { email: 'kim@example.com' });
-  assert.equal(seventh.status, 429);
-  assert.equal((await seventh.json()).error.code, 'rate_limited');
+  assert.equal(sixth.status, 429);
+  assert.equal((await sixth.json()).error.code, 'rate_limited');
 });
 
 test('addresses whose domain cannot receive mail are refused', async () => {
@@ -512,6 +686,75 @@ test('a signed bounce suppresses the address and marks the request; bad signatur
   assert.equal(h.env.DB.raw.prepare('SELECT reason FROM email_suppressions').get().reason, 'bounced');
   assert.equal((await h.call('/api/webhooks/resend', signed({ type: 'email.delivered', data: { email_id: 'email_123' } }))).status, 200);
   assert.deepEqual(events(id).slice(-2), ['bounced', 'delivered']);
+});
+
+// A reply to john@ as Resend stores it (GET /emails/receiving/{id}).
+const RECEIVED = {
+  object: 'email',
+  id: 'rcv_1',
+  from: 'jane@client.example',
+  to: ['john@lracdimension.online'],
+  subject: 'Re: Your website report: example.com scored 72/100',
+  html: '<p>Thanks! Can you fix the <b>HSTS</b> issue?</p>',
+  text: 'Thanks! Can you fix the HSTS issue?',
+  headers: { from: 'Jane Doe <jane@client.example>' },
+  reply_to: [],
+  authentication: { spf: 'pass', dkim: 'pass', dmarc: 'pass' },
+  created_at: '2026-11-28T09:00:00.000Z',
+  attachments: [{ id: 'att_1', filename: 'screenshot.png', size: 2048 }]
+};
+const inbound = (overrides = {}) => {
+  const mail = { ...RECEIVED, ...overrides };
+  h.respond = (url) => {
+    if (url === 'https://api.resend.com/emails/receiving/rcv_1') return Response.json(mail);
+    if (url.startsWith('https://api.resend.com/emails/receiving/rcv_1/attachments')) {
+      return Response.json({ object: 'list', has_more: false, data: [{ id: 'att_1', filename: 'screenshot.png', size: 2048, content_type: 'image/png', download_url: 'https://inbound-cdn.resend.com/att_1?sig=x', expires_at: '2026-11-28T10:00:00Z' }] });
+    }
+    if (url === 'https://api.resend.com/emails') return Response.json({ id: 'fwd_1' });
+    return new Response('not found', { status: 404 });
+  };
+};
+
+test('mail to the domain is forwarded to the private inbox, replying to the sender, once', async () => {
+  live();
+  h.env.RESEND_WEBHOOK_SECRET = `whsec_${WEBHOOK_KEY}`;
+  inbound();
+  const evt = { type: 'email.received', data: { email_id: 'rcv_1', from: 'jane@client.example', to: ['john@lracdimension.online'], subject: RECEIVED.subject } };
+  const res = await h.call('/api/webhooks/resend', signed(evt));
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { received: true, forwarded: true });
+  const [fwd] = resendCalls();
+  assert.deepEqual(fwd.body.to, ['owner@example.com']);
+  assert.equal(fwd.body.from, 'Jane Doe via LRACDIMENSION <hello@lracdimension.online>');
+  assert.equal(fwd.body.reply_to, 'jane@client.example');
+  assert.equal(fwd.body.subject, RECEIVED.subject);
+  assert.equal(fwd.headers['idempotency-key'], 'inbound-rcv_1');
+  assert.ok(fwd.body.html.includes('<b>HSTS</b>') && fwd.body.html.includes('Jane Doe &lt;jane@client.example&gt;'));
+  assert.ok(fwd.body.text.includes('To: john@lracdimension.online'));
+  assert.deepEqual(fwd.body.attachments, [{ filename: 'screenshot.png', path: 'https://inbound-cdn.resend.com/att_1?sig=x' }]);
+  // A webhook retry sends the same request under the same key, so Resend drops the duplicate.
+  await h.call('/api/webhooks/resend', signed(evt));
+  assert.equal(resendCalls().at(-1).headers['idempotency-key'], 'inbound-rcv_1');
+});
+
+test('forwarding flags failed sender checks, skips its own mail, and retries on upstream trouble', async () => {
+  live();
+  h.env.RESEND_WEBHOOK_SECRET = `whsec_${WEBHOOK_KEY}`;
+  inbound({ attachments: [], authentication: { spf: 'fail', dkim: 'fail', dmarc: 'fail' } });
+  await h.call('/api/webhooks/resend', signed({ type: 'email.received', data: { email_id: 'rcv_1', from: 'jane@client.example' } }));
+  const [fwd] = resendCalls();
+  assert.match(fwd.body.subject, /^\[unverified sender\] /);
+  assert.ok(fwd.body.html.includes('Sender checks failed'));
+  assert.equal(fwd.body.attachments, undefined);
+
+  // Our own sending address (an auto-reply bouncing back) is never forwarded: no loops.
+  const own = await h.call('/api/webhooks/resend', signed({ type: 'email.received', data: { email_id: 'rcv_1', from: 'hello@lracdimension.online' } }));
+  assert.equal((await own.json()).reason, 'own address');
+  assert.equal(resendCalls().length, 1);
+
+  // Resend unreachable: a 5xx, so Resend retries the webhook later.
+  h.respond = () => new Response('busy', { status: 503 });
+  assert.equal((await h.call('/api/webhooks/resend', signed({ type: 'email.received', data: { email_id: 'rcv_1', from: 'jane@client.example' } }))).status, 502);
 });
 
 test('the webhook is off until its secret is set', async () => {

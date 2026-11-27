@@ -1664,6 +1664,8 @@ a { color: inherit; text-decoration: none; }
 .start__next { margin-left: auto; }
 .start__alt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.9rem; padding-top: 1.1rem; border-top: 1px solid var(--line, var(--paper-14)); color: var(--dim, var(--paper-70)); }
 .start__where { margin-left: auto; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint, var(--paper-35)); }
+.start__mail { color: var(--paper, inherit); text-decoration: underline; text-decoration-color: var(--signal); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.start__mail:hover { color: var(--signal); }
 
 .start__done { display: grid; align-content: start; padding-block: 0.5rem; }
 .start__done:focus-within { outline: 0; }

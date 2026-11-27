@@ -15,7 +15,7 @@ eleventyExcludeFromCollections: true
 ## Free tools
 
 - [Bottleneck Finder]({{ site.url }}/diagnose/): ten questions about how a business runs; returns where it loses leads, time and cash, ranked by cost, with the system that fixes each one.
-- [Vector website audit]({{ site.url }}/vector/): health score, eight categories including AI visibility and Core Web Vitals on the page; the full report, every issue with evidence and a fix, by email.
+- [Vector website audit]({{ site.url }}/vector/): health score, eight categories including AI visibility and Core Web Vitals on the page; the full report, every issue with evidence and a fix, by email with a PDF copy.
 - [Signal website monitor]({{ site.url }}/signal/): uptime, response time, SSL, SEO scores, and detected analytics tools.
 {% for t in forgeTools %}- [{{ t.name | safe }}]({{ site.url }}/forge/{{ t.slug }}/): {{ t.summary | safe }}
 {% endfor %}
@@ -25,4 +25,4 @@ eleventyExcludeFromCollections: true
 - [Labs articles]({{ site.url }}/labs/)
 - [About]({{ site.url }}/about/)
 - [Services]({{ site.url }}/services/)
-- [Start a project]({{ site.url }}/#start) — opens the project-intake form (or email {{ site.email }})
+- [Start a project]({{ site.url }}/#start) — opens the project-intake form (or email {{ site.inquiryEmail }})

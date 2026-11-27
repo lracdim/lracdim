@@ -290,7 +290,7 @@ export function initStartModal() {
     done.hidden = false;
     doneCopy.textContent = result.sent
       ? `Received. A written reply goes to ${fields.email} within one business day.`
-      : `Delivery is not connected on this deployment, so your message was kept in this browser only. Email ${CFG.email || 'me'} directly and paste it in — I read every one.`;
+      : `Delivery is not connected on this deployment, so your message was kept in this browser only. Email ${CFG.inquiryEmail || CFG.email || 'me'} directly and paste it in — I read every one.`;
     modal.querySelector('#start-done-title').focus();
   }
 
@@ -312,7 +312,7 @@ export function initStartModal() {
       showStep(earliest);
       firstEl.focus();
     }
-    const email = CFG.email || 'me';
+    const email = CFG.inquiryEmail || CFG.email || 'me';
     setStatus(
       err.code === 'rate_limited'
         ? 'Too many submissions from this connection. Try again later or email me directly.'

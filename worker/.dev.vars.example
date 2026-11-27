@@ -2,7 +2,6 @@
 # In production these are Worker secrets: npx wrangler secret put <NAME>
 RESEND_API_KEY=
 NOTIFY_EMAIL=
-NOTIFY_WEBHOOK=
 ADMIN_KEY=local-admin-key
 RATE_LIMIT_SALT=local-salt
 
@@ -12,6 +11,10 @@ REPORT_EMAIL_DRY_RUN=true
 SITE_URL=http://localhost:8099
 API_URL=http://127.0.0.1:8787
 REPORT_AI=off
+# wrangler's local Browser Run emulator has no Quick Actions, so the PDF step
+# would only log "pdf_skipped". To print real PDFs locally, add "remote": true
+# to the browser binding (uses the account's 10 free browser minutes a day).
+REPORT_PDF=off
 # Cloudflare's published Turnstile test secret (always passes; the matching test
 # site key is 1x00000000000000000000AA). Its tokens report the host example.com,
 # so add https://example.com to CORS_ORIGINS here to let them through locally.

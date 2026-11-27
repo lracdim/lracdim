@@ -1,7 +1,7 @@
 {
   // LRACDIMENSION API on Cloudflare Workers. Runs on the free plan.
   // Secrets are set with `npx wrangler secret put <NAME>`, never written here:
-  //   RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_WEBHOOK, ADMIN_KEY, RATE_LIMIT_SALT,
+  //   RESEND_API_KEY, NOTIFY_EMAIL, ADMIN_KEY, RATE_LIMIT_SALT,
   //   TURNSTILE_SECRET, RESEND_WEBHOOK_SECRET, REPORT_SIGNING_KEY (optional)
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lracdim-api",
@@ -28,6 +28,9 @@
   ],
   // Workers AI writes the plain-English summary in the report email.
   "ai": { "binding": "AI" },
+  // Browser Run prints the full report to the PDF attached to that email
+  // (src/report-pdf.js). Free plan: 10 browser minutes a day.
+  "browser": { "binding": "BROWSER" },
   // Signal's scheduled checks (the Python API ran them on a background thread),
   // and the report-delivery backstop and retention sweep.
   "triggers": { "crons": ["*/5 * * * *"] },
@@ -35,12 +38,21 @@
     // Origins allowed to call the API. lracdimension.vercel.app and the bare
     // domain redirect to www, so www is the one visitors actually use.
     "CORS_ORIGINS": "https://www.lracdimension.online,https://lracdimension.online,https://lracdimension.vercel.app,http://localhost:8099",
-    // Sender for every email. lracdimension.online is verified in Resend
-    // (region ap-northeast-1); its DKIM, send/rsend CNAMEs and DMARC records live
-    // in Z.com DNS. Deploy this only after Resend shows the domain as Verified,
-    // or Resend rejects every send.
+    // Senders. lracdimension.online is verified in Resend (region
+    // ap-northeast-1); its DKIM, send/rsend CNAMEs and DMARC records live in
+    // Z.com DNS. Replies reach Resend once the domain's MX points at it
+    // (Resend Inbound), and src/inbound.js forwards them to NOTIFY_EMAIL
+    // (or INBOUND_FORWARD_TO, a secret, if set). Every address below is
+    // public: NOTIFY_EMAIL (a secret, the owner's private inbox) is never used
+    // as a sender or Reply-To.
+    // Owner alerts and the project-inquiry acknowledgement:
     "RESEND_FROM": "LRACDIMENSION <hello@lracdimension.online>",
-    "RESEND_AUTOREPLY": "false",
+    "INTAKE_REPLY_TO": "hello@lracdimension.online",
+    // Acknowledge each project inquiry from the domain, through Resend.
+    "RESEND_AUTOREPLY": "true",
+    // The emailed Vector report comes from John, and replies reach him:
+    "REPORT_FROM": "John Carl Dimatulac <john@lracdimension.online>",
+    "REPORT_REPLY_TO": "john@lracdimension.online",
     // Per-visitor limits, same as the Python API.
     "RATE_LIMIT_CONTACT": "5/hour",
     "RATE_LIMIT_AUDITS": "6/hour",
@@ -56,8 +68,10 @@
     "API_URL": "https://lracdim-api.lracdim.workers.dev",
     // Report requests per visitor IP.
     "RATE_LIMIT_REPORTS": "5/hour",
-    // Reports per address per 24 hours (different examinations).
-    "REPORT_PER_EMAIL_DAILY": "3",
+    // One report per address, and one per website (any page of it, with or
+    // without www), every this many days. "0" turns a limit off.
+    "REPORT_EMAIL_COOLDOWN_DAYS": "7",
+    "REPORT_SITE_COOLDOWN_DAYS": "7",
     // Reports per UTC day, all visitors. Each report is two emails (the report
     // and the owner alert); Resend's free plan allows 100 a day in total.
     "REPORT_DAILY_CAP": "40",
@@ -68,6 +82,8 @@
     // Summary model; "off" uses the rule-based summary only.
     "REPORT_AI": "on",
     "REPORT_AI_MODEL": "@cf/google/gemma-4-26b-a4b-it",
+    // Attach the report as a PDF; "off" sends the email without it.
+    "REPORT_PDF": "on",
     // Set to "true" once TURNSTILE_SECRET is set: requests are then refused
     // whenever the check cannot run, instead of skipping it.
     "TURNSTILE_REQUIRED": "false"

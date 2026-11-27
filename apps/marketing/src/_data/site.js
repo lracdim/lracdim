@@ -13,7 +13,11 @@ export default {
   url: 'https://www.lracdimension.online',
   description:
     'LRACDIMENSION is the engineering environment of John Carl Dimatulac: web systems, automation, and the tools behind them. Work, Vector, Signal, Forge, and Labs are working dimensions, not pages.',
-  email: 'lracdim@gmail.com',
+  /* Public addresses, both Titan mailboxes on the domain. `email` is John's own (footer, résumé,
+     privacy notice, the Vector report); `inquiryEmail` is the one the "Start a project" form offers.
+     Never put a personal Gmail address here: everything below is published. */
+  email: 'john@lracdimension.online',
+  inquiryEmail: 'hello@lracdimension.online',
 
   /* Public résumé (PDF). Leave empty until a version without personal data
      and references is exported; the link is hidden while empty. */
@@ -51,7 +55,7 @@ export default {
   social: [
     { label: 'GitHub', href: '' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/carl-dimatulac/' },
-    { label: 'Email', href: 'mailto:lracdim@gmail.com' }
+    { label: 'Email', href: 'mailto:john@lracdimension.online' }
   ],
 
   // Primary navigation is the five Dimensions (see _data/dimensions.js).

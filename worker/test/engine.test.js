@@ -283,7 +283,7 @@ test('a public Signal scan registers the domain, checks it, and stores a snapsho
 });
 
 test('status transitions record incidents and recoveries and alert the owner', async () => {
-  h.env.NOTIFY_WEBHOOK = 'https://hooks.example/signal';
+  Object.assign(h.env, { RESEND_API_KEY: 're_test', NOTIFY_EMAIL: 'owner@example.com' });
   h.respond = fakeSite;
   assert.equal((await h.call('/api/signal/targets', { method: 'POST', body: { name: 'Example', url: 'example.com' } })).status, 401);
   const added = await h.call('/api/signal/targets', { method: 'POST', headers: { 'X-Admin-Key': 'admin-secret' }, body: { name: 'Example', url: 'example.com' } });
@@ -292,14 +292,15 @@ test('status transitions record incidents and recoveries and alert the owner', a
   assert.equal(target.status, 'operational');
 
   h.respond = (url) => {
-    if (url.startsWith('https://hooks.example/')) return new Response('ok');
+    if (url === 'https://api.resend.com/emails') return Response.json({ id: 'email_alert' });
     throw new TypeError('fetch failed');
   };
   const down = await (await h.call(`/api/signal/targets/${target.id}/check`, { method: 'POST', headers: { 'X-Admin-Key': 'admin-secret' } })).json();
   assert.equal(down.status, 'unavailable');
-  const alert = h.outbound().find((c) => c.url === 'https://hooks.example/signal');
+  const alert = h.outbound().find((c) => c.url === 'https://api.resend.com/emails');
   assert.equal(alert.body.subject, '[Signal] Example: Website unavailable');
-  assert.equal(alert.body.to, 'unavailable');
+  assert.deepEqual(alert.body.to, ['owner@example.com']);
+  assert.match(alert.body.text, /^To: unavailable$/m);
 
   h.respond = fakeSite;
   const up = await (await h.call(`/api/signal/targets/${target.id}/check`, { method: 'POST', headers: { 'X-Admin-Key': 'admin-secret' } })).json();
