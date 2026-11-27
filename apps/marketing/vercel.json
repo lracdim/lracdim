@@ -26,8 +26,8 @@
       "permanent": true
     },
     {
-      "source": "/research/:path*",
-      "destination": "/labs/:path*",
+      "source": "/research/:slug{/}?",
+      "destination": "/labs/:slug/",
       "permanent": true
     },
     {
