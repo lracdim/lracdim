@@ -149,5 +149,57 @@ export default {
       { q: 'How is the Flesch reading-ease score calculated?', a: 'From the formula 206.835 minus 1.015 times words per sentence, minus 84.6 times syllables per word. Syllables are estimated, so treat the score as a guide rather than a measurement.' },
       { q: 'Is my text stored?', a: 'No. Everything runs in your browser and nothing is sent to a server.' }
     ]
+    },
+  'schema-generator': {
+    title: 'Structured Data Generator and Checker — JSON-LD for SEO and AI',
+    description: 'Generate JSON-LD for FAQ, local business, organisation, article, product and service pages, and check which schema.org types a live page already declares and what each is missing.',
+    guide: [
+      { h: 'What this tool does', p: ['The generator turns a short form into a schema.org JSON-LD block you paste into a page. It covers the types that matter most for search and answer engines: FAQPage, LocalBusiness, Organization, Article, Product and Service. Empty fields are left out, so the output only states what is true.', 'The checker reads a live page through the engine, lists every JSON-LD block and the types it declares, and names the required properties each type is missing. It also flags blocks that are not valid JSON and suggests types the page should add.'] },
+      { h: 'Why structured data matters for AI visibility', p: ['Search engines use structured data for rich results, and answer engines and AI assistants use it to understand who a business is, what a page is about and which question it answers. A page that states its facts in JSON-LD is easier to quote correctly than one that leaves them to be guessed from layout.'] }
+    ],
+    faq: [
+      { q: 'Where do I put the JSON-LD?', a: 'Inside the page’s HTML, usually in the head, as a script element with type application/ld+json. Most CMSs and WordPress SEO plugins have a field for custom schema.' },
+      { q: 'Does structured data guarantee a rich result?', a: 'No. It makes a page eligible. Search engines decide whether to show a rich result, and the markup must match what is visible on the page.' },
+      { q: 'Is what I type sent anywhere?', a: 'No. The generator runs in your browser. Only the optional page check sends the address you enter to the engine, which fetches that page.' }
+    ]
+  },
+  'ai-crawler-policy': {
+    title: 'AI Crawler Policy Builder — robots.txt for GPTBot, ClaudeBot and more',
+    description: 'Choose which AI crawlers may read your site, including GPTBot, ClaudeBot, PerplexityBot, Google-Extended and Applebot-Extended, get the robots.txt lines, and check what your current robots.txt allows.',
+    guide: [
+      { h: 'What this tool does', p: ['Each AI company publishes the user-agent names of its crawlers. Some collect pages for model training, some power AI search and answers, and some fetch a page only when a person asks an assistant about it. This tool lists them by purpose, lets you allow or block each one, and writes the robots.txt lines.', 'The optional check reads your live robots.txt through the engine and shows, for each crawler, whether it is currently allowed, blocked, or not mentioned and therefore following your rules for every crawler.'] },
+      { h: 'Choosing a policy', p: ['Blocking every AI crawler keeps your pages out of training data, but it also keeps you out of AI search results and recommendations. A common middle ground allows the search and answer crawlers and blocks the training-only ones. If being found and cited by AI matters to your business, allow them.'] }
+    ],
+    faq: [
+      { q: 'Do AI crawlers obey robots.txt?', a: 'The major companies say their crawlers do. Fetchers that act for a person asking a question, such as ChatGPT-User or Perplexity-User, may not apply robots.txt rules in the same way.' },
+      { q: 'Does blocking Google-Extended remove me from Google Search?', a: 'No. Google-Extended controls whether your content is used for Gemini models. Google Search crawling is controlled by Googlebot.' },
+      { q: 'Where does the output go?', a: 'In the robots.txt file at the root of your domain, alongside your existing rules. Keep your current User-agent: * group and Sitemap lines.' }
+    ]
+  },
+  'llms-txt-generator': {
+    title: 'llms.txt Generator — create an llms.txt from your sitemap',
+    description: 'Draft an llms.txt file for any website from its home page and sitemap: site name, summary and a sectioned list of pages, ready to edit and download.',
+    guide: [
+      { h: 'What llms.txt is', p: ['llms.txt is a proposed plain-text file at the root of a website that tells language models what the site is and where its most useful pages are. It is written in Markdown: a title, a one-line summary, and sections of links.', 'It does not replace robots.txt or a sitemap. It is a short, human-readable map that an AI assistant can read in one request.'] },
+      { h: 'What this generator does', p: ['The engine reads the site’s home page for its name and description, then its sitemap (and up to three child sitemaps of an index) for the pages. Pages are grouped by their first path segment, archive and tag pages are skipped, and titles are made from the page addresses.', 'You get an editable draft. Rename titles, add a sentence to each link, remove pages that do not help, and download it as llms.txt. If the site already publishes an llms.txt, the tool says so.'] }
+    ],
+    faq: [
+      { q: 'Do AI companies read llms.txt?', a: 'Support is still emerging and varies by company. Publishing one costs little and gives assistants that do read it a clean summary of your site.' },
+      { q: 'Why are some pages missing?', a: 'The draft lists up to 150 pages from the sitemap and skips archive, tag and login pages. Sites without a sitemap get only the home page.' },
+      { q: 'Where do I upload the file?', a: 'At the root of your domain, so it is served at https://yourdomain.com/llms.txt.' }
+    ]
+  },
+  'email-deliverability': {
+    title: 'Email Deliverability Checker — SPF, DKIM and DMARC lookup',
+    description: 'Check any domain’s SPF, DKIM, DMARC and MX records in one lookup. Get a score, see who is authorised to send, and a plain-language fix for each problem.',
+    guide: [
+      { h: 'What this checker looks at', p: ['SPF lists the servers allowed to send mail for your domain. DKIM signs each message with a key published in DNS. DMARC tells receivers what to do when a message fails both, and where to send reports. MX records say where your mail is received.', 'The checker reads all four through DNS, tries the DKIM selectors used by common providers (and any selector you give it), and scores the result out of 100. Each problem comes with the fix in plain language.'] },
+      { h: 'Why it matters', p: ['Without these records, invoices, booking confirmations and replies to your website forms land in spam or are rejected outright, and anyone can send mail that claims to be from you. Gmail and Yahoo require SPF, DKIM and DMARC from bulk senders.'] }
+    ],
+    faq: [
+      { q: 'Why does it say no DKIM key was found?', a: 'DKIM keys live under a selector chosen by your email provider. The checker tries the common ones. Open a message you sent, find the DKIM-Signature header, and enter its s= value as the selector.' },
+      { q: 'Is p=none good enough for DMARC?', a: 'It is the right place to start, because it only collects reports. Once the reports show your real senders pass, move to p=quarantine and then p=reject.' },
+      { q: 'Does the checker send email or touch my mail server?', a: 'No. It only reads public DNS records for the domain you enter.' }
+    ]
   }
 };

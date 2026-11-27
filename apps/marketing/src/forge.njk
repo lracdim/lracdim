@@ -9,10 +9,10 @@ description: "Eleven free web tools: redirect checker, robots.txt and sitemap va
 {% include "partials/dimension-head.njk" %}
 
 <section class="shell portfolio-section">
-{% set cats = ['URL', 'SEO', 'Developer', 'Content'] %}
+{% set cats = ['AI visibility', 'SEO', 'Email', 'URL', 'Developer', 'Content'] %}
 {% for cat in cats %}
-<div class="forge-cat"><p class="overline">{{ cat }}</p>
-<ul class="forge-list">{% for t in forgeTools %}{% if t.category == cat %}<li><a href="/forge/{{ t.slug }}/"><span class="project-type">{{ loop.index | pad }} / {{ 'Runs in your browser' if t.mode == 'client' else 'Runs on the engine' }}</span><h3>{{ t.name }} ↗</h3><p>{{ t.summary }}</p></a></li>{% endif %}{% endfor %}</ul></div>
+<div class="forge-cat" id="{{ cat | slug }}"><p class="overline">{{ cat }}</p>
+<ul class="forge-list">{% for t in forgeTools %}{% if t.category == cat %}<li><a href="/forge/{{ t.slug }}/"><span class="project-type">{{ loop.index | pad }} / {{ 'Runs in your browser' if t.mode == 'client' else ('Built in your browser, checked on the engine' if t.mode == 'hybrid' else 'Runs on the engine') }}</span><h3>{{ t.name }} ↗</h3><p>{{ t.summary }}</p></a></li>{% endif %}{% endfor %}</ul></div>
 {% endfor %}
 <p class="fine-print">Server-side runs are recorded as tool, time, status, and processing time only. The fetched content is never stored.</p>
 </section>

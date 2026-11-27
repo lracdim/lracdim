@@ -1,0 +1,9 @@
+<form class="forge-server fx-form" data-email-form novalidate>
+  <div class="forge-grid fx-grid">
+    <div class="forge-field"><label for="email-domain">Domain or email address</label><input id="email-domain" name="domain" type="text" inputmode="email" autocomplete="off" spellcheck="false" placeholder="example.com or you@example.com" required></div>
+    <div class="forge-field"><label for="email-selector">DKIM selector <span class="fine-print">(optional)</span></label><input id="email-selector" name="selector" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. google, selector1, resend"></div>
+  </div>
+  <div class="forge-actions"><button type="submit" class="btn" data-action="run">Check deliverability <span class="btn__glyph" aria-hidden="true">↗</span></button></div>
+  <p class="forge-status" data-status role="status"></p>
+</form>
+<div class="forge-output fx-out" data-output aria-live="polite"></div>

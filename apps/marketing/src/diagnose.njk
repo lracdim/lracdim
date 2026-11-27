@@ -1,0 +1,92 @@
+---
+layout: layouts/base.njk
+title: Bottleneck Finder — find where your work stalls
+permalink: /diagnose/
+description: "A free two-minute check of how your business runs. Answer ten questions and see where you lose leads, time and cash — ranked by cost, with the system that fixes each one."
+faq:
+  - q: "What does the Bottleneck Finder measure?"
+    a: "Ten common operational leaks: scattered enquiries, slow first replies, double entry, status that lives in someone's head, work that depends on memory, scheduling by chat, late invoices, hand-built reports, a website that does not convert, and being invisible to search and AI. Each answer is weighted by how much that leak usually costs."
+  - q: "Is my answer stored or sent anywhere?"
+    a: "No. The diagnosis is calculated in your browser. It is only sent if you choose to send it with a project request."
+  - q: "How is the leakage score calculated?"
+    a: "Yes scores 2 and sometimes scores 1, multiplied by each leak's weight. The score is the share of the maximum. Industry figures shown are typical sector baselines and the targets systems like these are built to reach, not past results."
+---
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- from "partials/rd-icons.njk" import icon -%}
+{{ pagehead({
+  badge: 'Free · two minutes · no email needed',
+  title: 'Find where your work',
+  accent: 'stalls',
+  sub: 'Answer ten questions about how your business runs. You get your leaks ranked by what they cost, and the system that removes each one.'
+}) }}
+
+<section class="rd-sec rd-sec--tight dg" data-diagnose>
+  <div class="rd-wrap dg__in">
+    <form class="dg__form" data-dg-form novalidate>
+      <fieldset class="rd-card dg__step">
+        <legend class="dg__legend"><span class="rd-step__n">01</span> Your industry <span class="fine-print">(optional)</span></legend>
+        <div class="dg__chips" role="radiogroup" aria-label="Industry">
+          {%- for ind in industries %}
+          <label class="dg__chip"><input type="radio" name="industry" value="{{ ind.slug }}"><span>{{ ind.name }}</span></label>
+          {%- endfor %}
+          <label class="dg__chip"><input type="radio" name="industry" value="" checked><span>Something else</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="rd-card dg__step">
+        <legend class="dg__legend"><span class="rd-step__n">02</span> How does the work run today?</legend>
+        <ol class="dg__qs">
+          {%- for item in diagnose %}
+          <li class="dg__q" data-q="{{ item.id }}">
+            <p id="dg-q-{{ item.id }}"><span class="dg__n">{{ loop.index0 | pad }}</span>{{ item.q }}</p>
+            <div class="dg__opts" role="radiogroup" aria-labelledby="dg-q-{{ item.id }}">
+              <label><input type="radio" name="{{ item.id }}" value="2"><span>Yes</span></label>
+              <label><input type="radio" name="{{ item.id }}" value="1"><span>Sometimes</span></label>
+              <label><input type="radio" name="{{ item.id }}" value="0"><span>No</span></label>
+            </div>
+          </li>
+          {%- endfor %}
+        </ol>
+      </fieldset>
+      <noscript><p class="rd-t-body">The Bottleneck Finder needs JavaScript to score your answers.</p></noscript>
+    </form>
+
+    <aside class="dg__side">
+      <div class="rd-card dg__meter" data-dg-meter>
+        <p class="rd-t-upper">Leakage so far</p>
+        <div class="dg__ring is-low" data-dg-ring>
+          <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="dg__ring-bg"/><circle cx="60" cy="60" r="52" class="dg__ring-fg" data-dg-arc/></svg>
+          <b data-dg-pct>0%</b>
+          <span data-dg-level>Answer to begin</span>
+        </div>
+        <p class="rd-t-cap"><span data-dg-count>0</span> of {{ diagnose.length }} answered</p>
+        <div class="dg__bar"><i data-dg-progress></i></div>
+        <button type="button" class="rd-btn rd-btn--white dg__go" data-dg-go disabled>See my bottlenecks<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></button>
+        <p class="rd-t-cap dg__hint" data-dg-hint>Answer all ten to see the full diagnosis.</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="rd-wrap dg__result" data-dg-result hidden tabindex="-1">
+    <header class="rd-sec__head">
+      <span class="rd-badge rd-badge--pill"><span class="rd-badge__tag">Your diagnosis</span> <span data-dg-sumline></span></span>
+      <h2 class="rd-t-h2" data-dg-title></h2>
+      <p class="rd-t-sub" data-dg-lede></p>
+    </header>
+    <ol class="dg__leaks" data-dg-leaks></ol>
+    <div class="dg__industry" data-dg-industry hidden></div>
+    <div class="rd-btn-row dg__ctas">
+      <button type="button" class="rd-btn rd-btn--white" data-dg-send>Send me a plan for this<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></button>
+      <a class="rd-btn rd-btn--dark" href="/vector/">Examine your website {{ icon('arrow-up-right') }}</a>
+      <button type="button" class="rd-btn rd-btn--dark" data-dg-copy>Copy a link to this result</button>
+      <button type="button" class="rd-btn rd-btn--dark" data-dg-reset>Start over</button>
+    </div>
+    <p class="rd-t-cap dg__status" data-dg-status role="status"></p>
+  </div>
+</section>
+
+<script type="application/json" id="dg-data">{{ {
+  questions: diagnose,
+  industries: industries | dg_industries
+} | json | safe }}</script>
+{% include "partials/studio-contact.njk" %}

@@ -1,0 +1,19 @@
+{#- The engine reads the home page and sitemap (/api/forge/llms-txt/run); the file is assembled and edited in the browser. -#}
+<form class="forge-server" data-server-form novalidate>
+  <div class="vector-inline__row"><label class="rd-sr" for="tool-url">Website</label><input id="tool-url" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="example.com" required><button type="submit" class="btn" data-action="run">Read the site <span class="btn__glyph" aria-hidden="true">↗</span></button></div>
+  <p class="forge-status" data-check-status role="status"></p>
+</form>
+<div class="fx-llms" data-llms hidden>
+  <div class="forge-grid fx-grid">
+    <div class="forge-field"><label for="llms-name">Site name</label><input id="llms-name" type="text" data-llms-name></div>
+    <div class="forge-field"><label for="llms-desc">One-line summary</label><input id="llms-desc" type="text" data-llms-desc></div>
+  </div>
+  <div class="forge-field"><label for="llms-out">llms.txt <span class="fine-print">(edit freely, then copy or download)</span></label><textarea id="llms-out" rows="18" spellcheck="false" data-llms-out></textarea></div>
+  <div class="forge-actions">
+    <button type="button" class="btn" data-action="download">Download llms.txt <span class="btn__glyph" aria-hidden="true">↗</span></button>
+    <button type="button" class="btn btn--ghost" data-action="copy">Copy</button>
+    <button type="button" class="btn btn--ghost" data-action="rebuild">Rebuild from the fields</button>
+  </div>
+  <p class="forge-status" data-status role="status"></p>
+  <div class="fx-notes" data-llms-notes></div>
+</div>

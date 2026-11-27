@@ -12,16 +12,22 @@ eleventyComputed:
 ---
 {%- from "partials/rd-pagehead.njk" import pagehead -%}
 <div data-dimension="forge">
+{%- set modeLabel = { client: 'Runs in your browser', server: 'Runs on the engine', hybrid: 'Built in your browser, checked on the engine' } -%}
+{%- set modeNote = {
+  client: ' Runs entirely in your browser; nothing you enter leaves the page.',
+  server: " Runs on the engine: public addresses only, size and time limits, rate-limited.",
+  hybrid: " What you type is built into the output in your browser; the optional check of a live site runs on the engine, public addresses only and rate-limited."
+} -%}
 {{ pagehead({
   back: { label: 'All Forge tools', href: '/forge/' },
-  badge: '04 · Forge · ' ~ tool.category ~ ' · ' ~ ('Runs in your browser' if tool.mode == 'client' else 'Runs on the engine'),
+  badge: '04 · Forge · ' ~ tool.category ~ ' · ' ~ modeLabel[tool.mode],
   title: tool.name,
-  sub: tool.summary ~ (' Runs entirely in your browser; nothing you enter leaves the page.' if tool.mode == 'client' else " Fetches the target through the engine's validated fetcher: public http and https addresses only, size and time limits, rate-limited.")
+  sub: tool.summary ~ modeNote[tool.mode]
 }) }}
 </div>
 <section class="shell portfolio-section" data-forge>
-  <article class="forge-tool forge-tool--page" id="{{ tool.slug }}" data-tool="{{ tool.slug }}" data-mode="{{ tool.mode }}">
-    {% if tool.mode == 'server' %}{% include "partials/forge/server-tool.njk" %}{% else %}{% include "partials/forge/" ~ tool.slug ~ ".njk" %}{% endif %}
+  <article class="forge-tool forge-tool--page" id="{{ tool.slug }}" data-tool="{{ tool.slug }}" data-mode="{{ tool.mode }}"{% if tool.api %} data-api="{{ tool.api }}"{% endif %}>
+    {% if tool.mode == 'server' and not tool.custom %}{% include "partials/forge/server-tool.njk" %}{% else %}{% include "partials/forge/" ~ tool.slug ~ ".njk" %}{% endif %}
   </article>
   {% set seo = tool.seo %}
   {% if seo %}{% include "partials/tool-guide.njk" %}{% endif %}

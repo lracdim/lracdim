@@ -9,6 +9,7 @@ import { clientIp, error, json, newId, nowIso, readJson, stringField } from './h
 import { Page } from './page.js';
 import { hit } from './ratelimit.js';
 import { UnsafeURL, normalize, validateResolved } from './ssrf.js';
+import { DNS_ONLY, EXTRA_TOOLS } from './forge-plus.js';
 
 const originOf = (url) => {
   const u = new URL(url);
@@ -242,11 +243,15 @@ async function record(env, tool, status, started, meta) {
   return row;
 }
 
+/* Looked up at call time: forge-plus.js imports parseSitemap from this module. */
+const allTools = () => ({ ...TOOLS, ...EXTRA_TOOLS });
+
 async function run(request, env, ctx, tool) {
   if (!(await hit(env, ctx, 'tools', clientIp(request), env.RATE_LIMIT_TOOLS || '60/hour'))) {
     return error(429, 'rate_limited', 'Too many requests. Try again later.');
   }
-  if (!(tool in TOOLS)) return error(404, 'unknown_tool', 'No such tool.');
+  const tools = allTools();
+  if (!(tool in tools)) return error(404, 'unknown_tool', 'No such tool.');
   const [body, bad] = await readJson(request);
   if (bad) return bad;
   const [url, badUrl] = stringField(body, 'url', 3, 2048);
@@ -255,8 +260,9 @@ async function run(request, env, ctx, tool) {
   const budget = new Budget();
   let result;
   try {
-    await validateResolved(url, budget); // policy check up front; the fetcher re-checks every hop
-    result = await TOOLS[tool](url, budget);
+    // Policy check up front; the fetcher re-checks every hop. DNS-only tools never fetch the address.
+    if (!DNS_ONLY.has(tool)) await validateResolved(url, budget);
+    result = await tools[tool](url, budget, body);
   } catch (err) {
     if (err instanceof UnsafeURL) {
       await record(env, tool, 'rejected', started, { reason: err.message });
@@ -265,6 +271,14 @@ async function run(request, env, ctx, tool) {
     if (err instanceof FetchError) {
       await record(env, tool, 'failed', started, { reason: err.reason });
       return error(502, 'fetch_failed', err.reason);
+    }
+    if (err && err.code === 'invalid_domain') {
+      await record(env, tool, 'rejected', started, { reason: err.message });
+      return error(422, 'invalid_url', err.message);
+    }
+    if (err && err.code === 'dns_failed') {
+      await record(env, tool, 'failed', started, { reason: err.message });
+      return error(502, 'fetch_failed', err.message);
     }
     throw err;
   }
@@ -275,7 +289,7 @@ async function run(request, env, ctx, tool) {
 /** Routes under /api/forge/. Returns a Response, or null when nothing matches. */
 export async function forgeRoute(request, env, ctx, url) {
   const p = url.pathname;
-  if (p === '/api/forge/tools' && request.method === 'GET') return json(Object.keys(TOOLS).map((tool) => ({ tool, mode: 'server' })));
+  if (p === '/api/forge/tools' && request.method === 'GET') return json(Object.keys(allTools()).map((tool) => ({ tool, mode: 'server' })));
   const match = p.match(/^\/api\/forge\/([^/]+)\/run$/);
   if (match && request.method === 'POST') return run(request, env, ctx, decodeURIComponent(match[1]));
   return null;

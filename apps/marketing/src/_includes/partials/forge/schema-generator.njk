@@ -1,0 +1,31 @@
+{#- Generator (browser) + checker (engine: /api/forge/structured-data/run). Fields are built by forge.js from SCHEMA_FORMS. -#}
+<div class="fx-tabs" role="tablist" aria-label="Structured data">
+  <button type="button" role="tab" class="fx-tab" aria-selected="true" aria-controls="fx-gen" id="fx-gen-tab" data-fx-tab="gen">Generate JSON-LD</button>
+  <button type="button" role="tab" class="fx-tab" aria-selected="false" aria-controls="fx-check" id="fx-check-tab" data-fx-tab="check" tabindex="-1">Check a live page</button>
+</div>
+
+<div class="fx-panel" id="fx-gen" role="tabpanel" aria-labelledby="fx-gen-tab" data-fx-panel="gen">
+  <div class="forge-field"><label for="schema-type">Page type</label>
+    <select id="schema-type" data-schema-type>
+      <option value="FAQPage">FAQ page</option>
+      <option value="LocalBusiness">Local business</option>
+      <option value="Organization">Organisation</option>
+      <option value="Service">Service</option>
+      <option value="Article">Article or blog post</option>
+      <option value="Product">Product</option>
+    </select>
+  </div>
+  <div class="fx-fields" data-schema-fields></div>
+  <div class="forge-field"><label for="schema-out">JSON-LD <span class="fine-print">(paste into the page’s &lt;head&gt;)</span></label><textarea id="schema-out" rows="14" readonly spellcheck="false" data-schema-out></textarea></div>
+  <div class="forge-actions"><button type="button" class="btn" data-action="copy">Copy JSON-LD <span class="btn__glyph" aria-hidden="true">↗</span></button></div>
+  <p class="forge-status" data-status role="status"></p>
+</div>
+
+<div class="fx-panel" id="fx-check" role="tabpanel" aria-labelledby="fx-check-tab" data-fx-panel="check" hidden>
+  <form class="forge-server" data-server-form novalidate>
+    <div class="forge-field"><label for="tool-url">Page URL</label><input id="tool-url" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/" required></div>
+    <div class="forge-actions"><button type="submit" class="btn" data-action="run">Check structured data <span class="btn__glyph" aria-hidden="true">↗</span></button></div>
+    <p class="forge-status" data-check-status role="status"></p>
+  </form>
+  <div class="forge-output fx-out" data-output aria-live="polite"></div>
+</div>

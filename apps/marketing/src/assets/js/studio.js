@@ -104,3 +104,4 @@ if (document.querySelector('[data-vector]')) import('./vector.js').then((m) => m
 if (document.querySelector('[data-vector-badge]')) import('./vector.js').then((m) => m.initVectorBadge());
 if (document.querySelector('[data-forge]')) import('./forge.js').then((m) => m.initForge());
 if (document.querySelector('[data-signal]')) import('./signal.js').then((m) => m.initSignal());
+if (document.querySelector('[data-diagnose]')) import('./diagnose.js').then((m) => m.initDiagnose());

@@ -6,14 +6,15 @@ description: "Operations systems, workflow automation, scheduling and tracking, 
 ---
 
 {%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- from "partials/rd-icons.njk" import icon -%}
 {%- set chips = [] -%}{%- for s in services %}{% set chips = (chips.push({ label: s.title, href: '#' ~ s.id }), chips) %}{% endfor -%}
-{{ pagehead({
+{% call pagehead({
   badge: 'Services',
   title: 'What I build for',
   accent: 'you',
   sub: 'Five kinds of system, organised around the problem you have rather than the technology I use. Most engagements are one of these, with a second added once the first is running.',
   chips: chips
-}) }}
+}) %}<div class="rd-actions"><a class="rd-btn rd-btn--white" href="/diagnose/">Not sure which you need? Find your bottleneck<span class="rd-btn__chip">{{ icon('arrow-up-right') }}</span></a></div>{% endcall %}
 
 {% for s in services %}
 <section class="band section{% if not loop.first %} section--rule{% endif %}" id="{{ s.id }}">

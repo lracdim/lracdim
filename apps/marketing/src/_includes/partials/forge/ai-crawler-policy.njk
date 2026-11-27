@@ -1,0 +1,18 @@
+{#- Policy builder (browser). The optional check reads the live robots.txt via /api/forge/robots-validator/run. -#}
+<div class="fx-presets" role="group" aria-label="Presets">
+  <button type="button" class="text-link" data-preset="all">Maximum AI visibility</button>
+  <button type="button" class="text-link" data-preset="search">In AI answers, not in training</button>
+  <button type="button" class="text-link" data-preset="none">Block every AI crawler</button>
+</div>
+<div class="fx-bots" data-bots></div>
+<div class="forge-field"><label for="ai-robots-out">robots.txt lines <span class="fine-print">(add to your existing robots.txt)</span></label><textarea id="ai-robots-out" rows="12" readonly spellcheck="false" data-robots-out></textarea></div>
+<div class="forge-actions"><button type="button" class="btn" data-action="copy">Copy lines <span class="btn__glyph" aria-hidden="true">↗</span></button></div>
+<p class="forge-status" data-status role="status"></p>
+
+<div class="fx-check">
+  <p class="overline">Check your current robots.txt</p>
+  <form class="forge-server" data-server-form novalidate>
+    <div class="vector-inline__row"><label class="rd-sr" for="tool-url">Your website</label><input id="tool-url" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="example.com" required><button type="submit" class="btn" data-action="run">Check <span class="btn__glyph" aria-hidden="true">↗</span></button></div>
+    <p class="forge-status" data-check-status role="status"></p>
+  </form>
+</div>

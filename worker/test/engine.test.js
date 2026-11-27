@@ -414,5 +414,5 @@ test('unknown tools are a 404, unsafe addresses a 422, and unreachable sites a 5
   assert.equal((await down.json()).error.message, 'The server could not be reached.');
   assert.deepEqual(h.rows('tool_runs').map((r) => r.status).sort(), ['failed', 'rejected']);
   const tools = await (await h.call('/api/forge/tools')).json();
-  assert.equal(tools.length, 5);
+  assert.deepEqual(tools.map((t) => t.tool).sort(), ['canonical-checker', 'email-deliverability', 'llms-txt', 'metadata-checker', 'redirect-checker', 'robots-validator', 'sitemap-validator', 'structured-data']);
 });

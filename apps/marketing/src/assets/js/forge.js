@@ -3,6 +3,7 @@
  * validated fetcher. Each tool binds to its [data-tool] root.
  */
 import { api, esc, hasApi } from './api.js';
+import { PLUS_TOOLS } from './forge-plus.js';
 
 function setStatus(root, text, isError = false) {
   const el = root.querySelector('[data-status]');
@@ -240,12 +241,18 @@ function initServer(root) {
       btn.textContent = 'Run ↗';
     }
   });
+  /* Arriving from a Vector finding (?url=…) runs the tool on that site. */
+  const preset = new URLSearchParams(location.search).get('url');
+  if (preset) {
+    input.value = preset;
+    form.requestSubmit();
+  }
 }
 
 export function initForge() {
-  const tools = { 'json-formatter': initJson, 'url-parser': initUrl, 'slug-generator': initSlug, 'timestamp-converter': initTime, 'text-analyzer': initText, 'regex-tester': initRegex };
+  const tools = { 'json-formatter': initJson, 'url-parser': initUrl, 'slug-generator': initSlug, 'timestamp-converter': initTime, 'text-analyzer': initText, 'regex-tester': initRegex, ...PLUS_TOOLS };
   document.querySelectorAll('[data-tool]').forEach((root) => {
-    const init = root.dataset.mode === 'server' ? initServer : tools[root.dataset.tool];
+    const init = tools[root.dataset.tool] || (root.dataset.mode === 'server' ? initServer : null);
     if (init) init(root);
   });
 }

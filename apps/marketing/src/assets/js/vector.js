@@ -15,6 +15,21 @@ import { postLead } from './leads.js';
 
 const grade = (s) => (s >= 80 ? 'good' : s >= 50 ? 'warn' : 'bad');
 const SEV = ['critical', 'high', 'medium', 'low'];
+/* Findings that a Forge tool fixes: link straight to it with the examined site filled in. */
+const FIX_TOOLS = {
+  ai_no_structured_data: ['/forge/schema-generator/', 'Generate the structured data'],
+  ai_invalid_structured_data: ['/forge/schema-generator/', 'Check and rebuild the structured data'],
+  ai_no_llms_txt: ['/forge/llms-txt-generator/', 'Generate an llms.txt'],
+  ai_answer_crawlers_blocked: ['/forge/ai-crawler-policy/', 'Build an AI crawler policy'],
+  no_robots_txt: ['/forge/ai-crawler-policy/', 'Build a robots.txt policy'],
+  robots_blocks_all: ['/forge/robots-validator/', 'Inspect the robots.txt']
+};
+function fixLink(issue, url) {
+  const fix = FIX_TOOLS[issue.code];
+  if (!fix) return '';
+  return `<p class="vector-issue__fix"><a class="text-link" href="${fix[0]}?url=${encodeURIComponent(url || '')}">${fix[1]} ↗</a></p>`;
+}
+
 const CATEGORY_LABEL = { ai: 'AI visibility', technical: 'Technical', seo: 'SEO', performance: 'Performance', accessibility: 'Accessibility', security: 'Security', links: 'Links', content: 'Content', uiux: 'Structure', contentWeight: 'Content' };
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -150,7 +165,7 @@ export function initVector() {
         <article class="vector-issue" data-sev="${esc(cap(i.severity))}">
           <p class="vector-issue__sev"><span class="sev" data-sev="${esc(cap(i.severity))}">${esc(cap(i.severity))}</span> <span class="fine-print">${esc(CATEGORY_LABEL[i.category] || i.category)}</span></p>
           <h3>${esc(i.title)}</h3>
-          <dl><dt>Evidence</dt><dd>${esc(i.evidence)}</dd><dt>Why it matters</dt><dd>${esc(i.explanation)}</dd><dt>Prescription</dt><dd>${esc(i.recommendation)}</dd><dt>Expected impact</dt><dd>${esc(i.impact)}</dd></dl>
+          <dl><dt>Evidence</dt><dd>${esc(i.evidence)}</dd><dt>Why it matters</dt><dd>${esc(i.explanation)}</dd><dt>Prescription</dt><dd>${esc(i.recommendation)}</dd><dt>Expected impact</dt><dd>${esc(i.impact)}</dd></dl>${fixLink(i, audit.url)}
         </article>`).join('') : '<p class="body body--sm">No issue crossed the reporting threshold in any category.</p>'}</div>
       <div class="vector-rx-wrap"><p class="overline">Prescription</p>${prescription.length ? `<ol class="vector-rx">${prescription.map((p) => `<li><span class="project-type">${String(p.position).padStart(2, '0')} — ${esc(cap(p.severity))}</span><strong>${esc(p.action)}</strong><span>${esc((issues.find((i) => i.code === p.issue_code) || {}).title || p.issue_code)}</span></li>`).join('')}</ol>` : '<p class="body body--sm">Nothing to prescribe from this examination.</p>'}</div>
       ${renderHistory(history_, audit.id)}

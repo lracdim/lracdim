@@ -48,7 +48,7 @@ export default [
     href: '/forge/',
     identity: 'Construction',
     descriptor: 'Web and developer tools',
-    summary: 'Eleven practical tools. Six run in your browser and never send what you paste; five fetch other sites through the engine’s validated fetcher.',
+    summary: 'Fifteen practical tools for AI visibility, SEO, email and everyday web work. Browser tools never send what you paste; the checkers reach other sites through the engine’s validated, rate-limited fetcher.',
     verbs: ['Build', 'Transform', 'Validate', 'Generate'],
     status: 'live',
     proves: 'Practical development'

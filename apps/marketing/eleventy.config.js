@@ -69,6 +69,11 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addFilter('urlencode', (str) => encodeURIComponent(String(str)));
 
+  // Only the industry fields the Bottleneck Finder shows, to keep its page payload small.
+  eleventyConfig.addFilter('dg_industries', (list) =>
+    (list || []).map((i) => ({ slug: i.slug, name: i.name, tagline: i.tagline, leaks: i.leaks, firstBuild: i.firstBuild, metrics: i.metrics }))
+  );
+
   // Serialize a data object into a <script type="application/json"> payload.
   // Used to hand a demo's clinic.json to its client-side app without a fetch.
   eleventyConfig.addFilter('faq_entities', (faq) => (faq || []).map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })));
