@@ -96,6 +96,23 @@ function usable(text, f) {
   return text.length >= 120 && text.includes(String(f.health));
 }
 
+const GENERATION = { max_tokens: 320, temperature: 0.3 };
+
+// Reasoning models (Gemma 4 among them) otherwise spend the whole token budget
+// in `reasoning_content` and return an empty answer with finish_reason
+// "length". Models whose chat template has no such switch (Mistral) reject the
+// key with a 400 that names chat_template, so the call is repeated without it.
+const NO_THINKING = { chat_template_kwargs: { enable_thinking: false } };
+
+async function runModel(env, model, messages) {
+  try {
+    return await env.AI.run(model, { messages, ...GENERATION, ...NO_THINKING });
+  } catch (err) {
+    if (!/chat_template/i.test(String(err && err.message))) throw err;
+    return env.AI.run(model, { messages, ...GENERATION });
+  }
+}
+
 function aiText(out) {
   if (!out) return '';
   if (typeof out === 'string') return out;
@@ -134,21 +151,18 @@ export async function writeSummary(env, facts) {
   let timer;
   try {
     const out = await Promise.race([
-      env.AI.run(model, {
-        messages: [
-          { role: 'system', content: SYSTEM },
-          { role: 'user', content: `<data>\n${JSON.stringify(data, null, 1)}\n</data>\nWrite the summary paragraph.` }
-        ],
-        max_tokens: 320,
-        temperature: 0.3
-      }),
+      runModel(env, model, [
+        { role: 'system', content: SYSTEM },
+        { role: 'user', content: `<data>\n${JSON.stringify(data, null, 1)}\n</data>\nWrite the summary paragraph.` }
+      ]),
       new Promise((_, reject) => {
         timer = setTimeout(() => reject(new Error('timed out')), AI_TIMEOUT_MS);
       })
     ]);
     const text = sanitizeSummary(aiText(out));
     if (!usable(text, facts)) {
-      console.warn(`report summary: ${model} answer unusable (${text.length} chars); using rules`);
+      const finish = out && out.choices && out.choices[0] && out.choices[0].finish_reason;
+      console.warn(`report summary: ${model} answer unusable (${text.length} chars${finish ? `, finish_reason ${finish}` : ''}); using rules`);
       return fallback;
     }
     return { text, source: `ai:${model}` };

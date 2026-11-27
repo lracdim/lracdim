@@ -261,7 +261,37 @@ test('Workers AI writes the summary from facts only, and its answer is cleaned',
   const sent = JSON.stringify(prompts[0].input);
   assert.ok(!sent.includes('<script>') && !sent.includes('Header absent'), 'evidence never reaches the model');
   assert.ok(sent.includes('No HSTS header'));
+  assert.deepEqual(prompts[0].input.chat_template_kwargs, { enable_thinking: false }, 'thinking is switched off');
   assert.ok(reportMail()[0].body.html.includes('Summary written with AI'));
+});
+
+test('a model that spends its budget thinking falls back to rules; one that rejects the switch is asked again without it', async () => {
+  seedAudit();
+  seedAudit('a2');
+  live();
+  // What Gemma 4 returns when thinking is left on: reasoning only, no answer.
+  h.env.AI = {
+    run: async () => ({
+      choices: [{ message: { role: 'assistant', content: '', reasoning_content: 'Owner of the website. Score 72...' }, finish_reason: 'length' }]
+    })
+  };
+  const first = await (await ask()).json();
+  assert.equal(request(first.id).summary_source, 'rules');
+
+  const calls = [];
+  h.env.AI = {
+    run: async (model, input) => {
+      calls.push(input);
+      if (input.chat_template_kwargs) throw new Error('8007: {"error":{"message":"chat_template is not supported for Mistral tokenizers."}}');
+      return { choices: [{ message: { content: 'example.com scored 72 out of 100, so it works but has problems. Security headers are missing and the description is absent. Fix HSTS first.' }, finish_reason: 'stop' }] };
+    }
+  };
+  const second = await (await ask('a2')).json();
+  assert.equal(calls.length, 2);
+  assert.ok(calls[0].chat_template_kwargs && !calls[1].chat_template_kwargs);
+  assert.equal(calls[1].max_tokens, 320);
+  assert.match(request(second.id).summary_source, /^ai:/);
+  h.env.REPORT_AI = 'off';
 });
 
 test('an AI failure or an unusable answer falls back to the rule-based summary', async () => {
