@@ -14,14 +14,15 @@ eleventyExcludeFromCollections: true
 {% endfor %}
 ## Free tools
 
+- [Bottleneck Finder]({{ site.url }}/diagnose/): ten questions about how a business runs; returns where it loses leads, time and cash, ranked by cost, with the system that fixes each one.
 - [Vector website audit]({{ site.url }}/vector/): health score, eight categories including AI visibility and Core Web Vitals, every issue with evidence and a fix.
 - [Signal website monitor]({{ site.url }}/signal/): uptime, response time, SSL, SEO scores, and detected analytics tools.
 {% for t in forgeTools %}- [{{ t.name | safe }}]({{ site.url }}/forge/{{ t.slug }}/): {{ t.summary | safe }}
 {% endfor %}
-## Work and research
+## Work and Labs
 
 - [All projects]({{ site.url }}/work/)
-- [Research articles]({{ site.url }}/research/)
+- [Labs articles]({{ site.url }}/labs/)
 - [About]({{ site.url }}/about/)
 - [Services]({{ site.url }}/services/)
 - [Start a project]({{ site.url }}/?start=1) — opens the project-intake form (or email {{ site.email }})

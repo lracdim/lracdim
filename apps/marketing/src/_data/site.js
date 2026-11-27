@@ -12,7 +12,7 @@ export default {
      must name this one. */
   url: 'https://www.lracdimension.online',
   description:
-    'LRACDIMENSION is the engineering environment of John Carl Dimatulac: web systems, automation, and the tools behind them. Work, Vector, Signal, Forge, and Research are working dimensions, not pages.',
+    'LRACDIMENSION is the engineering environment of John Carl Dimatulac: web systems, automation, and the tools behind them. Work, Vector, Signal, Forge, and Labs are working dimensions, not pages.',
   email: 'lracdim@gmail.com',
 
   /* Public résumé (PDF). Leave empty until a version without personal data
@@ -57,7 +57,7 @@ export default {
     { label: 'Vector', href: '/vector/' },
     { label: 'Signal', href: '/signal/' },
     { label: 'Forge', href: '/forge/' },
-    { label: 'Research', href: '/research/' }
+    { label: 'Labs', href: '/labs/' }
   ],
 
   /* Opens the project-intake modal (assets/js/start-modal.js). The href is the fallback for a new tab

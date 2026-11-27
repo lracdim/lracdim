@@ -44,4 +44,4 @@ The first phase cost a day of restructuring and no new infrastructure, and it ch
 
 ## Since then
 
-The second phase, completed the same week, added the FastAPI engine: seven analyzers behind Vector with stored reports and history, scheduled monitoring behind Signal with real events, five server-side Forge tools, and an intake API. The two research entries that followed, [on the scoring engine](/research/designing-a-website-health-scoring-engine/) and [on the crawler's safety policy](/research/building-a-safe-website-crawler/), document the parts that were hardest to get right.
+The second phase, completed the same week, added the FastAPI engine: seven analyzers behind Vector with stored reports and history, scheduled monitoring behind Signal with real events, five server-side Forge tools, and an intake API. The two research entries that followed, [on the scoring engine](/labs/designing-a-website-health-scoring-engine/) and [on the crawler's safety policy](/labs/building-a-safe-website-crawler/), document the parts that were hardest to get right.

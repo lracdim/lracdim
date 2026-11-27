@@ -55,9 +55,9 @@ export default [
   },
   {
     index: '05',
-    slug: 'research',
-    name: 'Research',
-    href: '/research/',
+    slug: 'labs',
+    name: 'Labs',
+    href: '/labs/',
     identity: 'Investigation',
     descriptor: 'Engineering notes and studies',
     summary: 'Sourced articles, build logs, and technical investigations. Written to show the reasoning, not only the conclusion.',

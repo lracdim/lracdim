@@ -1,5 +1,5 @@
 {
   "layout": "layouts/post.njk",
   "tags": ["research"],
-  "permalink": "/research/{{ page.fileSlug }}/"
+  "permalink": "/labs/{{ page.fileSlug }}/"
 }

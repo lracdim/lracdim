@@ -9,12 +9,12 @@ content/
   pages/      standalone pages, published at /<slug>/
   projects/   case studies, published at /work/<slug>/
   services/   service descriptions, rendered on /services/
-  blog/       research articles, published at /research/<slug>/
+  blog/       Labs articles, published at /labs/<slug>/
 public/images/  images referenced from Markdown, served at /images/<name>
 ```
 
 The file name is the slug: `content/blog/my-post.md` becomes
-`/research/my-post/`.
+`/labs/my-post/`.
 
 ## How the site reads it
 

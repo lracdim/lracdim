@@ -126,7 +126,7 @@
   </script>
   {%- endif %}
   {%- set crumbSection = false %}
-  {%- if ogType == 'article' %}{% set crumbSection = { name: 'Research', href: '/research/' } %}
+  {%- if ogType == 'article' %}{% set crumbSection = { name: 'Labs', href: '/labs/' } %}
   {%- elif project and project.slug %}{% set crumbSection = { name: 'Work', href: '/work/' } %}
   {%- elif crumbSectionName %}{% set crumbSection = { name: crumbSectionName, href: crumbSectionHref } %}
   {%- elif tool %}{% set crumbSection = { name: 'Forge', href: '/forge/' } %}{% endif %}

@@ -7,7 +7,7 @@
  *
  * Checks: console errors, failed requests, horizontal overflow at five
  * widths, navigation, dimension pages, Vector flow, Forge tools, Signal
- * dashboard, intake form submission, project and research pages.
+ * dashboard, intake form submission, project and Labs pages.
  */
 import puppeteer from 'puppeteer-core';
 
@@ -43,7 +43,7 @@ if (apiBase && !skipApi) {
 console.log(`site ${SITE} · api ${skipApi ? 'skipped' : (apiBase || '(none)')} ${apiUp ? 'up' : 'down'}`);
 
 // 1. Overflow + load at five widths
-const pages = ['/', '/work/', '/work/spade-website/', '/vector/', '/signal/', '/forge/', '/forge/json-formatter/', '/forge/robots-validator/', '/research/', '/research/designing-a-website-health-scoring-engine/', '/about/'];
+const pages = ['/', '/work/', '/work/spade-website/', '/vector/', '/signal/', '/forge/', '/forge/json-formatter/', '/forge/robots-validator/', '/labs/', '/labs/designing-a-website-health-scoring-engine/', '/about/'];
 for (const w of [320, 375, 768, 1024, 1440]) {
   await page.setViewport({ width: w, height: 900 });
   for (const p of pages) {
@@ -57,9 +57,9 @@ await page.setViewport({ width: 1440, height: 900 });
 // 2. Navigation and dimensions
 await page.goto(SITE + '/', { waitUntil: 'networkidle2' });
 const nav = await page.$$eval('.header__nav a', (as) => as.map((a) => a.textContent.trim()));
-check('primary nav is the five dimensions plus About', JSON.stringify(nav) === JSON.stringify(['Work', 'Vector', 'Signal', 'Forge', 'Research', 'About']), nav.join(','));
+check('primary nav is the five dimensions plus About', JSON.stringify(nav) === JSON.stringify(['Work', 'Vector', 'Signal', 'Forge', 'Labs', 'About']), nav.join(','));
 check('dimension selector has five cards', (await page.$$('.dim-card')).length === 5);
-for (const p of ['/work/', '/vector/', '/signal/', '/forge/', '/research/']) {
+for (const p of ['/work/', '/vector/', '/signal/', '/forge/', '/labs/']) {
   await page.goto(SITE + p, { waitUntil: 'networkidle2' });
   check(`dimension head on ${p}`, !!(await page.$('.dim-head h1')));
 }
@@ -204,13 +204,13 @@ if (apiUp) {
 }
 await page.evaluate(() => sessionStorage.removeItem('lracdim:start-draft'));
 
-// 7. Project and research pages
+// 7. Project and Labs pages
 await page.goto(SITE + '/work/lracdimension/', { waitUntil: 'networkidle2' });
 const sections = await page.$$eval('.case-body section h2', (hs) => hs.map((h) => h.textContent));
 check('case study has the full structure', ['Overview', 'The problem', 'What I built', 'Architecture', 'Result'].every((s) => sections.includes(s)), sections.join('|'));
 check('case study links across dimensions', (await page.$$('.related-list li')).length >= 2);
-await page.goto(SITE + '/research/building-a-safe-website-crawler/', { waitUntil: 'networkidle2' });
-check('research entry renders sections', (await page.$$eval('.prose h2', (hs) => hs.map((h) => h.textContent))).includes('Trade-offs'));
+await page.goto(SITE + '/labs/building-a-safe-website-crawler/', { waitUntil: 'networkidle2' });
+check('Labs entry renders sections', (await page.$$eval('.prose h2', (hs) => hs.map((h) => h.textContent))).includes('Trade-offs'));
 
 // 8. Mobile drawer + keyboard
 await page.setViewport({ width: 375, height: 812 });

@@ -5,7 +5,7 @@ reel: true
 description: "LRACDIMENSION is the engineering environment of John Carl Dimatulac: web systems, automation, and the tools behind them, organised into five working dimensions."
 ---
 {%- from "partials/rd-icons.njk" import icon -%}
-{%- set dimIcons = { work: 'boxes', vector: 'gauge', signal: 'activity', forge: 'wrench', research: 'file-text' } -%}
+{%- set dimIcons = { work: 'boxes', vector: 'gauge', signal: 'activity', forge: 'wrench', labs: 'file-text' } -%}
 {%- set stack = ['React', 'Next.js', 'Vue', 'TypeScript', 'Tailwind CSS', 'GSAP', 'Node.js', 'Express', 'PHP', 'PostgreSQL', 'MySQL', 'MongoDB', 'Firebase', 'WordPress', 'REST APIs', 'n8n', 'OpenRouter', 'Vercel', 'Railway', 'Cloudflare', 'GitHub Actions'] -%}
 <section class="rd-hero">
   <div class="rd-wrap rd-hero__in">
@@ -182,7 +182,7 @@ description: "LRACDIMENSION is the engineering environment of John Carl Dimatula
   </div>
 </section>
 
-<section class="rd-sec" id="research">
+<section class="rd-sec" id="labs">
   <div class="rd-wrap">
     <header class="rd-sec__head">
       <h2 class="rd-t-h2" data-enter>Notes from <span class="signal">the field</span>.</h2>
@@ -200,7 +200,7 @@ description: "LRACDIMENSION is the engineering environment of John Carl Dimatula
       </a>
       {%- endfor %}
     </div>
-    <div class="rd-btn-row rd-more"><a class="rd-btn rd-btn--dark" href="/research/">All research {{ icon('arrow-up-right') }}</a></div>
+    <div class="rd-btn-row rd-more"><a class="rd-btn rd-btn--dark" href="/labs/">All Labs posts {{ icon('arrow-up-right') }}</a></div>
   </div>
 </section>
 {% include "partials/studio-contact.njk" %}

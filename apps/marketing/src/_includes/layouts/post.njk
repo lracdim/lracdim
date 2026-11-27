@@ -4,7 +4,7 @@ ogType: article
 ---
 {%- from "partials/rd-pagehead.njk" import pagehead -%}
 {{ pagehead({
-  back: { label: 'All research', href: '/research/' },
+  back: { label: 'All Labs posts', href: '/labs/' },
   badge: topic ~ (' · ' ~ category if category else '') ~ ' · ' ~ (page.date | date_long) ~ ' · ' ~ (content | reading_time) ~ ' min read',
   title: title,
   sub: description,

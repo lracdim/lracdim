@@ -21,13 +21,23 @@
       "permanent": false
     },
     {
+      "source": "/research{/}?",
+      "destination": "/labs/",
+      "permanent": true
+    },
+    {
+      "source": "/research/:path*",
+      "destination": "/labs/:path*",
+      "permanent": true
+    },
+    {
       "source": "/logs{/}?",
-      "destination": "/research/",
+      "destination": "/labs/",
       "permanent": true
     },
     {
       "source": "/logs.html{/}?",
-      "destination": "/research/",
+      "destination": "/labs/",
       "permanent": true
     },
     {

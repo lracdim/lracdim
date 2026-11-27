@@ -7,7 +7,7 @@
  * files are mirrored into src/ before every build. The mirrors are generated
  * and git-ignored; /content is the source of truth.
  *
- * Mirrored: content/blog → src/research (URLs stay /research/<slug>/)
+ * Mirrored: content/blog → src/research (URLs are /labs/<slug>/)
  *           content/pages → src/pages   (URLs are /<slug>/)
  */
 import fs from 'node:fs';

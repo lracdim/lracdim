@@ -14,7 +14,7 @@ In the twelve months to September 2026, the number of Astro websites with enough
 
 Two independent data sets point the same way.
 
-- **WordPress is shrinking.** W3Techs puts WordPress at 39.5% of all websites on 1 November 2026, down from 43.2% in December 2025. It is still 58.2% of sites with a known content management system, far ahead of anything else. I looked at the first half of that decline in [Is this the end of the WordPress era?](/research/is-this-the-end-of-the-wordpress-era/)
+- **WordPress is shrinking.** W3Techs puts WordPress at 39.5% of all websites on 1 November 2026, down from 43.2% in December 2025. It is still 58.2% of sites with a known content management system, far ahead of anything else. I looked at the first half of that decline in [Is this the end of the WordPress era?](/labs/is-this-the-end-of-the-wordpress-era/)
 - **Astro is growing fast from a small base.** HTTP Archive's Technology Report, which uses Chrome's real-user data, counted 47,277 Astro sites on mobile in September 2026, up from 30,080 in May.
 - **Astro sites are faster in the field.** In the same September data, 71.1% of Astro sites passed all three Core Web Vitals on mobile, against 48.3% of WordPress sites. A year earlier the figures were 61.6% and 45.0%, so the gap is widening, not closing.
 
@@ -25,7 +25,7 @@ One caution on that last point: Astro sites tend to be newer and built by develo
 The reasons that come up again and again in migration write-ups are practical, not fashionable.
 
 - **Speed sells, and Astro ships less.** Astro renders pages to HTML at build time and sends no JavaScript unless a component asks for it, which Astro calls islands. A typical WordPress page loads its theme, its page builder and every plugin's scripts.
-- **The security surface disappears.** Patchstack counted 11,334 new vulnerabilities in the WordPress ecosystem in 2025, up 42% on 2024. 91% were in plugins and only 6 in WordPress core, and 46% had no patch when they were disclosed. A static Astro site has no plugins, no login page and no database on the public server. When [PHP2Shell](/research/php2shell-what-site-owners-should-do/) hit on 21 October 2026 and national cyber agencies advised taking unpatched PHP sites offline, static sites had nothing to patch.
+- **The security surface disappears.** Patchstack counted 11,334 new vulnerabilities in the WordPress ecosystem in 2025, up 42% on 2024. 91% were in plugins and only 6 in WordPress core, and 46% had no patch when they were disclosed. A static Astro site has no plugins, no login page and no database on the public server. When [PHP2Shell](/labs/php2shell-what-site-owners-should-do/) hit on 21 October 2026 and national cyber agencies advised taking unpatched PHP sites offline, static sites had nothing to patch.
 - **Maintenance stops being a monthly chore.** No core, plugin or PHP updates on the live site. Dependencies still need updating, but in the build, where a mistake fails a test instead of taking the site down.
 - **Content becomes code, with review.** Pages live in version control. Every change gets a preview link, and a broken page can be blocked before it deploys.
 - **The platform now has a heavyweight behind it.** In January 2026 the team that builds Astro joined Cloudflare. Astro stays MIT-licensed and deploys to any host, and Cloudflare names Porsche, IKEA and OpenAI among the companies using it. Astro 6, released in March, made live content collections and a Content Security Policy API stable.
