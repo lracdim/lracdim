@@ -1,7 +1,8 @@
 {
   // LRACDIMENSION API on Cloudflare Workers. Runs on the free plan.
   // Secrets are set with `npx wrangler secret put <NAME>`, never written here:
-  //   RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_WEBHOOK, ADMIN_KEY, RATE_LIMIT_SALT
+  //   RESEND_API_KEY, NOTIFY_EMAIL, NOTIFY_WEBHOOK, ADMIN_KEY, RATE_LIMIT_SALT,
+  //   TURNSTILE_SECRET, RESEND_WEBHOOK_SECRET, REPORT_SIGNING_KEY (optional)
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lracdim-api",
   "main": "src/index.js",
@@ -15,7 +16,20 @@
       "migrations_dir": "migrations"
     }
   ],
-  // Signal's scheduled checks (the Python API ran them on a background thread).
+  // Emails the full Vector report: summary, send with retries, owner alert
+  // (src/workflow.js, src/report-delivery.js). Renaming `name` creates a new
+  // Workflow instead of updating this one.
+  "workflows": [
+    {
+      "name": "report-delivery",
+      "binding": "REPORT_WORKFLOW",
+      "class_name": "ReportDeliveryWorkflow"
+    }
+  ],
+  // Workers AI writes the plain-English summary in the report email.
+  "ai": { "binding": "AI" },
+  // Signal's scheduled checks (the Python API ran them on a background thread),
+  // and the report-delivery backstop and retention sweep.
   "triggers": { "crons": ["*/5 * * * *"] },
   "vars": {
     // Origins allowed to call the API. lracdimension.vercel.app and the bare
@@ -33,6 +47,29 @@
     "RATE_LIMIT_TOOLS": "60/hour",
     "RATE_LIMIT_SIGNAL": "10/hour",
     // A check slower than this marks the site degraded.
-    "SIGNAL_RESPONSE_WARN_MS": "1500"
+    "SIGNAL_RESPONSE_WARN_MS": "1500",
+
+    // ---- Emailed full reports -------------------------------------------
+    // Links in the email point at the site; the one-click unsubscribe header
+    // points at this Worker.
+    "SITE_URL": "https://www.lracdimension.online",
+    "API_URL": "https://lracdim-api.lracdim.workers.dev",
+    // Report requests per visitor IP.
+    "RATE_LIMIT_REPORTS": "5/hour",
+    // Reports per address per 24 hours (different examinations).
+    "REPORT_PER_EMAIL_DAILY": "3",
+    // Reports per UTC day, all visitors. Each report is two emails (the report
+    // and the owner alert); Resend's free plan allows 100 a day in total.
+    "REPORT_DAILY_CAP": "40",
+    // How long the link to the online full report works.
+    "REPORT_LINK_DAYS": "30",
+    // After this, a request's name, address, company and note are erased.
+    "REPORT_RETENTION_DAYS": "365",
+    // Summary model; "off" uses the rule-based summary only.
+    "REPORT_AI": "on",
+    "REPORT_AI_MODEL": "@cf/google/gemma-4-26b-a4b-it",
+    // Set to "true" once TURNSTILE_SECRET is set: requests are then refused
+    // whenever the check cannot run, instead of skipping it.
+    "TURNSTILE_REQUIRED": "false"
   }
 }

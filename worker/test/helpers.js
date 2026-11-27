@@ -87,7 +87,7 @@ export function setup() {
     let body = init.body;
     if (body instanceof ArrayBuffer) body = new TextDecoder().decode(body);
     h.calls.push({ url, method: init.method || 'GET', headers, redirect: init.redirect, body: typeof body === 'string' && body.startsWith('{') ? JSON.parse(body) : body });
-    if (url.startsWith('https://cloudflare-dns.com/dns-query')) return dohAnswer(url);
+    if (url.startsWith('https://cloudflare-dns.com/dns-query')) return (h.doh || dohAnswer)(url);
     return h.respond(url, init);
   };
   h.restore = () => {
@@ -98,7 +98,7 @@ export function setup() {
     const init = { method, headers: { Origin: SITE, 'CF-Connecting-IP': ip, ...headers } };
     if (body !== undefined) {
       init.body = typeof body === 'string' ? body : JSON.stringify(body);
-      init.headers['Content-Type'] = 'application/json';
+      if (!Object.keys(init.headers).some((k) => k.toLowerCase() === 'content-type')) init.headers['Content-Type'] = 'application/json';
     }
     const res = await worker.fetch(new Request(`https://lracdim-api.example.workers.dev${path}`, init), h.env, h.ctx());
     await Promise.all(h.pending.splice(0));

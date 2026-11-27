@@ -1,0 +1,20 @@
+---
+layout: layouts/base.njk
+title: Vector — Full report
+permalink: /vector/report/
+noindex: true
+description: "The full Vector report, opened from the private link in the report email."
+---
+{#- The token travels in the fragment (#t=...), which browsers never send to a server or in a Referer header. -#}
+{% set dim = dimensions[1] %}
+{% set dimLede = "The full examination: every issue with its evidence, the prescription in priority order, and the raw measurements." %}
+{% include "partials/dimension-head.njk" %}
+<section class="shell portfolio-section vector" data-vector-fullreport>
+  <p class="fine-print vector-greeting" data-vector-greeting hidden></p>
+  <div class="vector-state" data-vector-report-state role="status">
+    <p class="overline">Full report</p>
+    <h2 class="vector-state__title">Opening your report…</h2>
+  </div>
+  <div class="vector-report" data-vector-report hidden></div>
+</section>
+{% include "partials/studio-contact.njk" %}

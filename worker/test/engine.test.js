@@ -162,7 +162,17 @@ test('a Vector examination runs in the background and produces the full report',
   assert.equal(typeof audit.health_score, 'number');
   assert.equal(audit.summary.status, 200);
 
-  const report = await (await h.call(`/api/vector/audits/${queued.id}/results`)).json();
+  // Visitors get the brief; the full report needs the admin key (or an emailed link, see report.test.js).
+  const brief = await (await h.call(`/api/vector/audits/${queued.id}/results`)).json();
+  assert.equal(brief.gated, true);
+  assert.ok(brief.results.every((r) => typeof r.score === 'number' && Object.keys(r.metrics).length === 0));
+  assert.ok(brief.issues.length <= 3 && brief.issues.every((i) => i.title && !i.evidence && !i.recommendation));
+  assert.deepEqual(brief.prescription, []);
+  const report = await (await h.call(`/api/vector/audits/${queued.id}/results`, { headers: { 'X-Admin-Key': 'admin-secret' } })).json();
+  assert.equal(report.gated, false);
+  assert.equal(brief.locked.total_issues, report.issues.length);
+  assert.equal(brief.locked.fixes, report.prescription.length);
+  assert.equal((await h.call(`/api/vector/audits/${queued.id}/results`, { headers: { 'X-Admin-Key': 'wrong' } })).status, 401);
   assert.deepEqual(report.results.map((r) => r.category), ['technical', 'seo', 'performance', 'accessibility', 'security', 'links', 'content', 'ai']);
   const metrics = Object.fromEntries(report.results.map((r) => [r.category, r.metrics]));
   assert.equal(metrics.seo.robots_txt, 'present');
@@ -174,7 +184,14 @@ test('a Vector examination runs in the background and produces the full report',
   assert.equal(metrics.ai.llms_txt, 'missing');
   assert.equal(metrics.performance.vitals, null);
   assert.ok(report.issues.some((i) => i.code === 'broken_links' && i.severity === 'high'));
-  assert.deepEqual(report.prescription[0], { position: 1, severity: report.issues[0].severity, action: report.issues[0].recommendation, issue_code: report.issues[0].code });
+  assert.deepEqual(report.prescription[0], {
+    position: 1,
+    severity: report.issues[0].severity,
+    action: report.issues[0].recommendation,
+    issue_code: report.issues[0].code,
+    title: report.issues[0].title,
+    category: report.issues[0].category
+  });
   assert.match(report.methodology, /^Scoring methodology/);
   // robots.txt is read once and shared by the SEO and AI analyzers.
   assert.equal(h.outbound().filter((c) => c.url === 'https://example.com/robots.txt').length, 1);

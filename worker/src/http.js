@@ -35,7 +35,7 @@ export function preflight(request, env) {
     headers: {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Key, Authorization',
       'Access-Control-Max-Age': '600',
       Vary: 'Origin'
     }

@@ -9,11 +9,12 @@ export const API_BASE = (CFG.apiBase || '').replace(/\/$/, '');
 export const hasApi = () => !!API_BASE;
 
 export class ApiError extends Error {
-  constructor(code, message, status, fields) {
+  constructor(code, message, status, fields, detail) {
     super(message);
     this.code = code;
     this.status = status;
     this.fields = fields || [];
+    this.detail = detail || {};
   }
 }
 
@@ -43,7 +44,7 @@ export async function api(path, { method = 'GET', body, timeout = 20000, headers
   }
   if (!res.ok) {
     const e = (data && data.error) || {};
-    throw new ApiError(e.code || 'http_' + res.status, e.message || `Request failed (${res.status}).`, res.status, e.fields);
+    throw new ApiError(e.code || 'http_' + res.status, e.message || `Request failed (${res.status}).`, res.status, e.fields, e);
   }
   return data;
 }

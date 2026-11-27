@@ -1,0 +1,17 @@
+---
+layout: layouts/base.njk
+title: Vector — Stop emails
+permalink: /vector/unsubscribe/
+noindex: true
+description: "Stop all email from LRACDIMENSION to an address."
+---
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- call pagehead({ badge: 'Vector · Email', titleHtml: 'Stop <span class="signal">emails.</span>', sub: 'One click and this site never emails the address again.' }) -%}{%- endcall %}
+<section class="shell portfolio-section" data-vector-unsubscribe>
+  <div class="vector-state">
+    <p class="overline">Unsubscribe</p>
+    <h2 class="vector-state__title" data-unsubscribe-title>Stop all email to this address?</h2>
+    <p class="body body--sm" data-unsubscribe-msg>Report emails are only sent when someone asks for one, but if this address was used without your permission, or you simply want none, confirm below. Future report requests for it will be refused.</p>
+    <p style="margin-top:1.25rem"><button type="button" class="btn" data-unsubscribe-confirm>Stop emails to this address</button></p>
+  </div>
+</section>

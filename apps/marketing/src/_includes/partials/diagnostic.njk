@@ -1,4 +1,4 @@
-{# System Diagnostic Protocol v1.0 — ported from the Elimate AnalysisModal. #}
+{# "Diagnose my site": hands the address to Vector (assets/js/modal.js). #}
 <div class="modal" id="diagnostic" role="dialog" aria-modal="true"
      aria-labelledby="diagnostic-protocol" hidden>
 
@@ -19,12 +19,10 @@
     </div>
 
     <div class="modal__body">
-
-      {# ---- Step 1: input ------------------------------------------------ #}
       <div class="modal__step" data-step="input">
         <h2 class="h3" style="margin-bottom:.5rem">Examine a website</h2>
         <p class="body body--sm" style="margin-bottom:1.75rem">
-          Vector reads the document structure and returns scores, issues, and a prescription. For the full page, open <a class="link" href="/vector/">the Vector dimension</a>.
+          Vector reads the live site in about twenty seconds: eight categories, every issue with its evidence. You see the summary straight away, and the full report with the fixes in priority order is emailed to you.
         </p>
 
         <form id="diagnostic-form" novalidate>
@@ -35,36 +33,23 @@
           </div>
 
           <div class="field">
-            <label class="field__label" for="diag-pain">Primary operational pain point</label>
-            <input class="field__input" id="diag-pain" name="pain" type="text"
-                   placeholder="Describe your biggest bottleneck...">
+            <label class="field__label" for="diag-pain">Biggest problem with the site <span class="fine-print">(optional)</span></label>
+            <input class="field__input" id="diag-pain" name="pain" type="text" maxlength="1000"
+                   placeholder="Slow pages, no leads, hard to update…">
           </div>
 
           <div class="field">
-            <label class="field__label" for="diag-email">Where should we send the report?</label>
+            <label class="field__label" for="diag-email">Where should the full report go? <span class="fine-print">(optional, you can add it after)</span></label>
             <input class="field__input" id="diag-email" name="email" type="email"
-                   autocomplete="email" placeholder="founder@company.com">
+                   autocomplete="email" placeholder="you@company.com">
           </div>
 
+          <p class="intake__error" data-diag-error role="alert"></p>
           <button type="submit" class="btn btn--block" style="margin-top:1.25rem">
-            Run diagnostic <span class="btn__glyph" aria-hidden="true">&#8599;</span>
+            Examine my site <span class="btn__glyph" aria-hidden="true">&#8599;</span>
           </button>
         </form>
       </div>
-
-      {# ---- Step 2: scanning --------------------------------------------- #}
-      <div class="modal__step scan" data-step="scanning" hidden>
-        <div class="scan__ring" aria-hidden="true"></div>
-        <h2 class="h3">Analyzing architecture&hellip;</h2>
-        <p class="body body--sm" style="margin:.5rem auto 0">
-          Scanning endpoints. Mapping workflows.
-        </p>
-        <div class="scan__console" data-scan-console role="status" aria-live="polite"></div>
-      </div>
-
-      {# ---- Step 3: report ------------------------------------------------ #}
-      <div class="modal__step" data-step="report" data-report hidden></div>
-
     </div>
   </div>
 </div>

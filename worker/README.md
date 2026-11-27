@@ -9,7 +9,8 @@ the same request and response shapes, so the site only needed a different
 | Area | Endpoints | Source in the Python API |
 | --- | --- | --- |
 | Intake | `POST /api/contact`, `GET /api/contact/project-types`, `GET /api/contact/submissions` (admin) | `routes/contact.py` |
-| Vector | `POST /api/vector/audits`, `GET /api/vector/audits/{id}`, `…/{id}/results`, `GET /api/vector/recent`, `GET /api/vector/websites/{host}/audits` | `routes/vector.py`, `services/audit_service.py`, `analyzers/` |
+| Vector | `POST /api/vector/audits`, `GET /api/vector/audits/{id}`, `…/{id}/results` (the summary; the full report with `X-Admin-Key`), `GET /api/vector/recent`, `GET /api/vector/websites/{host}/audits` | `routes/vector.py`, `services/audit_service.py`, `analyzers/` |
+| Emailed reports | `POST /api/vector/audits/{id}/report-requests`, `GET /api/vector/report-requests/{id}`, `GET /api/vector/report`, `POST /api/vector/unsubscribe/{token}`, `POST /api/webhooks/resend`, admin: `GET /api/vector/report-requests`, `…/{id}/retry`, `…/{id}/revoke`, `…/erase`, `GET /api/vector/report-stats` | new in the Worker, see "Emailed full reports" below |
 | Signal | `POST /api/signal/scan`, `GET /api/signal/targets`, `…/{id}`, `…/{id}/events`, `…/{id}/snapshot`, `GET /api/signal/events`, `GET /api/signal/lookup`, `POST /api/signal/targets` and `…/{id}/check` (admin) | `routes/signal.py`, `services/monitor_service.py`, `services/signal_scan.py` |
 | Forge | `GET /api/forge/tools`, `POST /api/forge/{tool}/run` for the robots, sitemap, metadata, canonical and redirect tools | `routes/forge.py`, `services/forge_tools.py` |
 | Health | `GET /api/health` | `main.py` |
@@ -40,6 +41,100 @@ scores, findings, evidence and metrics.
 - **DNS.** The address a visitor types is resolved over DNS-over-HTTPS and
   rejected if it points at a private network; redirect hops get the literal
   checks only (a Worker's egress cannot reach private networks).
+
+## Emailed full reports
+
+Anyone sees an examination's **summary**: the health score, the eight
+category scores, severity counts and the top three issues without their
+evidence or fixes (`/results`). The **full report** (every issue with
+evidence, the fix list, raw measurements) is emailed: the visitor fills in the
+form under the summary, and the report-delivery Workflow sends it.
+
+```
+site form ──POST report-requests──▶ validate · Turnstile · limits · MX check · suppression list
+                                     └─ store request (D1) ─▶ ReportDeliveryWorkflow
+                                          prepare ─▶ summarize (Workers AI, rules fallback)
+                                          ─▶ send report (Resend, 5 retries, idempotent)
+                                          ─▶ notify owner (NOTIFY_EMAIL / NOTIFY_WEBHOOK)
+email link ─▶ /vector/report/#t=<token> ─GET /api/vector/report (Bearer)─▶ full report
+```
+
+- **Code**: `src/reports.js` (HTTP), `src/report-delivery.js` (the pipeline),
+  `src/workflow.js` (the Workflow class), `src/report-email.js` (HTML and text
+  email), `src/report-summary.js` (AI and rule-based summary), `src/turnstile.js`,
+  `src/secure.js`; tables in `migrations/0003_report_delivery.sql`; tests in
+  `test/report.test.js`.
+- **Durable delivery.** Each step is a Workflow step with its own retries.
+  Steps re-read D1 and return only ids, so no address or report is kept in
+  Workflow state. If the binding is missing or refuses an instance, the same
+  pipeline runs in `ctx.waitUntil`, and the 5-minute cron re-dispatches
+  anything still queued after 30 minutes (at most 4 times, then `failed`).
+  Resend idempotency keys (`report-<id>-<attempt>`) mean a retry never sends twice.
+- **Links.** The report link carries an HMAC of the request id
+  (`REPORT_SIGNING_KEY`, or `RATE_LIMIT_SALT` when that is unset). Only its
+  SHA-256 is stored, with an expiry (`REPORT_LINK_DAYS`, 30) and a revoke flag.
+  It travels in the URL fragment, so it never reaches a server log or a
+  Referer header. Audit ids are not secrets (the recent list shows them), so
+  they never unlock the full report.
+- **Abuse protection.** Turnstile checked server-side (host and action too),
+  5 requests per IP per hour, 3 reports per address per 24 h, a daily cap
+  (`REPORT_DAILY_CAP`, 40: each report is two emails and Resend's free plan
+  allows 100 a day), an MX lookup, a honeypot, names containing links refused,
+  and a suppression list fed by unsubscribes and Resend bounce and complaint
+  webhooks. The same report to the same address within a day is not resent.
+- **AI summary.** Workers AI (`REPORT_AI_MODEL`) gets scores, counts and the
+  analyzers' own issue titles and fixes, never text copied from the examined
+  page. Its answer is stripped of links, addresses and markup and must state
+  the real score, or the rule-based summary is used. About 32 of the 10,000
+  free daily Neurons per report.
+- **Email.** HTML (tables, inline styles, under Gmail's clipping size) plus
+  plain text, reply-to `REPORT_REPLY_TO` or `NOTIFY_EMAIL`, RFC 8058 one-click
+  `List-Unsubscribe` headers, and a footer link to `/vector/unsubscribe/`.
+- **Privacy.** IPs and addresses are compared as salted hashes. After
+  `REPORT_RETENTION_DAYS` (365) the hourly sweep erases a request's name,
+  address, company and note; expired links are deleted after 30 more days.
+  `POST /api/vector/report-requests/erase {"email"}` erases one person's
+  requests at once. The site's `/privacy/` page describes all of this.
+
+### Setting it up
+
+1. Apply the migration, then deploy (the Workflow is created by the deploy):
+
+   ```bash
+   npm run db:migrate:remote
+   npm run deploy
+   ```
+
+2. Turnstile: in the Cloudflare dashboard, Turnstile → Add widget, hostnames
+   `www.lracdimension.online` and `lracdimension.online`, mode Managed. Then
+   `npx wrangler secret put TURNSTILE_SECRET`, set `LRACDIM_TURNSTILE_SITE_KEY`
+   on Vercel and redeploy the site, and set `TURNSTILE_REQUIRED` to `"true"` in
+   `wrangler.jsonc` and deploy again.
+3. Resend webhook: in Resend → Webhooks, add
+   `https://lracdim-api.lracdim.workers.dev/api/webhooks/resend` for
+   `email.delivered`, `email.bounced`, `email.complained` and
+   `email.delivery_delayed`, then `npx wrangler secret put RESEND_WEBHOOK_SECRET`
+   with its signing secret (`whsec_…`).
+4. Optional: `npx wrangler secret put REPORT_SIGNING_KEY` (a long random
+   string) to sign links with a key of their own. Changing it invalidates every
+   link already sent.
+
+### Operating it
+
+```bash
+H="X-Admin-Key: $ADMIN_KEY"; API=https://lracdim-api.lracdim.workers.dev
+curl -H "$H" $API/api/vector/report-stats                        # volumes, cap, suppressions, what is on
+curl -H "$H" "$API/api/vector/report-requests?status=failed"     # what needs attention
+curl -H "$H" $API/api/vector/report-requests/<id>                # one request and its audit trail
+curl -H "$H" -X POST $API/api/vector/report-requests/<id>/retry  # deliver again (add -d '{"force":true}' if it was sent)
+curl -H "$H" -X POST $API/api/vector/report-requests/<id>/revoke # withdraw a link
+curl -H "$H" -H "Content-Type: application/json" -X POST -d '{"email":"a@b.com"}' $API/api/vector/report-requests/erase
+npx wrangler d1 execute lracdim-api --remote --command "SELECT created_at, status, name, email, last_error FROM report_requests ORDER BY created_at DESC LIMIT 20"
+```
+
+Every pipeline event is also logged as JSON (`{"event":"report.sent",…}`) in
+the Worker logs. Locally, `REPORT_EMAIL_DRY_RUN=true` renders and logs each
+email instead of sending it.
 
 ## CPU time
 
@@ -76,11 +171,15 @@ npx wrangler secret put NOTIFY_EMAIL      # where alerts go (any inbox: lracdime
 npx wrangler secret put NOTIFY_WEBHOOK    # Google Sheets web app URL, optional
 npx wrangler secret put ADMIN_KEY         # guards the admin endpoints
 npx wrangler secret put RATE_LIMIT_SALT   # any long random string
+npx wrangler secret put TURNSTILE_SECRET  # Turnstile widget secret, for the report form
+npx wrangler secret put RESEND_WEBHOOK_SECRET  # Resend webhook signing secret (whsec_…)
+npx wrangler secret put REPORT_SIGNING_KEY     # optional: signs report links (else RATE_LIMIT_SALT)
 npx wrangler secret list                  # names only
 ```
 
 Plain settings (`CORS_ORIGINS`, `RESEND_FROM`, `RESEND_AUTOREPLY`, the
-`RATE_LIMIT_*` limits, `SIGNAL_RESPONSE_WARN_MS`) live in `wrangler.jsonc`.
+`RATE_LIMIT_*` limits, `SIGNAL_RESPONSE_WARN_MS`, `SITE_URL`, `API_URL` and the
+`REPORT_*` and `TURNSTILE_REQUIRED` report settings) live in `wrangler.jsonc`.
 
 ## Reading data
 

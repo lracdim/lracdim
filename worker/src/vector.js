@@ -8,11 +8,12 @@
  * prescription are stored as JSON on the audit row, which keeps one
  * examination well under the free plan's 50 database queries.
  */
+import { auditOut, briefReport, fullReport, parse } from './audit-view.js';
 import { FetchError, Budget, fetchPage } from './fetcher.js';
-import { error, fieldError, json, newId, nowIso, readJson, stringField, clientIp } from './http.js';
+import { error, fieldError, json, newId, nowIso, readJson, requireAdmin, stringField, clientIp } from './http.js';
 import { pageContext } from './page.js';
 import { hit } from './ratelimit.js';
-import { METHODOLOGY, WEIGHTS, buildPrescription, categoryScore, healthScore, rankFindings, severityCounts } from './scoring.js';
+import { WEIGHTS, buildPrescription, categoryScore, healthScore, rankFindings, severityCounts } from './scoring.js';
 import { UnsafeURL, validateResolved } from './ssrf.js';
 import { technical } from './analyzers/technical.js';
 import { seo } from './analyzers/seo.js';
@@ -62,30 +63,7 @@ export function stageList(current, failed = null) {
   }));
 }
 
-const parse = (v, fallback) => {
-  if (v === null || v === undefined) return fallback;
-  try {
-    return JSON.parse(v);
-  } catch {
-    return fallback;
-  }
-};
-
-export function auditOut(row) {
-  return {
-    id: row.id,
-    url: row.url,
-    status: row.status,
-    stage: row.stage,
-    stages: parse(row.stages, []),
-    error_message: row.error_message ?? null,
-    health_score: row.health_score ?? null,
-    scores: parse(row.scores, {}),
-    summary: parse(row.summary, {}),
-    created_at: row.created_at,
-    completed_at: row.completed_at ?? null
-  };
-}
+export { auditOut };
 
 async function update(env, id, fields) {
   const keys = Object.keys(fields);
@@ -215,11 +193,20 @@ async function getAudit(env, id) {
   return json(auditOut(row));
 }
 
-async function getResults(env, id) {
+/**
+ * The brief for everyone; the full report only with the admin key. Visitors
+ * get the full report by email (reports.js), through a link that carries its
+ * own secret, because audit ids are public on the recently examined list.
+ */
+async function getResults(request, env, id) {
   const row = await load(env, id);
   if (!row) return error(404, 'not_found', 'No examination with that id.');
   if (row.status !== 'completed') return error(409, 'not_ready', `The examination is ${row.status}.`);
-  return json({ audit: auditOut(row), results: parse(row.results, []), issues: parse(row.issues, []), prescription: parse(row.prescription, []), methodology: METHODOLOGY });
+  if (request.headers.get('X-Admin-Key')) {
+    const denied = await requireAdmin(request, env);
+    return denied || json(fullReport(row));
+  }
+  return json(briefReport(row));
 }
 
 async function recent(env) {
@@ -253,7 +240,7 @@ export async function vectorRoute(request, env, ctx, url) {
   if (p === '/api/vector/audits') return m === 'POST' ? start(request, env, ctx) : error(405, 'method_not_allowed', 'Use POST.');
   if (p === '/api/vector/recent' && m === 'GET') return recent(env);
   let match = p.match(/^\/api\/vector\/audits\/([^/]+)\/results$/);
-  if (match && m === 'GET') return getResults(env, decodeURIComponent(match[1]));
+  if (match && m === 'GET') return getResults(request, env, decodeURIComponent(match[1]));
   match = p.match(/^\/api\/vector\/audits\/([^/]+)$/);
   if (match && m === 'GET') return getAudit(env, decodeURIComponent(match[1]));
   match = p.match(/^\/api\/vector\/websites\/([^/]+)\/audits$/);

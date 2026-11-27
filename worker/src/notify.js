@@ -47,35 +47,60 @@ export function readable(payload) {
 }
 
 const truthy = (v) => ['1', 'true', 'yes'].includes(String(v || '').toLowerCase());
-const sender = (env) => env.RESEND_FROM || DEFAULT_FROM;
+export const sender = (env) => env.RESEND_FROM || DEFAULT_FROM;
 
 /**
- * Send one plain-text email through Resend. Returns false when Resend is not
- * configured; throws on an HTTP error. The key travels only in the
- * Authorization header and is never logged.
+ * A refused send. `permanent` is true when retrying the same request cannot
+ * succeed (a bad address, an unverified domain, a revoked key); 409 (a
+ * concurrent request with the same idempotency key), 429 and 5xx are worth
+ * retrying.
  */
-export async function sendResend(env, to, subject, text, { replyTo, idempotencyKey } = {}) {
-  if (!(env.RESEND_API_KEY && to)) return false;
-  const body = { from: sender(env), to: [to], subject: subject.slice(0, 200), text };
+export class ResendError extends Error {
+  constructor(status, reason) {
+    super(`Resend returned ${status}: ${reason}`.slice(0, 300));
+    this.status = status;
+    this.permanent = status >= 400 && status < 500 && status !== 409 && status !== 429;
+  }
+}
+
+/**
+ * Send one email through Resend and return its id. Header names with CR or
+ * LF are dropped and the subject is flattened, so nothing a visitor typed can
+ * inject a header. The key travels only in the Authorization header and is
+ * never logged.
+ */
+export async function sendEmail(env, { to, subject, text, html, replyTo, idempotencyKey, headers, tags }) {
+  const body = { from: sender(env), to: [to], subject: String(subject).replace(/[\r\n]+/g, ' ').slice(0, 200), text };
+  if (html) body.html = html;
   if (replyTo) body.reply_to = replyTo;
-  const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' };
+  if (headers) body.headers = Object.fromEntries(Object.entries(headers).filter(([k, v]) => !/[\r\n]/.test(k + v)));
+  if (tags) body.tags = tags;
+  const reqHeaders = { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' };
   // Resend drops a second request with the same key, so a retry never sends twice.
-  if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey.slice(0, 256);
+  if (idempotencyKey) reqHeaders['Idempotency-Key'] = idempotencyKey.slice(0, 256);
   const res = await fetch(RESEND_ENDPOINT, {
     method: 'POST',
-    headers,
+    headers: reqHeaders,
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(TIMEOUT_MS)
   });
-  if (res.status >= 400) {
-    let reason = '';
-    try {
-      reason = (await res.json()).message || '';
-    } catch {
-      reason = '';
-    }
-    throw new Error(`Resend returned ${res.status}: ${reason}`.slice(0, 300));
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
   }
+  if (res.status >= 400) throw new ResendError(res.status, (data && data.message) || '');
+  return { id: (data && data.id) || null };
+}
+
+/**
+ * Send one plain-text email through Resend. Returns false when Resend is not
+ * configured; throws on an HTTP error.
+ */
+export async function sendResend(env, to, subject, text, { replyTo, idempotencyKey } = {}) {
+  if (!(env.RESEND_API_KEY && to)) return false;
+  await sendEmail(env, { to, subject, text, replyTo, idempotencyKey });
   return true;
 }
 

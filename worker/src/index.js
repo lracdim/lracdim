@@ -2,14 +2,20 @@
  * LRACDIMENSION API on Cloudflare Workers (free plan), backed by D1.
  *
  * Serves everything the public site calls: health, the project-intake form,
- * Vector examinations, Signal scans and monitoring, and the Forge tools.
- * Scheduled Signal checks run from the Cron Trigger in wrangler.jsonc.
+ * Vector examinations and their emailed full reports, Signal scans and
+ * monitoring, and the Forge tools. The Cron Trigger in wrangler.jsonc runs
+ * the scheduled Signal checks and the report-delivery backstop; full reports
+ * are delivered by the ReportDeliveryWorkflow.
  */
 import { error, json, preflight, allowedOrigin, withCors } from './http.js';
 import { PROJECT_TYPES, submissions, submit } from './contact.js';
 import { vectorRoute } from './vector.js';
+import { reportsRoute, resendWebhook } from './reports.js';
+import { reportMaintenance } from './report-delivery.js';
 import { signalRoute, sweep } from './signal.js';
 import { forgeRoute } from './forge.js';
+
+export { ReportDeliveryWorkflow } from './workflow.js';
 
 async function health(env) {
   try {
@@ -29,6 +35,11 @@ async function route(request, env, ctx, url) {
   if (pathname === '/api/contact/submissions' && method === 'GET') return submissions(request, env);
   if (pathname === '/api/contact') {
     return method === 'POST' ? submit(request, env, ctx) : error(405, 'method_not_allowed', 'Use POST.');
+  }
+  if (pathname === '/api/webhooks/resend') return resendWebhook(request, env);
+  if (pathname.startsWith('/api/vector/')) {
+    const gated = await reportsRoute(request, env, ctx, url);
+    if (gated) return gated;
   }
   const handler = pathname.startsWith('/api/vector/') ? vectorRoute : pathname.startsWith('/api/signal/') ? signalRoute : pathname.startsWith('/api/forge/') ? forgeRoute : null;
   const response = handler ? await handler(request, env, ctx, url) : null;
@@ -52,6 +63,9 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(
       sweep(env, event.scheduledTime).catch((err) => console.error('signal sweep failed', (err && err.stack) || err))
+    );
+    ctx.waitUntil(
+      reportMaintenance(env, ctx, event.scheduledTime).catch((err) => console.error('report maintenance failed', (err && err.stack) || err))
     );
   }
 };

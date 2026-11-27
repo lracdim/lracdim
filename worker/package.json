@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "LRACDIMENSION API on Cloudflare Workers: project intake in D1, other routes forwarded to the Python API.",
+  "description": "LRACDIMENSION API on Cloudflare Workers: intake, Vector with emailed full reports, Signal and Forge, on D1.",
   "scripts": {
     "dev": "wrangler dev",
-    "test": "node --test",
+    "test": "node --import ./test/setup.js --test",
     "deploy": "wrangler deploy",
     "db:migrate:local": "wrangler d1 migrations apply lracdim-api --local",
     "db:migrate:remote": "wrangler d1 migrations apply lracdim-api --remote"
@@ -15,7 +15,7 @@
     "wrangler": "4.151.1"
   },
   "engines": {
-    "node": ">=22.13"
+    "node": ">=22.15"
   },
   "dependencies": {
     "htmlparser2": "9.1.0"

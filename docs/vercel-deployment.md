@@ -22,6 +22,7 @@ import flow mostly needs the root directory and the environment variables.
    | --- | --- |
    | `LRACDIM_API_BASE` | the API's public origin: the Cloudflare Worker, `https://lracdim-api.lracdim.workers.dev` (see `worker/README.md`). It must also appear in `connect-src` in `apps/marketing/vercel.json` |
    | `LRACDIM_GA_ID` | Google Analytics measurement id, optional |
+   | `LRACDIM_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public) for the Vector report form, optional. Empty shows no widget; the Worker's `TURNSTILE_SECRET` is the other half (see `worker/README.md`, "Emailed full reports") |
 
 3. Deploy. The build mirrors `/content` into the Eleventy input, so content
    committed anywhere in the repository is published by this project.

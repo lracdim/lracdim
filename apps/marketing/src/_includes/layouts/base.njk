@@ -147,7 +147,7 @@
 
 <body data-contact-email="{{ site.email }}">
   {#- Runtime integrations, from _data/site.js. Data, not a script: the CSP forbids inline scripts. Empty strings degrade honestly. -#}
-  <script type="application/json" id="lracdim-config">{{ {"apiBase": site.apiBase, "scanEndpoint": site.scanEndpoint, "leadWebhook": site.leadWebhook, "email": site.email, "gaId": site.gaId} | json | safe }}</script>
+  <script type="application/json" id="lracdim-config">{{ {"apiBase": site.apiBase, "scanEndpoint": site.scanEndpoint, "leadWebhook": site.leadWebhook, "email": site.email, "gaId": site.gaId, "turnstileSiteKey": site.turnstileSiteKey} | json | safe }}</script>
 
   <a class="skip-link" href="#main">Skip to content</a>
   {% include "partials/header.njk" %}

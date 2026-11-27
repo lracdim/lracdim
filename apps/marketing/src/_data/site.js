@@ -42,6 +42,10 @@ export default {
   /* Google Analytics 4 measurement id (G-XXXXXXXXXX). Set LRACDIM_GA_ID on Vercel; empty means no tag is loaded. */
   gaId: process.env.LRACDIM_GA_ID || '',
   leadWebhook: '',
+  /* Cloudflare Turnstile site key (public) for the Vector report form. Set LRACDIM_TURNSTILE_SITE_KEY on
+     Vercel once the widget exists; empty means no widget is shown. The Worker's TURNSTILE_SECRET is the
+     other half, and only the Worker can verify a token. */
+  turnstileSiteKey: process.env.LRACDIM_TURNSTILE_SITE_KEY || '',
 
   /* Public profiles. Only entries with a real URL are rendered. */
   social: [
@@ -71,6 +75,7 @@ export default {
     { label: 'Process', href: '/process/' },
     { label: 'Resume', href: '/resume/' },
     { label: 'Clinic demo template', href: '/demos/clinic/' },
-    { label: 'Industry blueprints', href: '/services/#sectors' }
+    { label: 'Industry blueprints', href: '/services/#sectors' },
+    { label: 'Privacy', href: '/privacy/' }
   ]
 };

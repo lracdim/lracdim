@@ -1,0 +1,47 @@
+---
+layout: layouts/base.njk
+title: Privacy notice
+permalink: /privacy/
+description: "What this site collects when you send an inquiry or request a Vector report, why, who processes it, how long it is kept, and how to have it deleted."
+---
+{%- from "partials/rd-pagehead.njk" import pagehead -%}
+{%- call pagehead({ badge: 'Privacy', title: 'Privacy', accent: 'notice', sub: 'What this site keeps about you, why, and how to have it removed. Last updated 27 November 2026.' }) -%}{%- endcall %}
+<article class="case-study shell post">
+  <div class="prose">
+    <p>This site is run by {{ site.owner }} ({{ site.name }}), {{ site.location }}. Questions and requests go to <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+
+    <h2>What is collected, and why</h2>
+    <ul>
+      <li><strong>Project inquiries.</strong> The name, email, company and project details you type into the project form, so I can reply. They are stored in the site's database and sent to my inbox.</li>
+      <li><strong>Vector report requests.</strong> Your name, email address, and the optional company and note, together with the website you examined and the version of the consent wording you accepted. They are used to email you the full report and to contact you about it. A short plain-English summary in the email may be written by an AI model from the report's scores and issue titles; your name and address are not sent to it.</li>
+      <li><strong>Website examinations.</strong> The address you examine and its results. The domain and score appear on the public "recently examined" list only if you leave that option on.</li>
+      <li><strong>Abuse protection.</strong> Your IP address is used to limit how often forms can be sent. Only a salted hash of it is stored, never the address itself. The report form may show a Cloudflare Turnstile security check.</li>
+      {%- if site.gaId %}
+      <li><strong>Analytics.</strong> Google Analytics records which pages are viewed, to see what is useful. It does not receive what you type into forms.</li>
+      {%- endif %}
+    </ul>
+    <p>Nothing is sold, and there is no newsletter. A report request sends one email: your report.</p>
+
+    <h2>Who processes it</h2>
+    <ul>
+      <li><strong>Cloudflare</strong> runs the API, the database, the AI summary and the Turnstile check.</li>
+      <li><strong>Resend</strong> delivers the emails.</li>
+      <li><strong>Vercel</strong> hosts the website.</li>
+      <li><strong>Google</strong>{% if site.gaId %} provides the analytics and{% endif %} may receive inquiry details in a private spreadsheet.</li>
+    </ul>
+
+    <h2>How long it is kept</h2>
+    <ul>
+      <li>The link to an online full report stops working after 30 days.</li>
+      <li>The name, address, company and note on a report request are erased after 12 months. A one-way hash of the address is kept so opt-outs and sending limits keep working.</li>
+      <li>Project inquiries are kept while they are useful for the project, and deleted on request.</li>
+    </ul>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li>Every report email has a link that stops all email to that address. Future report requests for it are then refused.</li>
+      <li>Email <a href="mailto:{{ site.email }}">{{ site.email }}</a> to get a copy of what is held about you, to correct it, or to have it deleted. Under the Philippine Data Privacy Act of 2012 and similar laws elsewhere, these are your rights.</li>
+      <li>If an address was used to request a report without its owner's permission, use the stop-email link in that email, or write to me and I will remove it.</li>
+    </ul>
+  </div>
+</article>

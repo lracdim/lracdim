@@ -5,3 +5,15 @@ NOTIFY_EMAIL=
 NOTIFY_WEBHOOK=
 ADMIN_KEY=local-admin-key
 RATE_LIMIT_SALT=local-salt
+
+# Emailed Vector reports. With REPORT_EMAIL_DRY_RUN=true every report and owner
+# alert is rendered and logged instead of sent, even if RESEND_API_KEY is set.
+REPORT_EMAIL_DRY_RUN=true
+SITE_URL=http://localhost:8099
+API_URL=http://127.0.0.1:8787
+REPORT_AI=off
+# Cloudflare's published Turnstile test secret (always passes; the matching test
+# site key is 1x00000000000000000000AA). Its tokens report the host example.com,
+# so add https://example.com to CORS_ORIGINS here to let them through locally.
+TURNSTILE_SECRET=
+RESEND_WEBHOOK_SECRET=

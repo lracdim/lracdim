@@ -24,7 +24,7 @@ export default [
     href: '/vector/',
     identity: 'Diagnosis',
     descriptor: 'Web Clinic',
-    summary: 'Examine a website with eight analyzers, AI visibility and Core Web Vitals included, get every issue with its evidence, and a prioritised prescription. Reports are stored, shareable, and comparable over time.',
+    summary: 'Examine a website with eight analyzers, AI visibility and Core Web Vitals included, see the summary at once, and get every issue with its evidence and a prioritised prescription by email. Reports are stored, shareable, and comparable over time.',
     verbs: ['Examine', 'Diagnose', 'Prescribe', 'Improve'],
     status: 'live',
     proves: 'Analytical engineering'
